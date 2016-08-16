@@ -21,7 +21,7 @@ pottedplant
 
 Then run `clean.py` to parse xml files in the annotation folder (according to what has been specified in `labels.txt`)
 
-```python
+```bash
 python clean.py /path/to/annotation/folder
 # the default path is ../pascal/VOCdevkit/ANN
 ```
@@ -40,7 +40,7 @@ Skip this if you are working with one of the three original configurations since
 
 Now as you have already specified the new configuration, next step is to initialize the weights. In this step, it is reasonable to recollect a few first layers from some trained configuration before randomly initialize the rest. `makew.py` does exactly this.
 
-```python
+```bash
 # Recollect weights from yolo-tiny.weights to yolo-3c.weights
 python makew.py tiny 3c
 ```
@@ -52,7 +52,7 @@ After all this, `yolo-3c.weights` is created. Bear in mind that unlike `yolo-tin
 ### 2.3 Flowing the graph
 From now on, all operations are performed by `tensor.py`. 
 
-```python
+```bash
 # Have a look at its options
 python tensor.py --h
 # Forward all images in ./data using tiny yolo and 100% GPU usage
@@ -62,7 +62,7 @@ python tensor.py --test data --model tiny --gpu 1.0
 
 Training the new configuration:
 
-```python
+```bash
 python tensor.py --train --model 3c --gpu 1.0
 ```
 
@@ -70,7 +70,7 @@ During training, the script will occasionally save intermediate results into two
 
 To resume, use `--load` option, it essentially parse `./backup/checkpoint` to get the most recent save and load it before doing any next operation, either training or testing.
 
-```python
+```bash
 # To resume the most recent checkpoint for training
 python tensor.py --train --model 3c --load
 # To run testing with the most recent checkpoint
@@ -88,7 +88,7 @@ To avoid this, one would have to build the graph all over again with all Variabl
 
 In short, in order to produce a protobuf graph with optimal size for use in C++ and Objective-C++ API, one would need to use `.weights` files stored in `./binaries/`. They are __important__
 
-```python
+```bash
 ## Saving the lastest checkpoint to protobuf file
 python tensor.py --model 3c --load --savepb
 ```
@@ -101,7 +101,7 @@ That's all!
 In this part,  I will discuss further into details and present design choices of the source code. Skip this if you are not concerned about improving the source code.
 
 All python scripts are
-```python
+```bash
 clean.py # parsing xml annotations
 makew.py # initialize weights
 tensor.py # main script
