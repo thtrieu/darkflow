@@ -118,12 +118,13 @@ def draw_predictions(predictions,
 			if right > w - 1: right = w - 1
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
+			thick = int((h+w)/300)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
-				colors[max_indx], 2)
+				colors[max_indx], int((h+w)/300))
 			mess = '{}:{:.3f}'.format(label, max_prob)
-			cv2.putText(imgcv, mess, (left, top - 10), 
-				0, 1e-3 * h, colors[max_indx])
+			cv2.putText(imgcv, mess, (left, top - 12), 
+				0, 1e-3 * h, colors[max_indx],thick/5)
 	
 	img_name = 'results/{}'.format(
 		img_path.split('/')[-1].split('.')[0])

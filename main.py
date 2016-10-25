@@ -1,6 +1,6 @@
-from Yolo import *
+from yolo import *
 from box import *
-from TFnet import *
+from tfnet import *
 from tensorflow import flags
 import sys
 import time

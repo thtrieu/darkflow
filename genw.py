@@ -1,5 +1,5 @@
 from configs.process import cfg_yielder
-from Yolo import *
+from yolo import *
 import numpy as np
 import os
 import sys

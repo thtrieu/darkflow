@@ -1,4 +1,4 @@
-from Drawer import *
+from drawer import *
 import cPickle as pickle
 from copy import deepcopy
 import subprocess

@@ -42,7 +42,7 @@ Now as you have already specified the new configuration, next step is to initial
 
 ```bash
 # Recollect weights from yolo-tiny.weights to yolo-3c.weights
-python makew.py tiny 3c
+python genw.py tiny 3c
 ```
 
 The script prints out which layers are recollected and which are randomly initialized. The recollected layers are a few first ones that are identical between two configurations. In case there is no such layer, all the new net will be randomly initialized. 
@@ -50,20 +50,20 @@ The script prints out which layers are recollected and which are randomly initia
 After all this, `yolo-3c.weights` is created. Bear in mind that unlike `yolo-tiny.weights`, `yolo-3c.weights` is not yet trained.
 
 ### 2.3 Flowing the graph
-From now on, all operations are performed by `tensor.py`. 
+From now on, all operations are performed by `main.py`. 
 
 ```bash
 # Have a look at its options
-python tensor.py --h
+python main.py --h
 # Forward all images in ./data using tiny yolo and 100% GPU usage
-python tensor.py --test data --model tiny --gpu 1.0
+python main.py --test data --model tiny --gpu 1.0
 # The results are stored in results/
 ```
 
 Training the new configuration:
 
 ```bash
-python tensor.py --train --model 3c --gpu 1.0
+python main.py --train --model 3c --gpu 1.0
 ```
 
 During training, the script will occasionally save intermediate results into two files, one is a Tensorflow checkpoint, stored in `./backup/`, one is a binary file in Darknet style, stored in `./binaries/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is omitted.
@@ -72,12 +72,12 @@ To resume, use `--load` option, it essentially parse `./backup/checkpoint` to ge
 
 ```bash
 # To resume the most recent checkpoint for training
-python tensor.py --train --model 3c --load
+python main.py --train --model 3c --load
 # To run testing with the most recent checkpoint
-python tensor.py --notrain --model 3c --load
+python main.py --notrain --model 3c --load
 # Without the --load option, you will be using the untrained yolo-3c.weights
 # Fine tuning tiny yolo from the original one
-python tensor.py --train --model tiny --noload
+python main.py --train --model tiny --noload
 ```
 
 ### 2.4 Migrating the model to C++ and Objective-C++
@@ -90,7 +90,7 @@ In short, in order to produce a protobuf graph with optimal size for use in C++ 
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-python tensor.py --model 3c --load --savepb
+python main.py --model 3c --load --savepb
 ```
 
 For further usage of this protobuf file, please refer to the official documentation of Tensorflow on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on the iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
@@ -103,23 +103,23 @@ In this part,  I will discuss further into details and present design choices of
 All python scripts are
 ```bash
 clean.py # parsing xml annotations
-makew.py # initialize weights
-tensor.py # main script
+genw.py # initialize weights
+main.py # main script
 ./configs/process.py # .cfg parser
 box.py # all geometry goes here
-Drawer.py # pre-process, post-process images
-Data_helper.py # Use parsed.yolotf to yield minibatches of placeholders
-Yolo.py # Use the cfg parser to parse .weights files into raw YOLO obj
-TFnet.py # Use the parsed .weights object to build the TF graph
+drawer.py # pre-process, post-process images
+data.py # Use parsed.yolotf to yield minibatches of placeholders
+yolo.py # Use the cfg parser to parse .weights files into raw YOLO obj
+tfnet.py # Use the parsed .weights object to build the TF graph
 ```
 
 In next parts, I will present the layout of each of these scripts.
 
-### 3.1 `tensor.py`
+### 3.1 `main.py`
 This script essentially collects all options into object `FLAGS` and pass it on to other subroutines
 
-### 3.2 `Yolo.py`
-This script contains the class definition of `Yolo`, which calls `./configs/process.py` upon its initialization to parse the required `.cfg` config, so that it knows the structure of the corresponding `.weights` file. After that, it dissects this `.weights` file accordingly and store all the parameters into the `layer` attribute.
+### 3.2 `yolo.py`
+This script contains the class definition of `Yolo`, who calls `./configs/process.py` upon its initialization to parse the required `.cfg` config, so that it knows the structure of the corresponding `.weights` file. After that, it dissects this `.weights` file accordingly and store all the parameters into the `layer` attribute.
 
 
 ```python
@@ -157,11 +157,11 @@ class YOLO(object):
         for i in range(self.layer_number):
             ...
 ```
-### 3.3 `Data_helpers.py`
+### 3.3 `data.py`
 
-Since Tensorflow does not support member assignment, calculating the loss is very difficult. One must first figure out what exactly is the tensorized operations that carry out the loss calculation. Then decide which among these tensorized operations should be implemented as `numpy tensors` (allow member assignment) and which as `tensorflow tensors`. This script accounts for the `numpy` part, while the next section introduces the `tensorflow` part.
+Since Tensorflow does not support member assignment, calculating the loss is not simple. One must first figure out what are the tensorized operations that carry out the loss calculation. Since there are many ways to do so, one also has to decide which among these tensorized operations should be implemented as `numpy tensors` (allow member assignment) and which as `tensorflow tensors`, so as to maximise efficiency. This script basically cuts the data into batches, then pre-processes these batches by carrying out the `numpy` part. While in the next section, where the tensorflow computational graph is built, the `tensorflow` part is taken care of.
 
-Basically, this script provide a yielder that does the following:
+In detail, this script provides a yielder that does the following:
 
 - Read `parsed.yolotf`, which essentially contains a list of objects, each represent information of a training example
 
@@ -215,7 +215,7 @@ def shuffle(train_path, file, expectC, S, batch, epoch):
 
 ```
 
-### 3.4 `TFnet.py`
+### 3.4 `tfnet.py`
 This script contains a class definition of the class `SimpleNet`, it stores the tensorflow graph and methods operate on this graph, including the L2-loss evaluation.
 
 ```python

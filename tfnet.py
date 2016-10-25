@@ -2,9 +2,9 @@ import tensorflow as tf
 import numpy as np
 import os
 import time
-from Drawer import *
-from Data_helper import shuffle
-from Yolo import *
+from drawer import *
+from data import shuffle
+from yolo import *
 import subprocess
 import sys
 
