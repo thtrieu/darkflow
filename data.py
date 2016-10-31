@@ -65,24 +65,79 @@ def shuffle(train_path, file, expectC, S, batch, epoch):
 							x += [np.floor(cx)] 
 							x += [np.floor(cy)]
 
-						if False:
-							for x in allobj:
-								cx = x[5] + x[1]
-								cy = x[6] + x[2]
-								centerx = cx * cellx
-								centery = cy * celly
-								ww = x[3] * x[3] * w
-								hh = x[4] * x[4] * h
-								cv2.rectangle(im,
-									(int(centerx - ww/2), int(centery - hh/2)),
-									(int(centerx + ww/2), int(centery + hh/2)),
-									(0,0,255), 2)
+						# if False:
+						# 	for x in allobj:
+						# 		cx = x[5] + x[1]
+						# 		cy = x[6] + x[2]
+						# 		centerx = cx * cellx
+						# 		centery = cy * celly
+						# 		ww = x[3] * x[3] * w
+						# 		hh = x[4] * x[4] * h
+						# 		cv2.rectangle(im,
+						# 			(int(centerx - ww/2), int(centery - hh/2)),
+						# 			(int(centerx + ww/2), int(centery + hh/2)),
+						# 			(0,0,255), 2)
 
-							cv2.imshow("result", im)
-							cv2.waitKey()
-							cv2.destroyAllWindows()
+						# 	cv2.imshow("result", im)
+						# 	cv2.waitKey()
+						# 	cv2.destroyAllWindows()
 
+						"""
+						YOLO formulates the problem as a regression problem. Normally from the
+						annotation, we can directly produce a target tensor to calculate the L2
+						loss as (network_output - target)^2. But YOLO's L2 loss formulation is not
+						that straightforward, namely the complication comes from its loss is selective:
+						not penalizes all entries in the network_output, depending on what network_output
+						looks like during training, moreover the loss also weights each term in the loss
+						differently, e.g. coordinate term is weighted more than confidence terms, etc.
 
+						To resolve this complication, I came up with a procedure that can calculate YOLO's
+						loss function in two parts, all the operation in each part are tensor operations. The
+						first part is done here during minibatch yielding, tensor operations are done on numpy
+						tensors, the second part is done in decode() method inside tfnet.py, as tensorflow tensors.
+						Why the seperation? I believe there are three reasons: 1. tensorflow tensors
+						does not support member assignment, so any operation involving member assignment must be
+						done as numpy tensors. 2. Efficiency: some operation are best to be done here than there.
+						3. Inherent constraints in YOLO's formulation of the loss, please read the comming text
+						for details.  
+						
+						The following text explains the next 11 tensors that I'll define
+						They will be passed as placeholders into the network and serve as
+						materials for calculating YOLO's loss. I look forward to suggestions
+						on improving this (my) current approach.
+						-----------------------------------------------------------------
+		
+						probs is the target class probability tensor
+						confs1 and confs2 are confidence score of boxes 1 and boxes 2
+						upleft are upper left corner coordinates of bounding boxes
+						botright are bottom right corner coordinates of bounding boxes
+						So far, probs, confs1, confs2, upleft, botright constitutes the target 
+						of regression, why do we need the ___id tensors?
+
+						You know from the paper that only grid cells that are responsible for 
+						correct prediction are penalized (by an L2 loss), so not all entries in
+						the above tensors should take part in the loss calculation, furthermore 
+						according to the paper, coordinates terms in the loss should be weighted more 
+						than the other terms, and of two boxes that each grid cell predicts, one with better 
+						IOU should be weighted differently than the other.
+
+						These __id tensors are meant to solve the above complication. They act as weights
+						and will be set to appropriate value either in data.py (as numpy tensors, during the 
+						batch generating phase (this file)) or in tfnet.py (as tensorflow tensors, during the 
+						loss calculation phase). For example, if an entry should not affect the loss, its 
+						corresponding weight will be set to zero, if an entry correspond to coordinate loss, 
+						the weight should be 5.0, so on.
+
+						proid will weight probs, and its final value is set here in data.py
+						conid1 weights confs1
+						conid2 weights confs2
+						cooid1 weights coordinate of box1
+						cooid2 weights coordinate of box2
+
+						conid1, conid2, cooid1, cooid2's values are initialised in data.py and set to correct value 
+						in tfnet.py. Why? because we only know their correct value when IOU of each predicted box 
+						with the target are calculated, i.e. the forward pass must be done before this. 
+						"""
 						probs = np.zeros([S*S,C])
 						confs = np.zeros([S*S,2])
 						coord = np.zeros([S*S,2,4])
@@ -97,17 +152,19 @@ def shuffle(train_path, file, expectC, S, batch, epoch):
 							proid[at, :] = [1] * C
 							coord[at, 0, :] = x[1:5]
 							coord[at, 1, :] = x[1:5]
-							prear[at,0] = x[1] - x[3]**2 * 3.5 # xleft
-							prear[at,1] = x[2] - x[4]**2 * 3.5 # yup
-							prear[at,2] = x[1] + x[3]**2 * 3.5 # xright
-							prear[at,3] = x[2] + x[4]**2 * 3.5 # ybot
+							scale = .5 * S
+							prear[at,0] = x[1] - x[3]**2 * scale # xleft
+							prear[at,1] = x[2] - x[4]**2 * scale # yup
+							prear[at,2] = x[1] + x[3]**2 * scale # xright
+							prear[at,3] = x[2] + x[4]**2 * scale # ybot
 							confs[at, :] = [1.] * 2
 							conid[at, :] = [1.] * 2
 							cooid1[at, 0, :] = [1.] * 4
 							cooid2[at, 0, :] = [1.] * 4
 						upleft   = np.expand_dims(prear[:,0:2], 1) # 49 x 1 
 						botright = np.expand_dims(prear[:,2:4], 1)
-					#==================================================
+
+					# Finalise the placeholders' values
 						probs = probs.reshape([-1]) # true_class
 						confs1 = confs[:,0]
 						confs2 = confs[:,1]
@@ -119,7 +176,8 @@ def shuffle(train_path, file, expectC, S, batch, epoch):
 						conid2 = conid[:,1]
 						cooid1 = cooid1
 						cooid2 = cooid2
-					#==================================================
+
+					# Assemble the placeholders' value 
 						new = [
 							[probs], [confs1], [confs2], [coord],
 							[upleft], [botright],

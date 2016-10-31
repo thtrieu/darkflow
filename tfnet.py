@@ -138,96 +138,117 @@ class SimpleNet(object):
 				f.write(val.tobytes())
 	
 	def decode(self):
-			print ('Set up loss and train ops (may cause lag)...')
-			SS = self.S * self.S
-			self.true_class = tf.placeholder(tf.float32, #
-				[None, SS * self.C])
-			self.true_coo = tf.placeholder(tf.float32, #
-				[None, SS * 2 * 4])
-			self.class_idtf = tf.placeholder(tf.float32, #
-				[None, SS * self.C])
-			self.cooid1 = tf.placeholder(tf.float32, #
-				[None, SS, 1, 4])
-			self.cooid2 = tf.placeholder(tf.float32, #
-				[None, SS, 1, 4])
-			self.confs1 = tf.placeholder(tf.float32, #
-				[None, SS])
-			self.confs2 = tf.placeholder(tf.float32, #
-				[None, SS])
-			self.conid1 = tf.placeholder(tf.float32, #
-				[None, SS])
-			self.conid2 = tf.placeholder(tf.float32, #
-				[None, SS])
-			self.upleft = tf.placeholder(tf.float32, #
-				[None, SS, 2, 2])
-			self.botright = tf.placeholder(tf.float32, #
-				[None, SS, 2, 2])
+    		"""
+			Please refer to the comment section inside data.py
+			to understand the below placeholders. I look forward
+			to receiving comments/improvements on my current
+			implementation of YOLO's loss calculation
+			"""
 
-			coords = self.out[:, SS * (self.C + 2):]
-			coords = tf.reshape(coords, [-1, SS, 2, 4])
+		print ('Set up loss and train ops (may cause lag)...')
+		SS = self.S * self.S
+		self.true_class = tf.placeholder(tf.float32, #
+			[None, SS * self.C])
+		self.true_coo = tf.placeholder(tf.float32, #
+			[None, SS * 2 * 4])
+		self.class_idtf = tf.placeholder(tf.float32, #
+			[None, SS * self.C])
+		self.cooid1 = tf.placeholder(tf.float32, #
+			[None, SS, 1, 4])
+		self.cooid2 = tf.placeholder(tf.float32, #
+			[None, SS, 1, 4])
+		self.confs1 = tf.placeholder(tf.float32, #
+			[None, SS])
+		self.confs2 = tf.placeholder(tf.float32, #
+			[None, SS])
+		self.conid1 = tf.placeholder(tf.float32, #
+			[None, SS])
+		self.conid2 = tf.placeholder(tf.float32, #
+			[None, SS])
+		self.upleft = tf.placeholder(tf.float32, #
+			[None, SS, 2, 2])
+		self.botright = tf.placeholder(tf.float32, #
+			[None, SS, 2, 2])
 
-			wh = tf.pow(coords[:,:,:,2:4], 2) * 3.5;
-			xy = coords[:,:,:,0:2]
-			floor = xy - wh
-			ceil = xy + wh
+		# Extract the coordinate prediction from 
+		# output of YOLO's net
+		coords = self.out[:, SS * (self.C + 2):]
+		coords = tf.reshape(coords, [-1, SS, 2, 4])
 
-			# [batch, 49, box, xy]
-			intersect_upleft = tf.maximum(floor, self.upleft)
-			intersect_botright = tf.minimum(ceil, self.botright)
-			intersect_wh = intersect_botright - intersect_upleft
-			intersect_wh = tf.maximum(intersect_wh, 0.0)
-			
-			# [batch, 49, box]
-			intersect_area1 = tf.mul(intersect_wh[:,:,0,0], intersect_wh[:,:,0,1])
-			intersect_area2 = tf.mul(intersect_wh[:,:,1,0], intersect_wh[:,:,1,1])
-			inferior_cell = intersect_area1 > intersect_area2
-			inferior_cell = tf.to_float(inferior_cell)
+		wh = tf.pow(coords[:,:,:,2:4], 2) * (.5 * self.S); # weight & height of each box
+		xy = coords[:,:,:,0:2] # the center coordinates of each box
+		floor = xy - wh
+		ceil = xy + wh
 
-			# [batch, 49]
-			confs1 = tf.mul(inferior_cell, self.confs1) 
-			confs2 = tf.mul((1.-inferior_cell), self.confs2)
-			confs1 = tf.expand_dims(confs1, -1)
-			confs2 = tf.expand_dims(confs2, -1)
-			confs = tf.concat(2, [confs1, confs2])
-			# [batch, 49, 2]
+		# calculate the coordinates of the intersection 
+		# between predicted boxes and correct boxes
+		intersect_upleft = tf.maximum(floor, self.upleft)
+		intersect_botright = tf.minimum(ceil, self.botright)
+		intersect_wh = intersect_botright - intersect_upleft
+		intersect_wh = tf.maximum(intersect_wh, 0.0)
+		
+		# calculate the areas of intersection 
+		intersect_area1 = tf.mul(intersect_wh[:,:,0,0], intersect_wh[:,:,0,1])
+		intersect_area2 = tf.mul(intersect_wh[:,:,1,0], intersect_wh[:,:,1,1])
+		# determine which box has worse & which box has better IOU to ground truth
+		inferior_cell = intersect_area1 > intersect_area2
+		inferior_cell = tf.to_float(inferior_cell)
 
-			mult = inferior_cell
-			conid1 =  tf.mul(mult, self.conid1)
-			conid2 =  tf.mul((1. - mult), self.conid2)
-			conid1 = tf.expand_dims(conid1, -1)
-			conid2 = tf.expand_dims(conid2, -1)
-			conid = tf.concat(2, [conid1, conid2])
-			# [batch, 49, 2]
+		# since the initial value of confs is 1.0 throughout
+		# now we know which box of each pair has worse IOU
+		# its value should be set to 0.0
+		confs1 = tf.mul(inferior_cell, self.confs1) 
+		confs2 = tf.mul((1.-inferior_cell), self.confs2)
+		confs1 = tf.expand_dims(confs1, -1)
+		confs2 = tf.expand_dims(confs2, -1)
+		confs = tf.concat(2, [confs1, confs2])
 
-			times = tf.expand_dims(inferior_cell, -1) # [batch, 49, 1]
-			times = tf.expand_dims(times, 2) # [batch, 49, 1, 1]
-			times = tf.concat(3, [times]*4) # [batch, 49, 1, 4]
-			cooid1 = tf.mul(times, self.cooid1)
-			cooid2 = (1. - times) * self.cooid2
-			cooid = tf.concat(2, [cooid1, cooid2]) # [batch, 49, 2, 4]
+		# Again, since now we know which box of each pair has worse IOU
+		# it should not contribute to the loss value
+		# hence the corresponding conid is set to 0.0
+		mult = inferior_cell
+		conid1 =  tf.mul(mult, self.conid1)
+		conid2 =  tf.mul((1. - mult), self.conid2)
+		conid1 = tf.expand_dims(conid1, -1)
+		conid2 = tf.expand_dims(conid2, -1)
+		conid = tf.concat(2, [conid1, conid2])
 
-			confs = tf.reshape(confs,
-				[-1, int(np.prod(confs.get_shape()[1:]))])
-			conid = tf.reshape(conid,
-				[-1, int(np.prod(conid.get_shape()[1:]))])
-			cooid = tf.reshape(cooid,
-				[-1, int(np.prod(cooid.get_shape()[1:]))])
+		# Again, since now we know which box of each pair has worse IOU
+		# it should not contribute to the loss value, 
+		# hence the corresponding cooid is set to 0.0 
+		times = tf.expand_dims(inferior_cell, -1) # [batch, 49, 1]
+		times = tf.expand_dims(times, 2) # [batch, 49, 1, 1]
+		times = tf.concat(3, [times]*4) # [batch, 49, 1, 4]
+		cooid1 = tf.mul(times, self.cooid1)
+		cooid2 = (1. - times) * self.cooid2
+		cooid = tf.concat(2, [cooid1, cooid2]) # [batch, 49, 2, 4]
 
-			conid = conid + tf.to_float(conid > .5) * (self.scale_conf - 1.)
-			conid = conid + tf.to_float(conid < .5) * self.scale_noobj
+		# reshape
+		confs = tf.reshape(confs,
+			[-1, int(np.prod(confs.get_shape()[1:]))])
+		conid = tf.reshape(conid,
+			[-1, int(np.prod(conid.get_shape()[1:]))])
+		cooid = tf.reshape(cooid,
+			[-1, int(np.prod(cooid.get_shape()[1:]))])
 
-			true = tf.concat(1,[self.true_class, confs, self.true_coo])
-			idtf = tf.concat(1,[self.class_idtf * self.scale_prob, conid,
-								cooid * self.scale_coor])
+		conid = conid + tf.to_float(conid > .5) * (self.scale_conf - 1.)
+		conid = conid + tf.to_float(conid < .5) * self.scale_noobj
 
-			self.loss = tf.pow(self.out - true, 2)
-			self.loss = tf.mul(self.loss, idtf)
-			self.loss = tf.reduce_sum(self.loss, 1)
-			self.loss = .5 * tf.reduce_mean(self.loss)
+		# true is the regression target
+		# idtf is the weight
+		# the L2 loss of YOLO is then: tf.mul(idtf, (self.out - true)**2)
+		true = tf.concat(1,[self.true_class, confs, self.true_coo])
+		idtf = tf.concat(1,[self.class_idtf * self.scale_prob, conid,
+							cooid * self.scale_coor])
 
-			optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
-			gradients = optimizer.compute_gradients(self.loss)
-			self.train_op = optimizer.apply_gradients(gradients)
+		self.loss = tf.pow(self.out - true, 2)
+		self.loss = tf.mul(self.loss, idtf)
+		self.loss = tf.reduce_sum(self.loss, 1)
+		self.loss = .5 * tf.reduce_mean(self.loss)
+
+		optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
+		gradients = optimizer.compute_gradients(self.loss)
+		self.train_op = optimizer.apply_gradients(gradients)
 
 	def train(self, train_set, annotate, batch_size, epoch):
 		batches = shuffle(train_set, annotate, self.C, self.S, batch_size, epoch)
@@ -269,7 +290,7 @@ class SimpleNet(object):
 			all_img = all_img_[j*batch: (j*batch+batch)]
 			new_all = list()
 			for img in all_img:
-				if '.xml' in img: continue
+				if '.jpg' not in img: continue
 				new_all += [img]
 				this_img = '{}/{}'.format(img_path, img)
 				this_img = crop(this_img)
