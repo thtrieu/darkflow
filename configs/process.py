@@ -1,13 +1,24 @@
 import numpy as np
 import os
 
-def cfg_yielder(model, mode = True):
-	# Parse ---------------------------------------
+def cfg_yielder(model, undiscovered = True):
+	"""
+	yielding each layer information, i.e. yielding type & size
+	of each layer of `model`.
+	Because of different reasons, it is not always be the ideal 
+	case that following .cfg file will successfully match the 
+	size of .weights file, so one would need to investigate the
+	.weights file if s/he is parsing the .cfg file for the first 
+	time (undiscovered = True) in order to adjust the parsing 
+	appropriately.
+	"""
+
+	# Step 1: parsing cfg file
 	with open('configs/yolo-{}.cfg'.format(model), 'rb') as f:
 		lines = f.readlines()
 
-	s = []
-	S = int()
+	s = [] # contains layers' info
+	S = int() # the number of grid cell
 	add = dict()
 	for line in lines:
 		line = line.strip()
@@ -29,34 +40,50 @@ def cfg_yielder(model, mode = True):
 				except:
 					pass
 	yield S
-	# Interprete---------------------------------------
+
+	# Step 2: investigate the weight file
 	weightf = 'yolo-{}.weights'.format(model)
-	if mode:
+	if undiscovered:
 		allbytes = os.path.getsize('yolo-{}.weights'.format(model))
-		allbytes /= 4
-		allbytes -= 4
-		last_convo = int()
+		allbytes /= 4 # each float is 4 byte
+		allbytes -= 4 # the first 4 bytes are darknet specifications
+		last_convo = int() 
 		for i, d in enumerate(s):
 			if len(d) == 4:
-				last_convo = i
+				last_convo = i # the index of last convolution layer
 		flag = False
-		channel = 3
-		out = int()
+		channel = 3 # initial number of channel in the tensor volume
+		out = int() 
 		for i, d in enumerate(s):
+    		# for each iteration in this loop
+			# allbytes will be gradually subtracted
+			# by the size of the corresponding layer (d)
+			# except for the 1st dense layer
+			# it should be what remains after subtracting
+			# all other layers
 			if len(d) == 4:
 				allbytes -= d['size'] ** 2 * channel * d['filters']
 				allbytes -= d['filters']
 				channel = d['filters']
-			elif 'output' in d:
-				if flag is False:
-					out = out1 = d['output']
-					flag = True
-					continue
+			elif 'output' in d: # this is a dense layer
+				if flag is False: # this is the first dense layer
+					out = out1 = d['output'] # output unit of the 1st dense layer
+					flag = True # mark that the 1st dense layer is passed
+					continue # don't do anything with the 1st dense layer
 				allbytes -= out * d['output']
 				allbytes -= d['output']
 				out = d['output']
-		allbytes -= out1
-		size = (np.sqrt(allbytes/out1/channel))
+		allbytes -= out1 # substract the bias
+		if allbytes <= 0:
+				message = "Error: yolo-{}.cfg suggests a bigger size"
+				message += " than yolo-{}.weights actually is"
+				print message.format(model, model)
+				assert allbytes > 0
+		# allbytes is now = I * out1
+		# where I is the input size of the 1st dense layer
+		# I is also the volume of the last convolution layer
+		# I = size * size * channel
+		size = (np.sqrt(allbytes/out1/channel)) 
 		size = int(size)
 		n = last_convo + 1
 		while 'output' not in s[n]:
@@ -66,6 +93,7 @@ def cfg_yielder(model, mode = True):
 		last_convo = None
 		size = None
 
+	# Step 3: Yielding config
 	w = 448
 	h = 448
 	c = 3

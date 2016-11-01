@@ -121,7 +121,7 @@ def draw_predictions(predictions,
 			thick = int((h+w)/300)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
-				colors[max_indx], int((h+w)/300))
+				colors[max_indx], thick)
 			mess = '{}:{:.3f}'.format(label, max_prob)
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
