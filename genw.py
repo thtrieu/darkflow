@@ -1,32 +1,33 @@
-from configs.process import cfg_yielder
-from yolo import *
+from configs.process import *
+from yolo.train import *
+from tensorflow import flags
+from darknet import *
 import numpy as np
 import os
 import sys
 
+flags.DEFINE_string("src", "", "source of recollection: model name if source is complete, file name if source is partial, blank if no source")
+flags.DEFINE_string("des", "", "name of new model")
+flags.DEFINE_float("std", 1e-2, "standard deviation of random initialization")
+FLAGS = flags.FLAGS
+src = FLAGS.src
+des = FLAGS.des
 
-src = sys.argv[1]
-try:
-	des = sys.argv[2]
-except:
-	des = src
-	src = str()
-
-wlayer = ['CONVOLUTIONAL', 'CONNECTED']
+wlayer = ['convolutional', 'connected']
 class collector(object):
-	def __init__(self, yolo):
+	def __init__(self, net):
 		self.i = 0
-		self.yolo = yolo
+		self.net = net
 	def inc(self):
-		while self.yolo.layers[self.i].type not in wlayer:
+		while self.net.layers[self.i].type not in wlayer:
 			self.i += 1
-			if self.i == len(self.yolo.layers):
+			if self.i == len(self.net.layers):
 				break
 	def give(self):
 		self.inc()
-		l = self.yolo.layers[self.i]
+		l = self.net.layers[self.i]
 		w = l.weights
-		if l.type == 'CONVOLUTIONAL':
+		if l.type == 'convolutional':
 			w = w.transpose([3,2,0,1])
 		w = w.reshape([-1])
 		w = np.concatenate((l.biases, w))
@@ -40,8 +41,12 @@ writer.write(np.int32([int(0)]*4).tobytes())
 offset = int(16)
 
 if src != str():
-	yolo = YOLO(src)
-	col = collector(yolo)
+	partial = False
+	if ".weights" in src:
+		partial = True
+		src = des # same structure
+	net = Darknet(src, partial)
+	col = collector(net)
 	flag = True
 
 	# PHASE 01: recollect
@@ -61,8 +66,6 @@ if src != str():
 		elif not flag:
 			mark = i
 			break
-	if mark == i:
-    		print 'none'
 else:
     flag = False
 
@@ -75,11 +78,11 @@ if not flag:
 		print k
 		if k[0] == 'conv':
 			w = np.random.normal(
-				scale = .05,
+				scale = FLAGS.std,
 				size = (k[1]*k[1]*k[2]*k[3]+k[3],))
 		else:
 			w = np.random.normal(
-				scale = .05,
+				scale = FLAGS.std,
 				size = (k[6]*k[7]+k[7],))
 		w = np.float32(w)
 		writer.write(w.tobytes())

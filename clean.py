@@ -1,3 +1,20 @@
+"""
+file: ./clean.py
+includes: a script to parse Pascal VOC data
+this script produces the binary file parsed.bin, which contains
+a cPickle dump of a list. Each element in the list corresponds
+to an image, the element in turn contains a list of  parsed bounding 
+boxes coordinates and asscociated classes of each object defined
+in labels.txt. If labels.txt is left blank, the default choice of
+all twenty objects are used (see list labels20 below).
+
+The cPickle dump will be used mainly by ./data.py, inside function
+shuffle(). shuffle() will shuffle and cut the dump into batches,
+preprocess them so that they are ready to be fed into net.
+
+WARNING: this script is messy, it hurts to read :(
+"""
+
 import os
 import numpy as np
 import cv2
@@ -15,9 +32,10 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
 	"horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
 	"train", "tvmonitor"]
 
+pick = list()
 with open('labels.txt', 'r') as f:
-	pick = f.readlines()
-	for i in range(len(pick)): pick[i] = pick[i].strip()
+	pick = [l.strip() for l in f.readlines()]
+if pick == list(): pick = labels20
 
 def pp(l):
 	for i in l: print '{}: {}'.format(i,l[i])
@@ -50,10 +68,10 @@ for i, file in enumerate(os.listdir('.')):
 
 	w = h = int()
 	all = current = list()
+	name = str()
 	obj = False
-	noHuman = True
-	noPlant = True
-	for line in lines:
+	for i in range(len(lines)):
+		line = lines[i]
 		if '<width>' in line:
 			w = parse(line)
 		if '<height>' in line:
@@ -70,14 +88,13 @@ for i, file in enumerate(os.listdir('.')):
 		if '<name>' in line:
 			if current != list() and current[0] in pick:
 					all += [current]
-					if current[0] == 'person': noHuman = False
-					if current[0] == 'pottedplant': noPlant = False
 			current = list()
 			name = parse(line)
 			if name not in pick: 
 				obj = False
 				continue
 			current = [name,None,None,None,None]
+		if len(current) != 5: continue
 		xn = '<xmin>' in line
 		xx = '<xmax>' in line
 		yn = '<ymin>' in line
@@ -89,12 +106,10 @@ for i, file in enumerate(os.listdir('.')):
 
 	if current != list() and current[0] in pick:
 		all += [current]
-		if current[0] == 'person': noHuman = False
-		if current[0] == 'pottedplant': noPlant = False
 
 	if all == list(): continue
 	jpg = file.split('.')[0]+'.jpg'
-	add = [[jpg, [w, h, all]]] * (1 + noHuman* (15 + noPlant * 11))
+	add = [[jpg, [w, h, all]]]
 	dumps += add
 
 
@@ -112,6 +127,6 @@ print
 print 'Statistics:'
 pp(stat)
 print 'Dataset size: {}'.format(len(dumps))
-with open('parsed.yolotf', 'wb') as f:
-	pickle.dump([pick, dumps],f,protocol=-1)
+with open('parsed.bin', 'wb') as f:
+	pickle.dump([dumps],f,protocol=-1)
 os.chdir(tempdir)
