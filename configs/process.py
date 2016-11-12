@@ -58,7 +58,7 @@ def discoverer(weightf, s):
 			allfloat -= kernel + d['filters']
 			channel = d['filters']
 			if 'batch_normalize' in d:
-				allfloat -= 2 * d['filters']
+				allfloat -= 3* d['filters']
 		elif d['type'] == '[connected]':
 			if dense is False: 
 				out = out1 = d['output'] 
@@ -89,7 +89,6 @@ def cfg_yielder(model, undiscovered = True):
 	for the first time (undiscovered = True), discoverer
 	will be employed
 	"""
-	
 	layers, meta = parser(model); yield meta
 
 	if undiscovered:
@@ -115,12 +114,13 @@ def cfg_yielder(model, undiscovered = True):
 			new = int(np.floor(new + 1.))
 			if i == last_convo:
     			# signal tfnet to figure out the pad itself
-				# to achieve the desired `size`. Namely, to
-				# use the negative sign:
+				# for achieving the desired `size`. Namely, 
+				# to use the negative sign:
 				d['pad'] = -size
 				new = size
-			yield ['conv', d['size'], c, d['filters'], 
-				    h, w, d['stride'], d['pad']]	
+			batch_norm = d.get('batch_normalize', 0)
+			yield ['conv', d['size'], c, d['filters'], h, w, 
+				   d['stride'], d['pad'], batch_norm]
 			w = h = new
 			c = d['filters']
 			l = w * h * c

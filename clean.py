@@ -73,9 +73,9 @@ for i, file in enumerate(os.listdir('.')):
 	for i in range(len(lines)):
 		line = lines[i]
 		if '<width>' in line:
-			w = parse(line)
+			w = int(parse(line))
 		if '<height>' in line:
-			h = parse(line)
+			h = int(parse(line))
 		if '<object>' in line:
 			obj = True
 		if '</object>' in line:
@@ -89,7 +89,7 @@ for i, file in enumerate(os.listdir('.')):
 			if current != list() and current[0] in pick:
 					all += [current]
 			current = list()
-			name = parse(line)
+			name = str(parse(line))
 			if name not in pick: 
 				obj = False
 				continue
@@ -99,10 +99,10 @@ for i, file in enumerate(os.listdir('.')):
 		xx = '<xmax>' in line
 		yn = '<ymin>' in line
 		yx = '<ymax>' in line
-		if xn: current[1] = parse(line)
-		if xx: current[3] = parse(line)
-		if yn: current[2] = parse(line)
-		if yx: current[4] = parse(line)
+		if xn: current[1] = int(parse(line))
+		if xx: current[3] = int(parse(line))
+		if yn: current[2] = int(parse(line))
+		if yx: current[4] = int(parse(line))
 
 	if current != list() and current[0] in pick:
 		all += [current]

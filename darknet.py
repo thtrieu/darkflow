@@ -99,6 +99,25 @@ class Darknet(object):
         # Read byte arrays from file
         for i in range(len(self.layers)):
             l = self.layers[i]
+
+            # if(state.train){
+            #     mean_cpu(l.output, l.batch, l.out_c, l.out_h*l.out_w, l.mean);   
+            #     variance_cpu(l.output, l.mean, l.batch, l.out_c, l.out_h*l.out_w, l.variance);   
+            #     normalize_cpu(l.output, l.mean, l.variance, l.batch, l.out_c, l.out_h*l.out_w);   
+            # } else {
+            #     normalize_cpu(l.output, l.rolling_mean, l.rolling_variance, l.batch, l.out_c, l.out_h*l.out_w);
+            # }
+            # scale_bias(l.output, l.scales, l.batch, l.out_c, l.out_h*l.out_w);
+            
+            # int num = l.n*l.c*l.size*l.size;
+            # fwrite(l.biases, sizeof(float), l.n, fp);
+            # if (l.batch_normalize){
+            #     fwrite(l.scales, sizeof(float), l.n, fp);
+            #     fwrite(l.rolling_mean, sizeof(float), l.n, fp);
+            #     fwrite(l.rolling_variance, sizeof(float), l.n, fp);
+            # }
+            # fwrite(l.weights, sizeof(float), num, fp);
+            
             if l.type == "convolutional":
                 weight_number = l.n * l.c * l.size * l.size
                 l.biases = np.memmap(weight_path, mode = 'r',
@@ -119,6 +138,11 @@ class Darknet(object):
                     offset = offset, shape = (),
                     dtype = '({})float32,'.format(l.n))
                 offset += 4 * l.n
+                l.weights = np.memmap(weight_path, mode = 'r',
+                    offset = offset, shape = (),
+                    dtype = '({})float32,'.format(l.n))
+                offset += 4 * l.n
+
 
             elif l.type == "connected":
                 bias_number = l.output_size
