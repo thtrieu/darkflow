@@ -33,6 +33,7 @@ def yolo_metaprocess(meta):
 	else: 
 		with open('labels.txt','r') as f:
 			meta['labels'] = [l.strip() for l in f.readlines()]
+	if len(meta['labels']) == 0: meta['labels'] = labels20
 	if len(meta['labels']) != meta['classes']:
 		msg = 'labels.txt and configs/yolo-{}.cfg '
 		msg+= 'indicate different class number'

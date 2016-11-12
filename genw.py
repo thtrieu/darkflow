@@ -26,11 +26,21 @@ class collector(object):
 	def give(self):
 		self.inc()
 		l = self.net.layers[self.i]
-		w = l.weights
+		w = list()
 		if l.type == 'convolutional':
-			w = w.transpose([3,2,0,1])
-		w = w.reshape([-1])
-		w = np.concatenate((l.biases, w))
+			w += [l.p['biases']]
+			if l.batch_norm:
+				w += [l.p['scale']]
+				w += [l.p['mean']]
+				w += [l.p['var']]
+			kernel = l.p['kernel']
+			kernel = kernel.transpose([3,2,0,1])
+			kernel = kernel.reshape([-1])
+			w += [kernel]
+		if l.type == 'connected':
+			w += [l.p['biases']]
+			w += [l.p['weights'].reshape([-1])]
+		w = np.concatenate(w)
 		self.i += 1
 		return np.float32(w)
 
