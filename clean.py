@@ -48,6 +48,8 @@ def parse(line):
 		r = x
 	return r
 
+def _int(literal): return int(float(literal))
+
 dumps = list()
 tempdir = os.getcwd()
 os.chdir(ANN)
@@ -73,9 +75,9 @@ for i, file in enumerate(os.listdir('.')):
 	for i in range(len(lines)):
 		line = lines[i]
 		if '<width>' in line:
-			w = int(parse(line))
+			w = _int(parse(line))
 		if '<height>' in line:
-			h = int(parse(line))
+			h = _int(parse(line))
 		if '<object>' in line:
 			obj = True
 		if '</object>' in line:
@@ -99,10 +101,10 @@ for i, file in enumerate(os.listdir('.')):
 		xx = '<xmax>' in line
 		yn = '<ymin>' in line
 		yx = '<ymax>' in line
-		if xn: current[1] = int(parse(line))
-		if xx: current[3] = int(parse(line))
-		if yn: current[2] = int(parse(line))
-		if yx: current[4] = int(parse(line))
+		if xn: current[1] = _int(parse(line))
+		if xx: current[3] = _int(parse(line))
+		if yn: current[2] = _int(parse(line))
+		if yx: current[4] = _int(parse(line))
 
 	if current != list() and current[0] in pick:
 		all += [current]
