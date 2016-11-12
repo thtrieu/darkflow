@@ -25,16 +25,13 @@ class layer:
         self.size = size
         self.c, self.n = (c, n) 
         self.h, self.w = (h, w)
+        # any trainable var goes in here:
+        self.p = dict() 
 
 class dropout_layer(layer):
     def __init__(self, p):
-        self.type = 'dropout'
+        layer.__init__(self, 'dropout')
         self.prob = p
-
-class btchnrm_layer(layer):
-    def __init__(self, size, c, n, h, w ): # <- cryin' haha
-        layer.__init__(self, 'batchnorm',
-            size, c, n, h, w)
 
 class maxpool_layer(layer):
     def __init__(self, size, c, n, h, w, 
@@ -46,11 +43,12 @@ class maxpool_layer(layer):
 
 class convolu_layer(layer):
     def __init__(self, size, c, n, h, w, 
-        stride, pad ):
+        stride, pad, batch_norm ): # <- cryin'
         layer.__init__(self, 'convolutional', 
         	size, c, n, h, w)
         self.stride = stride
         self.pad = pad
+        self.batch_norm = bool(batch_norm)
 
 class connect_layer(layer):
     def __init__(self, size, c, n, h, w, 
@@ -86,7 +84,6 @@ class Darknet(object):
         for i, info in enumerate(layers):
             if i == 0: self.meta = info; continue
             if len(info) == 1: new = layer(type = info[0])
-            if info[0] == 'bnrm': new = btchnrm_layer(*info[1:])
             if info[0] == 'drop': new = dropout_layer(*info[1:])
             if info[0] == 'conv': new = convolu_layer(*info[1:])
             if info[0] == 'pool': new = maxpool_layer(*info[1:])
@@ -100,58 +97,44 @@ class Darknet(object):
         for i in range(len(self.layers)):
             l = self.layers[i]
 
-            # if(state.train){
-            #     mean_cpu(l.output, l.batch, l.out_c, l.out_h*l.out_w, l.mean);   
-            #     variance_cpu(l.output, l.mean, l.batch, l.out_c, l.out_h*l.out_w, l.variance);   
-            #     normalize_cpu(l.output, l.mean, l.variance, l.batch, l.out_c, l.out_h*l.out_w);   
-            # } else {
-            #     normalize_cpu(l.output, l.rolling_mean, l.rolling_variance, l.batch, l.out_c, l.out_h*l.out_w);
-            # }
-            # scale_bias(l.output, l.scales, l.batch, l.out_c, l.out_h*l.out_w);
-            
-            # int num = l.n*l.c*l.size*l.size;
-            # fwrite(l.biases, sizeof(float), l.n, fp);
-            # if (l.batch_normalize){
-            #     fwrite(l.scales, sizeof(float), l.n, fp);
-            #     fwrite(l.rolling_mean, sizeof(float), l.n, fp);
-            #     fwrite(l.rolling_variance, sizeof(float), l.n, fp);
-            # }
-            # fwrite(l.weights, sizeof(float), num, fp);
+            # Convolution with bn: conv -> normalize -> scale -> add bias
+            # Saving conv with bn: bias -> scale -> mean -> var -> kernel
+
             
             if l.type == "convolutional":
                 weight_number = l.n * l.c * l.size * l.size
-                l.biases = np.memmap(weight_path, mode = 'r',
+                l.p['biases'] = np.memmap(weight_path, mode = 'r',
                     offset = offset, shape = (),
                     dtype = '({})float32,'.format(l.n))
                 offset += 4 * l.n
-                l.weights = np.memmap(weight_path, mode = 'r',
+                
+                if l.batch_norm:
+                    l.p['scale'] = np.memmap(weight_path, mode = 'r',
+                        offset = offset, shape = (),
+                        dtype = '({})float32,'.format(l.n))
+                    offset += 4 * l.n
+                    l.p['mean'] = np.memmap(weight_path, mode = 'r',
+                        offset = offset, shape = (),
+                        dtype = '({})float32,'.format(l.n))
+                    offset += 4 * l.n
+                    l.p['var'] = np.memmap(weight_path, mode = 'r',
+                        offset = offset, shape = (),
+                        dtype = '({})float32,'.format(l.n))
+                    offset += 4 * l.n
+
+                l.p['kernel'] = np.memmap(weight_path, mode = 'r',
                     offset = offset, shape = (),
                     dtype = '({})float32,'.format(weight_number))
                 offset += 4 * weight_number
-            
-            elif l.type == "batchnorm":
-                l.biases = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(l.n))
-                offset += 4 * l.n
-                l.weights = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(l.n))
-                offset += 4 * l.n
-                l.weights = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(l.n))
-                offset += 4 * l.n
-
 
             elif l.type == "connected":
                 bias_number = l.output_size
                 weight_number = l.output_size * l.input_size
-                l.biases = np.memmap(weight_path, mode = 'r',
+                l.p['biases'] = np.memmap(weight_path, mode = 'r',
                     offset = offset, shape = (),
                     dtype = '({})float32,'.format(bias_number))
                 offset += bias_number * 4
-                l.weights = np.memmap(weight_path, mode = 'r',
+                l.p['weights'] = np.memmap(weight_path, mode = 'r',
                     offset = offset, shape = (),
                     dtype = '({})float32,'.format(weight_number))
                 offset += weight_number * 4
@@ -167,14 +150,14 @@ class Darknet(object):
             l = self.layers[i]
             
             if l.type == 'convolutional':
-                weight_array = l.weights
+                weight_array = l.p['kernel']
                 weight_array = np.reshape(weight_array,
                 	[l.n, l.c, l.size, l.size])
                 weight_array = weight_array.transpose([2,3,1,0])
-                l.weights = weight_array
+                l.p['kernel'] = weight_array
 
             if l.type == 'connected':
-                weight_array = l.weights
+                weight_array = l.p['weights']
                 weight_array = np.reshape(weight_array,
                 	[l.input_size, l.output_size])
-                l.weights = weight_array
+                l.p['weights'] = weight_array

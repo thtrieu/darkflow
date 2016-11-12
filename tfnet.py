@@ -13,7 +13,7 @@ from ops import *
 from data import *
 
 const_layer = ['leaky', 'dropout']
-var_layer = ['convolutional', 'connected', 'batchnorm']
+var_layer = ['convolutional', 'connected']
 
 class TFNet(object):
 	def __init__(self, darknet, FLAGS):
@@ -34,21 +34,20 @@ class TFNet(object):
 			else: name = l.type+'-{}'.format(i)
 			# no variable when saving to .pb file
 			if l.type in var_layer and not FLAGS.savepb:
-				l.biases = tf.Variable(l.biases)
-				l.weights = tf.Variable(l.weights)
+				for var in l.p: l.p[var] = tf.Variable(l.p[var])
 			arg = [l, now, name]
 			if l.type=='convolutional': now = convl(*arg)
 			elif l.type == 'connected': now = dense(*arg)
-			elif l.type == 'batchnorm': now = bnorm(*arg)
 			elif l.type == 'maxpool': now = maxpool(*arg)	
 			elif l.type == 'flatten': now = flatten(*arg[1:])
 			elif l.type == 'leaky'  : now =   leaky(*arg[1:])
 			# Dropout
 			elif l.type == 'dropout' and not FLAGS.savepb:
-				self.drop[name] = tf.placeholder(tf.float32)
-				self.drop[name + '_'] = l.prob
-				self.feed[self.drop[name]] = self.drop[name+'_']
 				print 'Dropout p = {}'.format(l.prob)
+				self.drop[name] = tf.placeholder(tf.float32)
+				drop_value_name = '{}_'.format(name)
+				self.drop[drop_value_name] = l.prob
+				self.feed[self.drop[name]] = self.drop[drop_value_name]
 				now = dropout(now, self.drop[name], name)
 			if l.type not in const_layer: print now.get_shape()
 

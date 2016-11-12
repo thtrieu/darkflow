@@ -57,8 +57,8 @@ def discoverer(weightf, s):
 			kernel = d['size'] ** 2 * channel * d['filters']
 			allfloat -= kernel + d['filters']
 			channel = d['filters']
-			if 'batch_normalize' in d:
-				allfloat -= 3* d['filters']
+			if 'batch_normalize' in d: # scale, mean, var
+				allfloat -= 3* d['filters'] 
 		elif d['type'] == '[connected]':
 			if dense is False: 
 				out = out1 = d['output'] 
@@ -124,8 +124,6 @@ def cfg_yielder(model, undiscovered = True):
 			w = h = new
 			c = d['filters']
 			l = w * h * c
-			if 'batch_normalize' in d: 
-				yield['bnrm', 0, 0, c, 0, 0]
 			if 'activation' in d: yield ['leaky']
 			
 		if d['type'] == '[maxpool]':
