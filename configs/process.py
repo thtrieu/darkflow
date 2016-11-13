@@ -128,8 +128,8 @@ def cfg_yielder(model, undiscovered = True):
 			if 'activation' in d: yield ['leaky']
 			
 		if d['type'] == '[maxpool]':
-			yield ['pool', d['size'], 0, 
-				0, 0, 0, d['stride'], 0]
+			pad = d.get('pad', 0)
+			yield ['pool', d['size'], d['stride'], pad]
 			new = (w * 1.0 - d['size'])/d['stride'] + 1
 			new = int(np.floor(new))
 			w = h = new
@@ -139,7 +139,7 @@ def cfg_yielder(model, undiscovered = True):
 			if not flat:
 				yield ['flatten']
 				flat = True
-			yield ['conn'] + [0] * 5 + [l, d['output']]
+			yield ['conn', l, d['output']]
 			l = d['output']
 			if 'activation' in d: yield ['leaky']
 

@@ -33,10 +33,9 @@ class dropout_layer(layer):
         self.prob = p
 
 class maxpool_layer(layer):
-    def __init__(self, size, c, n, h, w, 
-        stride, pad ):
-		layer.__init__(self, 'maxpool', 
-			size, c, n, h, w)
+    def __init__(self, size, stride, pad):
+		layer.__init__(self, 'maxpool')
+		self.size = size
 		self.stride = stride
 		self.pad = pad
 
@@ -84,10 +83,8 @@ class convolu_layer(layer):
         self.p['kernel'] = kernel
 
 class connect_layer(layer):
-    def __init__(self, size, c, n, h, w, 
-    	input_size, output_size):
-		layer.__init__(self, 'connected', 
-			size, c, n, h, w)
+    def __init__(self, input_size, output_size):
+		layer.__init__(self, 'connected')
 		self.output_size = output_size
 		self.input_size = input_size
 
