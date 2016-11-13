@@ -19,14 +19,13 @@ import time
 import os
 
 class layer:
-    def __init__(self, type, size = 0, 
-    	c = 0, n = 0, h = 0, w = 0):
+    def __init__(self, type):
         self.type = type
-        self.size = size
-        self.c, self.n = (c, n) 
-        self.h, self.w = (h, w)
         # any trainable var goes in here:
-        self.p = dict() 
+        self.p = dict()
+
+    def load(self, loader):
+        pass
 
 class dropout_layer(layer):
     def __init__(self, p):
@@ -41,14 +40,48 @@ class maxpool_layer(layer):
 		self.stride = stride
 		self.pad = pad
 
+class Loader(object):
+    """
+    an iterative reader of .weights files.
+    takes path to .weights file `weight_path`,
+    reads and returns `length` float32, starting 
+    from byte position `offset`
+    """
+    def __init__(self, weight_path, offset):
+        self.offset = offset
+        self.weight_path = weight_path
+    def __call__(self, length):
+        float32_1D_array = np.memmap(self.weight_path, 
+            mode= 'r', offset= self.offset, shape= (), 
+            dtype = '({})float32,'.format(length))
+        self.offset += 4 * length
+        return float32_1D_array
+
 class convolu_layer(layer):
     def __init__(self, size, c, n, h, w, 
         stride, pad, batch_norm ): # <- cryin'
-        layer.__init__(self, 'convolutional', 
-        	size, c, n, h, w)
+        layer.__init__(self, 'convolutional')
+        self.size = size
+        self.c, self.n = (c, n) 
+        self.h, self.w = (h, w)
         self.stride = stride
         self.pad = pad
         self.batch_norm = bool(batch_norm)
+# Convolution with bn: conv -> normalize -> scale -> add bias
+# Saving conv with bn: bias -> scale -> mean -> var -> kernel            
+    def load(self, loader):
+        self.p['biases'] = loader(self.n)
+        if self.batch_norm:
+            self.p['scale'] = loader(self.n)
+            self.p['mean'] = loader(self.n)
+            self.p['var'] = loader(self.n)
+        kernel_size = self.n*self.c*self.size*self.size
+        kernel = loader(kernel_size)
+        # reshape
+        kernel = np.reshape(kernel,
+            [self.n, self.c, self.size, self.size])
+        kernel = kernel.transpose([2,3,1,0])
+        self.p['kernel'] = kernel
 
 class connect_layer(layer):
     def __init__(self, size, c, n, h, w, 
@@ -57,6 +90,16 @@ class connect_layer(layer):
 			size, c, n, h, w)
 		self.output_size = output_size
 		self.input_size = input_size
+
+    def load(self, loader):
+        self.p['biases'] = loader(self.output_size)
+        weight_size = self.output_size*self.input_size
+        weight_array = loader(weight_size)
+        # reshape
+        weight_array = np.reshape(weight_array,
+            [self.input_size, self.output_size])
+        self.p['weights'] = weight_array
+
 
 class Darknet(object):
 
@@ -78,6 +121,9 @@ class Darknet(object):
         print ('Finished in {}s'.format(stop - start))
 
     def parse(self, model):
+        """
+        Use process.py to build `layers`
+        """
         cfg = model.split('-')[0]
         print ('Parsing yolo-{}.cfg'.format(cfg))
         layers = cfg_yielder(cfg)
@@ -91,73 +137,20 @@ class Darknet(object):
             self.layers.append(new)
 
     def loadWeights(self, weight_path):
-        file_len = os.path.getsize(weight_path); offset = 16
-
-        # Read byte arrays from file
-        for i in range(len(self.layers)):
-            l = self.layers[i]
-
-            # Convolution with bn: conv -> normalize -> scale -> add bias
-            # Saving conv with bn: bias -> scale -> mean -> var -> kernel
-
-            
-            if l.type == "convolutional":
-                weight_number = l.n * l.c * l.size * l.size
-                l.p['biases'] = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(l.n))
-                offset += 4 * l.n
-                
-                if l.batch_norm:
-                    l.p['scale'] = np.memmap(weight_path, mode = 'r',
-                        offset = offset, shape = (),
-                        dtype = '({})float32,'.format(l.n))
-                    offset += 4 * l.n
-                    l.p['mean'] = np.memmap(weight_path, mode = 'r',
-                        offset = offset, shape = (),
-                        dtype = '({})float32,'.format(l.n))
-                    offset += 4 * l.n
-                    l.p['var'] = np.memmap(weight_path, mode = 'r',
-                        offset = offset, shape = (),
-                        dtype = '({})float32,'.format(l.n))
-                    offset += 4 * l.n
-
-                l.p['kernel'] = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(weight_number))
-                offset += 4 * weight_number
-
-            elif l.type == "connected":
-                bias_number = l.output_size
-                weight_number = l.output_size * l.input_size
-                l.p['biases'] = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(bias_number))
-                offset += bias_number * 4
-                l.p['weights'] = np.memmap(weight_path, mode = 'r',
-                    offset = offset, shape = (),
-                    dtype = '({})float32,'.format(weight_number))
-                offset += weight_number * 4
+        """
+        Use `layers` and Loader to load .weights file
+        """
+        file_len = os.path.getsize(weight_path);         
+        loader = Loader(weight_path, 16)
+        
+        for l in self.layers:
+            if l.type in ['convolutional', 'connected']:
+                l.load(loader)
               
         # Defensive python right here bietch.
-        if offset == file_len:
-            print 'Successfully identified all {} bytes'.format(offset)
+        if loader.offset == file_len:
+            msg = 'Successfully identified all {} bytes'
+            print msg.format(loader.offset)
         else:
-            exit('Error: expect {} bytes, found {}'.format(offset, file_len))
-
-        # Reshape
-        for i in range(len(self.layers)):
-            l = self.layers[i]
-            
-            if l.type == 'convolutional':
-                weight_array = l.p['kernel']
-                weight_array = np.reshape(weight_array,
-                	[l.n, l.c, l.size, l.size])
-                weight_array = weight_array.transpose([2,3,1,0])
-                l.p['kernel'] = weight_array
-
-            if l.type == 'connected':
-                weight_array = l.p['weights']
-                weight_array = np.reshape(weight_array,
-                	[l.input_size, l.output_size])
-                l.p['weights'] = weight_array
+            msg = 'Error: expect {} bytes, found {}' 
+            exit(msg.format(loader.offset, file_len))

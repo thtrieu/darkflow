@@ -75,13 +75,12 @@ def discoverer(weightf, s):
 	
 	# expected size of last convolution kernel
 	size = (np.sqrt(1.*allfloat/out1/channel))
-	print 'Last convolutional kernel size = {}'.format(size)
-	size = int(size)
 	n = last_convo + 1
 	while 'output' not in s[n]:
 		size *= s[n].get('size',1)
 		n += 1
-	return last_convo, size
+	print 'Last convolutional kernel size = {}'.format(size)
+	return last_convo, int(size)
 
 def cfg_yielder(model, undiscovered = True):
 	"""
@@ -112,12 +111,14 @@ def cfg_yielder(model, undiscovered = True):
 			new = (w + mult * d['pad'] - d['size'])
 			new /= d['stride']
 			new = int(np.floor(new + 1.))
+
 			if i == last_convo:
     			# signal tfnet to figure out the pad itself
 				# for achieving the desired `size`. Namely, 
 				# to use the negative sign:
 				d['pad'] = -size
 				new = size
+
 			batch_norm = d.get('batch_normalize', 0)
 			yield ['conv', d['size'], c, d['filters'], h, w, 
 				   d['stride'], d['pad'], batch_norm]

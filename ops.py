@@ -12,15 +12,17 @@ def convl(l, x, name):
         padding = [l.pad, l.pad]
     l.pad = 'VALID'
     x = tf.pad(x, [[0, 0], padding, padding, [0, 0]])
-    x = tf.nn.conv2d(x, l.p['kernel'], 
-        padding = l.pad, name = name,
-        strides=[1, l.stride, l.stride, 1])
+    x = tf.nn.conv2d(x, l.p['kernel'], padding = l.pad, 
+        name = name,strides=[1, l.stride, l.stride, 1])
     if l.batch_norm:
         x = batchnorm(l, x, '{}-bnorm'.format(name))
     return tf.nn.bias_add(x, l.p['biases'])
 
 def batchnorm(l, x, name):
-    return x
+    return tf.nn.batch_normalization(
+        x = x, mean = l.p['mean'], variance = l.p['var'], 
+        offset = None, scale = l.p['scale'], name = name,
+        variance_epsilon = 1e-10)
 
 class batch_norm(object):
     """Code modification of http://stackoverflow.com/a/33950177"""
