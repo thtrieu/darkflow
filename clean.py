@@ -74,6 +74,8 @@ for i, file in enumerate(os.listdir('.')):
 	obj = False
 	for i in range(len(lines)):
 		line = lines[i]
+		if '<filename>' in line:
+			jpg = str(parse(line))
 		if '<width>' in line:
 			w = _int(parse(line))
 		if '<height>' in line:
@@ -110,7 +112,6 @@ for i, file in enumerate(os.listdir('.')):
 		all += [current]
 
 	if all == list(): continue
-	jpg = file.split('.')[0]+'.jpg'
 	add = [[jpg, [w, h, all]]]
 	dumps += add
 

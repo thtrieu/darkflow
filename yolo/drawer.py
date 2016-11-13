@@ -67,8 +67,6 @@ def yolo_preprocess(imPath, allobj = None):
 	def fix(x,c): # fit x inside [0,c]
 		return max(min(x,c),0)
 	
-	if not os.path.isfile(imPath):
-		imPath = '{}{}'.format(imPath[:-3], 'JPG')
 	im = cv2.imread(imPath)
 	if allobj is not None: # in training mode
 		h, w, _ = im.shape
