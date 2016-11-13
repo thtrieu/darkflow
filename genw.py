@@ -93,7 +93,7 @@ if not flag:
 		else:
 			w = np.random.normal(
 				scale = FLAGS.std,
-				size = (k[6]*k[7]+k[7],))
+				size = (k[1]*k[2]+k[2],))
 		w = np.float32(w)
 		writer.write(w.tobytes())
 		offset += w.shape[0] * 4
