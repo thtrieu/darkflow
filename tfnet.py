@@ -151,5 +151,3 @@ class TFNet(object):
 				yolo_postprocess(
 					prediction, '{}/{}'.format(inp_path, all_inp[i]), 
 					self.FLAGS, self.meta)
-		
-		print ('Results stored in results/')

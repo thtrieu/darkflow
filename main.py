@@ -21,6 +21,12 @@ FLAGS = flags.FLAGS
 image = FLAGS.dataset
 annot = FLAGS.annotation + 'parsed.bin'
 
+def get_dir(dirs):
+	for d in dirs:
+		this = os.path.abspath(os.path.join(os.path.curdir, d))
+		if not os.path.exists(this): os.makedirs(this)
+get_dir([FLAGS.testset, 'results', 'binaries', 'backup'])
+
 step = int()
 if FLAGS.load < 0:
 	try:
