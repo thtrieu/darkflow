@@ -14,7 +14,12 @@ src = FLAGS.src
 des = FLAGS.des
 
 wlayer = ['convolutional', 'connected']
+
 class collector(object):
+	"""
+	takes a darknet, give the next flattened
+	weights upon each call to self.give()
+	"""
 	def __init__(self, net):
 		self.i = 0
 		self.net = net
@@ -28,18 +33,18 @@ class collector(object):
 		l = self.net.layers[self.i]
 		w = list()
 		if l.type == 'convolutional':
-			w += [l.p['biases']]
+			w += [l.w['biases']]
 			if l.batch_norm:
-				w += [l.p['scale']]
-				w += [l.p['mean']]
-				w += [l.p['var']]
-			kernel = l.p['kernel']
+				w += [l.w['scale']]
+				w += [l.w['mean']]
+				w += [l.w['var']]
+			kernel = l.w['kernel']
 			kernel = kernel.transpose([3,2,0,1])
 			kernel = kernel.reshape([-1])
 			w += [kernel]
 		if l.type == 'connected':
-			w += [l.p['biases']]
-			w += [l.p['weights'].reshape([-1])]
+			w += [l.w['biases']]
+			w += [l.w['weights'].reshape([-1])]
 		w = np.concatenate(w)
 		self.i += 1
 		return np.float32(w)
@@ -64,11 +69,11 @@ if src != str():
 	for i, k in enumerate(zip(cfg_yielder(des, undiscovered = False), 
 							cfg_yielder(src, undiscovered = False))):
 		if not i: continue
-		if k[0][:] != k[1][:] and k[0][0] in ['conv', 'conn']:
+		if k[0][:] != k[1][:] and k[0][0] in wlayer:
 			flag = False
 		if flag:
 			k = k[0]
-			if k[0] not in ['conv', 'conn']: continue
+			if k[0] not in wlayer: continue
 			w = col.give()
 			writer.write(w.tobytes())
 			offset += w.shape[0] * 4
@@ -84,9 +89,9 @@ print 'Random init:'
 if not flag:
 	for i, k in enumerate(cfg_yielder(des, undiscovered = False)):
 		if i < mark: continue
-		if k[0] not in ['conv','conn']: continue
+		if k[0] not in wlayer: continue
 		print k
-		if k[0] == 'conv':
+		if k[0] == 'convolutional':
 			w = np.random.normal(
 				scale = FLAGS.std,
 				size = (k[1]*k[1]*k[2]*k[3]+k[3],))
@@ -97,5 +102,6 @@ if not flag:
 		w = np.float32(w)
 		writer.write(w.tobytes())
 		offset += w.shape[0] * 4
+
 writer.close()
 print 'total size: {} bytes'.format(offset)

@@ -44,6 +44,7 @@ def yolo_batch(train_path, chunk, meta):
     allobj = deepcopy(allobj_)
     path = '{}{}'.format(train_path, jpg)
     img, allobj = yolo_preprocess(path, allobj)
+    #img = yolo_preprocess(path)
 
     # Calculate regression target
     cellx = 1. * w / S

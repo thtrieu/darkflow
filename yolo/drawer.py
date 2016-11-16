@@ -16,7 +16,7 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
-default_models = ['full', 'small', 'tiny', 'baby']
+default_models = ['yolo-full', 'yolo-new', 'yolo-small', 'yolo-tiny', 'yolo-baby']
 
 def yolo_metaprocess(meta):
 	"""
@@ -29,13 +29,14 @@ def yolo_metaprocess(meta):
 		r = (indx % base2) / base
 		g = (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
-	if meta['model'] in default_models: meta['labels'] = labels20
+	if meta['model'] in default_models: 
+		meta['labels'] = labels20
 	else: 
 		with open('labels.txt','r') as f:
 			meta['labels'] = [l.strip() for l in f.readlines()]
 	if len(meta['labels']) == 0: meta['labels'] = labels20
 	if len(meta['labels']) != meta['classes']:
-		msg = 'labels.txt and configs/yolo-{}.cfg '
+		msg = 'labels.txt and configs/{}.cfg '
 		msg+= 'indicate different class number'
 		exit('Error: {}'.format(msg.format(meta['model'])))
 	colors = list()
@@ -45,7 +46,7 @@ def yolo_metaprocess(meta):
 	meta['colors'] = colors
 	return meta
 
-def is_yolo_inp(name): return '.jpg' in name
+def is_yolo_inp(name): return name[-4:] in ['.jpg','.JPG']
 
 def yolo_preprocess(imPath, allobj = None):
 	"""

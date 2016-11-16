@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from darknet import *
 from tfnet import *
 from tensorflow import flags
@@ -6,7 +8,7 @@ flags.DEFINE_string("testset", "test", "path to testing directory")
 flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
 flags.DEFINE_string("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
 flags.DEFINE_float("threshold", 0.1, "detection threshold")
-flags.DEFINE_string("model", "3c", "configuration of choice")
+flags.DEFINE_string("model", "", "configuration of choice")
 flags.DEFINE_boolean("train", False, "training mode or not?")
 flags.DEFINE_integer("load", 0, "load a saved backup/checkpoint, -1 for newest")
 flags.DEFINE_boolean("savepb", False, "save net and weight to a .pb file")
@@ -25,34 +27,36 @@ def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
-get_dir([FLAGS.testset, 'results', 'binaries', 'backup'])
+get_dir([FLAGS.testset, 'results', 'backup'])
 
-step = int()
-if FLAGS.load < 0:
-	try:
-		with open('backup/checkpoint','r') as f:
-			lines = f.readlines()
-	except:
-		sys.exit('Seems like there is no recent training in backup/')
-	name = lines[-1].split(' ')[1].split('"')[1]
-	step = int(name.split('-')[1])
-else: step = FLAGS.load
-yoloNet = Darknet(FLAGS.model + int(step > 0) * '-{}'.format(step))
+checkpoint = 'backup/checkpoint'
+recent = os.path.isfile(checkpoint)
+last = int()
+
+if recent:
+	with open(checkpoint,'r') as f:
+		lines = f.readlines()
+		name = lines[-1].split(' ')
+		name = name[1].split('"')[1]
+		last = int(name.split('-')[1])
+
+if FLAGS.load < 0: FLAGS.load = last
+darknet = Darknet(FLAGS.model)
 
 print ('\nCompiling net & fill in parameters...')
 start = time.time()
-if FLAGS.gpu <= 0.:
-	with tf.device('cpu:0'):
-		tfnet = TFNet(yoloNet, FLAGS)
-else:
-	tfnet = TFNet(yoloNet, FLAGS)
-tfnet.step = step
-tfnet.setup_meta_ops()
-print ('Finished in {}s'.format(time.time() - start))
+if FLAGS.gpu <= 0.: 
+	with tf.device('cpu:0'): tfnet = TFNet(darknet, FLAGS)
+else: tfnet = TFNet(darknet, FLAGS)
+print ('Finished in {}s\n'.format(time.time() - start))
 
 if FLAGS.train:
-	print '\nEnter training ...'
+	print 'Enter training ...'
 	tfnet.train(image, annot, FLAGS.batch, FLAGS.epoch)
+	if not FLAGS.savepb: exit('Training finished')
 
-print
+if FLAGS.savepb:
+	print 'Rebuild a constant version ...'
+	tfnet.savepb(); exit('Done')
+
 tfnet.predict()
