@@ -21,7 +21,7 @@ activation = linear
 ...
 ```
 
-Imagine design a deep net with such an ease! Many thanks to the Darknet author :) Currently, `darktf` is built to sufficiently run YOLO. For other net structures (to be exact, for other types of layers/ops that is not presented in YOLO), new code will be added, but with a lot of ease - it should be! In fact, one can always add a whole new framework to `darktf` without much knowledge about its internal working, take a look at `./yolo/`.
+Imagine design a deep net with such ease! Many thanks to the Darknet author. Currently, `darktf` is built to sufficiently run YOLO. For other net structures, new code will be added. Take a look at `./yolo/` to see how this task should be quite simple.
 
 Regarding bridging Darknet and Tensorflow, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
 
