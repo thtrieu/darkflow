@@ -64,7 +64,7 @@ class TFNet(object):
 		# There are variable in self.graph
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
-		
+
 		self.step = int()
 		if self.FLAGS.load <= 0: return
 		self.step = self.FLAGS.load
@@ -90,7 +90,7 @@ class TFNet(object):
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
 				for var in tf.trainable_variables():
-					vals += [var.eval(sess)]
+					vals += [var.eval()]
 		for i, var in enumerate(tf.trainable_variables()):
 			new_name = ':'.join(var.name.split(':')[:-1])
 			if var.get_shape() != vals[i].shape:
