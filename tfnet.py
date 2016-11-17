@@ -60,16 +60,48 @@ class TFNet(object):
 		if self.FLAGS.train: yolo_loss(self)
 		self.sess.run(tf.initialize_all_variables())
 		
-		if not self.ckpt:
+		if not self.ckpt: 
+			# There are variable in self.graph
+			graph_def = self.sess.graph_def
+			name = '{}.pb'.format(self.meta['model'])
+			tf.train.write_graph(graph_def,'./backup/', name, False)
+
 			self.saver = tf.train.Saver(tf.all_variables(), 
 				max_to_keep = self.FLAGS.keep)
 
 			self.step = int()
 			if self.FLAGS.load > 0:
 				self.step = self.FLAGS.load
-				load_point = 'backup/model-{}'.format(self.FLAGS.load)
+				load_point = 'backup/{}'.format(self.meta['model'])
+				load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 				print 'Loading from {}'.format(load_point)
-				self.saver.restore(self.sess, load_point)
+				try: self.saver.restore(self.sess, load_point)
+				except: self.load_old_graph(load_point)
+
+	def load_old_graph(self, load_point):
+		"""
+		new versions of code name variables differently,
+		so for backward compatibility, a matching between
+		new and old graph_def has to be done.
+		"""
+
+		print 'Resolve imcompatible graph def ...'			
+		meta = '{}.meta'.format(load_point)
+		msg = 'Recovery from {} '.format(meta)
+		vals = list()
+		with tf.Graph().as_default() as graph:
+			with tf.Session() as sess:
+				old_meta = tf.train.import_meta_graph(meta)
+				old_meta.restore(sess, load_point)
+				for var in tf.trainable_variables():
+					vals += [var.eval(sess)]
+		for i, var in enumerate(tf.trainable_variables()):
+			new_name = ':'.join(var.name.split(':')[:-1])
+			if var.get_shape() != vals[i].shape:
+				exit('Error: {}'.format(msg + 'has failed'))
+			var = tf.Variable(vals[i], name = new_name)
+		print msg + 'finished'
+
 
 	def savepb(self):
 		"""
@@ -127,8 +159,10 @@ class TFNet(object):
 			_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
 			print 'step {} - batch {} - loss {}'.format(i+self.step, i, loss)
 			if i % (self.FLAGS.save/batch) == 0 or i == total:
-				print 'save checkpoint and binaries at step {}'.format(self.step+i)
-				self.saver.save(self.sess, 'backup/model-{}'.format(self.step+i))
+				step_now = self.step + i
+				checkpoint_file = 'backup/{}-{}'.format(self.meta['model'], step_now)
+				print 'save checkpoint and binaries at step {}'.format(step_now)
+				self.saver.save(self.sess, checkpoint_file)
 
 	def predict(self):
 		inp_path = self.FLAGS.testset
