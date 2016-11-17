@@ -84,7 +84,7 @@ class TFNet(object):
 		print 'Resolve imcompatible graph def ...'			
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
-		vals = list()
+		vals = list(); names = list()
 		with tf.Graph().as_default() as graph:
 			with tf.Session() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
@@ -96,7 +96,13 @@ class TFNet(object):
 			if var.get_shape() != vals[i].shape:
 				exit('Error: {}'.format(msg + 'has failed'))
 			var = tf.Variable(vals[i], name = new_name)
-		tf.initialize_all_variables()
+		# 	names += [new_name]
+		# with tf.Graph().as_default() as graph:
+		# 	with tf.Session() as sess:
+		# 		for i in len(vals):
+		# 			new_var = tf.Variable(vals[i], name = names[i])
+		# 		saver = tf.train.Saver(tf.all_variables())
+		self.sess.run(tf.initialize_all_variables())
 		print msg + 'finished'
 
 
