@@ -1,6 +1,6 @@
 ## Intro
 
-This repo aims at building a tensorflow version of Darknet framework, where the famous framework YOLO (real time object detection & classification) is produced. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
+This repo aims at building a tensorflow version of [darknet framework](https://github.com/pjreddie/darknet), where the famous framework [YOLO](http://pjreddie.com/darknet/yolo/) (real time object detection & classification) is created. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
 
 
 ```python
