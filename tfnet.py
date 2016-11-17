@@ -96,29 +96,32 @@ class TFNet(object):
 		print 'Resolve incompatible graph def ...'	
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
-		err = 'Error: {}'.format(msg + 'failed')
+		err = '{}'.format(msg + 'failed')
 
+		feed = dict()
 		allw = tf.all_variables()
 		with tf.Graph().as_default() as g:
 			with tf.Session().as_default() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
-
 				for i, this in enumerate(tf.all_variables()):
-					if allw == list(): break
 					val = this.eval(sess)
 					name = this.name
 					args = [allw, name, val.shape]
-					idx = lookup(*args);
-					assert idx is not None, err
-					# broadcast graph from w.graph
-					w = allw[idx]
-					op = tf.assign(w, val)
-					self.sess.run(op)
+					idx = lookup(*args)
+					if idx is None: continue
+					feed[allw[idx]] = val
 					del allw[idx]
 
 		# Make sure all new vars are covered
 		assert allw == list(), err
+		
+		# restore values
+		for w in feed:
+			val = feed[w]; shape = val.shape
+			ph = tf.placeholder(tf.float32, shape)
+			op = tf.assign(w, ph)
+			self.sess.run(op, {ph: val})
 
 
 	def to_darknet(self):
