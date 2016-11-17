@@ -21,9 +21,9 @@ activation = linear
 ...
 ```
 
-Imagine design a deep net with such ease! Many thanks to the Darknet author. Currently, `darktf` is built to sufficiently run YOLO. For other net structures, new code will be added. Take a look at `./yolo/` to see how this task should be quite simple.
+Imagine design a deep net with such ease! Many thanks to the Darknet author. The ease, however, is not complete though - imagine changing the number of classes and you have to do the engineer work: edit some code, rebuild `darknet`. Fortunately you won't have to do so with `darktf`. Currently, `darktf` is built to sufficiently run YOLO. For other net structures, new code will be added in a plug-and-play manner. Take a look at `./yolo/` and see how this task should be quite simple.
 
-Regarding bridging Darknet and Tensorflow, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
+Regarding bridging Darknet and Tensorflow for YOLO, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
 
 This is understandable since building the loss op of YOLO in `Tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darktf` also allows saving the trained weights to a constant protobuf object that can be used in `Tensorflow` C++ interface.
 
