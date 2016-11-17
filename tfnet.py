@@ -159,7 +159,6 @@ class TFNet(object):
 
 		for layer in darknet_ckpt.layers:
 			for ph in layer.h:
-				print layer.h[ph]
 				layer.h[ph] =  layer.h[ph]['dfault']
 		tfnet_ckpt = TFNet(darknet_ckpt, self.FLAGS)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
