@@ -107,7 +107,8 @@ class TFNet(object):
 				for i, this in enumerate(tf.all_variables()):
 					val = this.eval(sess)
 					name = this.name
-					args = [allw, name, val.shape]
+					shape = val.shape
+					args = [allw, name, shape]
 					idx = lookup(*args)
 					if idx is None: continue
 					feed[allw[idx]] = val
