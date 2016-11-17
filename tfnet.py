@@ -96,21 +96,22 @@ class TFNet(object):
 			if var.get_shape() != vals[i].shape:
 				exit('Error: {}'.format(msg + 'has failed'))
 			#var = tf.Variable(vals[i], name = new_name)
-			names += [new_name]
-		with tf.Graph().as_default() as graph:
-			with tf.Session() as sess:
-				for i, val in enumerate(vals):
-					new_var = tf.Variable(val, name = names[i])
-				class dummy(object): pass
-				if self.FLAGS.train: 
-					obj = dummy()
-					obj.meta = self.meta
-					yolo_loss(obj)
-				saver = tf.train.Saver(tf.all_variables())
-				sess.run(tf.initialize_all_variables())
-				saver.save(sess, load_point)
+			# names += [new_name]
+			self.graph.add_to_collection(new_name, vals[i])
+		# with tf.Graph().as_default() as graph:
+		# 	with tf.Session() as sess:
+		# 		for i, val in enumerate(vals):
+		# 			new_var = tf.Variable(val, name = names[i])
+		# 		class dummy(object): pass
+		# 		if self.FLAGS.train: 
+		# 			obj = dummy()
+		# 			obj.meta = self.meta
+		# 			yolo_loss(obj)
+		# 		saver = tf.train.Saver(tf.all_variables())
+		# 		sess.run(tf.initialize_all_variables())
+		# 		saver.save(sess, load_point)
 
-		self.saver.restore(self.sess, load_point)
+		# self.saver.restore(self.sess, load_point)
 		print msg + 'finished'
 
 
