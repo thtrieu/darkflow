@@ -135,6 +135,10 @@ class TFNet(object):
 				l_idx = int(var_name[0])
 				w_sig = var_name[-1]
 				darknet_ckpt.layers[l_idx].w[w_sig] = val
+		for layer in darknet_ckpt.layers:
+			for ph in layer.h:
+				feed = self.feed[layer.h[ph]]
+				layer.h[ph] = feed
 
 		return darknet_ckpt
 
@@ -154,7 +158,8 @@ class TFNet(object):
 		flags_ckpt.verbalise = False
 
 		for layer in darknet_ckpt.layers:
-			for ph in layer.h: 
+			for ph in layer.h:
+				print layer.h[ph]
 				layer.h[ph] =  layer.h[ph]['dfault']
 		tfnet_ckpt = TFNet(darknet_ckpt, self.FLAGS)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
