@@ -90,12 +90,13 @@ class TFNet(object):
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
 				for var in tf.trainable_variables():
-					vals += [var.eval()]
+					vals += [var.eval(sess)]
 		for i, var in enumerate(tf.trainable_variables()):
 			new_name = ':'.join(var.name.split(':')[:-1])
 			if var.get_shape() != vals[i].shape:
 				exit('Error: {}'.format(msg + 'has failed'))
 			var = tf.Variable(vals[i], name = new_name)
+		tf.initialize_all_variables()
 		print msg + 'finished'
 
 
