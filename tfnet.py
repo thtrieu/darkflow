@@ -106,7 +106,7 @@ class TFNet(object):
 				old_meta.restore(sess, load_point)
 				for i, this in enumerate(tf.all_variables()):
 					name = this.name
-					shape = val.shape
+					shape = this.get_shape()
 					args = [allw, name, shape]
 					idx = lookup(*args)
 					if idx is None: continue
