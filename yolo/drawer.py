@@ -63,8 +63,8 @@ def yolo_preprocess(imPath, allobj = None):
 	# intensity transformations, DO NOT
 	# perform shift/scale or rotate here
 	# ADD YOUR CODE BELOW:
-		alpha = np.random.uniform() + 1
-		beta = np.random.uniform() * 50 - 25
+		alpha = np.random.uniform() + .5
+		beta = np.random.uniform() * 40 - 20
 		im = im * alpha
 		im = im + beta
 		return im
