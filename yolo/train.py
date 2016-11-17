@@ -5,8 +5,8 @@ together they support the pipeline:
     annotation -> minibatch -> loss evaluation -> training
 """
 
-import tensorflow.contrib.slim as slim
 import tensorflow as tf
+import tensorflow.contrib.slim as slim
 from copy import deepcopy
 from drawer import *
 

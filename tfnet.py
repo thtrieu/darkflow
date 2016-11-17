@@ -81,21 +81,42 @@ class TFNet(object):
 		so for backward compatibility, a matching between
 		new and old graph_def has to be done.
 		"""
-		print 'Resolve incompatible graph def ...'			
+
+		def lookup(allw, name, shape):
+			"""
+			Look for variable with name `name`
+			and shape `shape` in list `allw`
+			"""
+			for idx, w in enumerate(allw):
+				if w.name == name: # highly unlikely
+					return idx	
+			for idx, w in enumerate(allw):
+				if w.get_shape() == shape:
+					return idx
+			return None
+
+		print 'Resolve incompatible graph def ...'	
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
-		vals = list(); names = list()
-		all_var = tf.all_variables()
+		err = 'Error: {}'.format(msg + 'failed')
+
+		allw = tf.all_variables()
 		with tf.Graph().as_default() as graph:
-			with tf.Session() as sess:
+			with tf.Session().as_default() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
+
 				for i, this in enumerate(tf.all_variables()):
+					if allw == list(): break
 					val = this.eval(sess)
-					var_i = all_var[i]
-					assert var_i.get_shape() == val.shape,\
-						'Error: {}'.format(msg + 'failed')
-					self.sess.run(all_var[i].assign(val))
+					args = [allw, this.name, val.shape]
+					idx = lookup(*args)
+					assert idx is not None, err; 
+					w = allw[idx]; op = tf.assign(w, val)
+					self.sess.run(op)
+					del allw[idx];
+
+		assert allw == list(), err
 		print msg + 'done'
 
 
@@ -128,7 +149,7 @@ class TFNet(object):
 
 		tfnet_ckpt = TFNet(darknet_ckpt, self.FLAGS)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
-		#tfnet_ckpt.predict() # uncomment for unit testing
+		# tfnet_ckpt.predict() # uncomment for unit testing
 
 		name = 'graph-{}.pb'.format(self.meta['model'])
 		print 'Saving const graph def to {}'.format(name)
@@ -157,7 +178,7 @@ class TFNet(object):
 			if i % (self.FLAGS.save/batch) == 0 or i == total:
 				step_now = self.step + i
 				checkpoint_file = 'backup/{}-{}'.format(self.meta['model'], step_now)
-				print 'save checkpoint and binaries at step {}'.format(step_now)
+				print 'Checkpoint at step {}'.format(step_now)
 				self.saver.save(self.sess, checkpoint_file)
 
 	def predict(self):
