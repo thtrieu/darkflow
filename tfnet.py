@@ -81,7 +81,7 @@ class TFNet(object):
 		so for backward compatibility, a matching between
 		new and old graph_def has to be done.
 		"""
-		print 'Resolve imcompatible graph def ...'			
+		print 'Resolve incompatible graph def ...'			
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
 		vals = list(); names = list()
@@ -89,29 +89,13 @@ class TFNet(object):
 			with tf.Session() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
-				for var in tf.trainable_variables():
+				for var in tf.all_variables():
 					vals += [var.eval(sess)]
-		for i, var in enumerate(tf.trainable_variables()):
+		for i, var in enumerate(tf.all_variables()):
 			new_name = ':'.join(var.name.split(':')[:-1])
 			if var.get_shape() != vals[i].shape:
 				exit('Error: {}'.format(msg + 'has failed'))
-			#var = tf.Variable(vals[i], name = new_name)
-			names += [new_name]
-		with tf.Graph().as_default() as graph:
-			with tf.Session() as sess:
-				for i, val in enumerate(vals):
-					new_var = tf.Variable(val, name = names[i])
-				class dummy(object): pass
-				if self.FLAGS.train: 
-					obj = dummy()
-					obj.meta = self.meta
-					obj.out = self.out
-					yolo_loss(obj)
-				saver = tf.train.Saver(tf.all_variables())
-				sess.run(tf.initialize_all_variables())
-				saver.save(sess, load_point)
-
-		self.saver.restore(self.sess, load_point)
+			self.sess.run(var.assign(vals[i]))
 		print msg + 'finished'
 
 
