@@ -12,6 +12,7 @@ Thanks.
 
 This repo aims at building a tensorflow version of Darknet framework, where the famous framework YOLO (real time object detection & classification) is produced. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
 
+
 ```python
 ...
 
@@ -30,7 +31,7 @@ activation = linear
 ...
 ```
 
-Current, `darktf` is built to sufficiently run YOLO, for other net structures, new code will be added.
+Imagine design the net in such an easy manner! Many thanks to the Darknet author :) Currently, `darktf` is built to sufficiently run YOLO, for other net structures, new code will be added, with ease (it should).
 
 Regarding bridging Darknet and Tensorflow, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
 
