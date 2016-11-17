@@ -64,11 +64,7 @@ class TFNet(object):
 		# There are variable in self.graph
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
-
-		graph_def = self.sess.graph_def
-		name = '{}.pb'.format(self.meta['model'])
-		tf.train.write_graph(graph_def,'./backup/', name, False)
-
+		
 		self.step = int()
 		if self.FLAGS.load <= 0: return
 		self.step = self.FLAGS.load
