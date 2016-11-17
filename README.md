@@ -1,12 +1,5 @@
-## Update!
-
-I've been refactored a lot of code, the goal is to decouple YOLO out of the main framework (darknet -> tensorflow). Most of the syntax is the same (for old users), but there is one change with `genw.py`: instead of `python genw.py tiny 3c` to initialize `3c` from `tiny`, please use `python genw.py --src yolo-tiny --des yolo-3c`.
-
-Still working on batch normalization layer though.
-
-Thanks.
-
-##
+Title: Darktf, from Darknet to Tensorflow and constant Graph Def
+---
 
 ## 1. Intro
 
