@@ -101,6 +101,8 @@ class TFNet(object):
 			with tf.Session() as sess:
 				for i, val in enumerate(vals):
 					new_var = tf.Variable(val, name = names[i])
+				class dummy(object): pass
+				if self.FLAGS.train: yolo_loss(dummy())
 				saver = tf.train.Saver(tf.all_variables())
 				sess.run(tf.initialize_all_variables())
 				saver.save(sess, load_point)

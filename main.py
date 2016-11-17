@@ -38,7 +38,7 @@ if recent:
 		lines = f.readlines()
 		name = lines[-1].split(' ')
 		name = name[1].split('"')[1]
-		last = int(name.split('-')[1])
+		last = int(name.split('-')[-1])
 
 if FLAGS.load < 0: FLAGS.load = last
 darknet = Darknet(FLAGS.model)
