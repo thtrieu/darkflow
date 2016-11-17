@@ -85,18 +85,18 @@ class TFNet(object):
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
 		vals = list(); names = list()
+		all_var = tf.all_variables()
 		with tf.Graph().as_default() as graph:
 			with tf.Session() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
-				for var in tf.all_variables():
-					vals += [var.eval(sess)]
-		for i, var in enumerate(tf.all_variables()):
-			new_name = ':'.join(var.name.split(':')[:-1])
-			if var.get_shape() != vals[i].shape:
-				exit('Error: {}'.format(msg + 'has failed'))
-			self.sess.run(var.assign(vals[i]))
-		print msg + 'finished'
+				for i, this in enumerate(tf.all_variables()):
+					val = this.eval(sess)
+					var_i = all_var[i]
+					assert var_i.get_shape() == val.shape,\
+						'Error: {}'.format(msg + 'has failed')
+					self.sess.run(all_var[i].assign(val))
+		print msg + 'done'
 
 
 	def savepb(self):
