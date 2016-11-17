@@ -117,7 +117,7 @@ class TFNet(object):
 					self.sess.run(op)
 					del allw[idx]
 
-		# Make sure all old vars are covered
+		# Make sure all new vars are covered
 		assert allw == list(), err
 
 
