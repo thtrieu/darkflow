@@ -92,12 +92,12 @@ class TFNet(object):
 				for var in tf.trainable_variables():
 					vals += [var.eval(sess)]
 		for i, var in enumerate(tf.trainable_variables()):
-			new_name = ':'.join(var.name.split(':')[:-1])
+			#new_name = ':'.join(var.name.split(':')[:-1])
 			if var.get_shape() != vals[i].shape:
 				exit('Error: {}'.format(msg + 'has failed'))
 			#var = tf.Variable(vals[i], name = new_name)
 			# names += [new_name]
-			self.graph.add_to_collection(new_name, vals[i])
+			self.graph.add_to_collection(var.name, vals[i])
 		# with tf.Graph().as_default() as graph:
 		# 	with tf.Session() as sess:
 		# 		for i, val in enumerate(vals):
