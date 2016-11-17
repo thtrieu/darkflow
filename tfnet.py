@@ -94,7 +94,7 @@ class TFNet(object):
 					val = this.eval(sess)
 					var_i = all_var[i]
 					assert var_i.get_shape() == val.shape,\
-						'Error: {}'.format(msg + 'has failed')
+						'Error: {}'.format(msg + 'failed')
 					self.sess.run(all_var[i].assign(val))
 		print msg + 'done'
 
