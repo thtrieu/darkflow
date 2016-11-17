@@ -1,0 +1,4 @@
+person
+chair
+tvmonitor
+pottedplant
