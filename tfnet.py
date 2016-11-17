@@ -105,12 +105,12 @@ class TFNet(object):
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
 				for i, this in enumerate(tf.all_variables()):
-					val = this.eval(sess)
 					name = this.name
 					shape = val.shape
 					args = [allw, name, shape]
 					idx = lookup(*args)
 					if idx is None: continue
+					val = this.eval(sess)
 					feed[allw[idx]] = val
 					del allw[idx]
 
