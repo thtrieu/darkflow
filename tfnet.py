@@ -164,7 +164,7 @@ class TFNet(object):
 		for layer in darknet_ckpt.layers:
 			for ph in layer.h:
 				layer.h[ph] =  layer.h[ph]['dfault']
-		tfnet_ckpt = TFNet(darknet_ckpt, self.FLAGS)		
+		tfnet_ckpt = TFNet(darknet_ckpt, flags_ckpt)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
 		# tfnet_ckpt.predict() # uncomment for unit testing
 
