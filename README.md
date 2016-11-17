@@ -1,8 +1,4 @@
----
-title: Darktf, from Darknet to Tensorflow and constant Graph Def
----
-
-## 1. Intro
+## Intro
 
 This repo aims at building a tensorflow version of Darknet framework, where the famous framework YOLO (real time object detection & classification) is produced. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
 
@@ -32,8 +28,10 @@ Regarding bridging Darknet and Tensorflow, there are currently some available re
 This is understandable since building the loss op of YOLO in `Tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darktf` also allows saving the trained weights to a constant protobuf object that can be used in `Tensorflow` C++ interface.
 
 
-## 2. How to use it
-### 2.1 Parsing the annotations
+## How to use it
+
+### Parsing the annotations
+
 Skip this if you are not training or fine-tuning anything (you simply want to forward flow a trained net)
 
 The first thing to do is specifying the classes you want to work with, write them down in the `labels.txt` file. For example, if you want to work with only 3 classes `tvmonitor`, `person`, `pottedplant`; edit `labels.txt` as follows
@@ -53,14 +51,16 @@ python clean.py /path/to/annotation/folder
 
 This will print some stats on the parsed dataset to screen. Parsed bounding boxes and their associated classes is stored in `parsed.yolotf`.
 
-### 2.2 Design the net
+### Design the net
+
 Skip this if you are working with one of the three original configurations since they are already there.
 
 In this step you create a configuration `[config_name].cfg` and put it inside `./configs/`. Take a look at some of the available configs there to know the syntax.
 
 Note that these files, besides being descriptions of the net structures, also store technical specifications that is read by Darknet framework (e.g. learning rate, batch size, epoch number). `darktf` therefore, ignore these Darknet specifications.
 
-### 2.2 Initialize weights
+### Initialize weights
+
 Skip this if you are working with one of the original configurations since the `.weights` files are already there.
 
 Now as you have already specified the new configuration, next step is to initialize the weights. In this step, it is reasonable to recollect a few first layers from some trained configuration before randomly initialize the rest. `makew.py` does exactly this.
@@ -74,7 +74,8 @@ The script prints out which layers are recollected and which are randomly initia
 
 After all this, `yolo-3c.weights` is created. Bear in mind that unlike `yolo-tiny.weights`, `yolo-3c.weights` is not yet trained.
 
-### 2.3 Flowing the graph
+### Flowing the graph
+
 From now on, all operations are performed by file `darktf`. 
 
 ```bash
@@ -105,7 +106,7 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 ./darktf --train --model yolo-tiny
 ```
 
-### 2.4 Migrating the model to C++ and Objective-C++
+### Migrating the graph to C++ and Objective-C++
 
 Now this is the tricky part since there is no official support for loading variables in C++ API. Some suggest adding assigning ops from variable to constants into the graph and save it down as a `.pb` (protobuf) file [_like this_](https://alexjoz.gitbooks.io/code-life/content/chapter7.html). However this will double the necessary size of this file, which is very undesirable in, say, building mobile applications. 
 
