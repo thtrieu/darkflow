@@ -58,11 +58,15 @@ def yolo_preprocess(imPath, allobj = None):
 	parsed annotation (allobj) will also be modified accordingly.
 	"""
 	def recolor(im):
-	# `im` is a cv2 image python object
+	# `im` is a numpy python object
 	# recolor `im` by adding in random
 	# intensity transformations, DO NOT
 	# perform shift/scale or rotate here
 	# ADD YOUR CODE BELOW:
+		alpha = np.random.uniform() * 2 + 1
+		beta = np.random.uniform() * 100 - 50
+		im = im * alpha
+		im = im + beta
 		return im
 	
 	def fix(x,c): # fit x inside [0,c]
@@ -72,7 +76,7 @@ def yolo_preprocess(imPath, allobj = None):
 	if allobj is not None: # in training mode
 		h, w, _ = im.shape
 		# Scale and translate
-		scale = np.random.uniform() / 5. + 1.
+		scale = np.random.uniform() / 10. + 1.
 		max_offx = (scale-1.) * w
 		max_offy = (scale-1.) * h
 		offx = int(np.random.uniform() * max_offx)
@@ -93,13 +97,16 @@ def yolo_preprocess(imPath, allobj = None):
 				temp = obj[1]
 				obj[1] = w - obj[3]
 				obj[3] = w - temp
-
 		if flip: im = cv2.flip(im, 1)
-		im = recolor(im)
+
+	im = cv2.resize(im, (448, 448))
+	image_array = np.array(im)
+
+	# recoloring in training mode
+	if allobj is not None:
+		image_array = recolor(image_array)
 
 	# return np array input to YOLO
-	im_ = cv2.resize(im, (448, 448))
-	image_array = np.array(im_)
 	image_array = image_array / 255.
 	image_array = image_array * 2. - 1.
 	image_array = np.expand_dims(image_array, 0)
