@@ -124,11 +124,12 @@ def yolo_loss(net):
     S, B, C = m['side'], m['num'], m['classes']
     SS = S * S # number of grid cells
 
-    print 'Loss hyper-parameters:'
-    print '\tside    = {}'.format(m['side'])
-    print '\tbox     = {}'.format(m['num'])
-    print '\tclasses = {}'.format(m['classes'])
-    print '\tscales  = {}'.format([sprob, sconf, snoob, scoor])
+    if net.FLAGS.verbalise:
+        print 'Loss hyper-parameters:'
+        print '\tside    = {}'.format(m['side'])
+        print '\tbox     = {}'.format(m['num'])
+        print '\tclasses = {}'.format(m['classes'])
+        print '\tscales  = {}'.format([sprob, sconf, snoob, scoor])
 
     size1 = [None, SS, C]
     size2 = [None, SS, B]
@@ -184,13 +185,11 @@ def yolo_loss(net):
     true = tf.concat(1, [probs, confs, coord])
     wght = tf.concat(1, [proid, conid, cooid])
     
-    print 'Building net.loss'
     net.loss = tf.pow(net.out - true, 2)
     net.loss = tf.mul(net.loss, wght)
     net.loss = tf.reduce_sum(net.loss, 1)
     net.loss = .5 * tf.reduce_mean(net.loss)
 
-    print 'Building net.train_op'
     optimizer = tf.train.RMSPropOptimizer(net.FLAGS.lr)
     gradients = optimizer.compute_gradients(net.loss)
     net.train_op = optimizer.apply_gradients(gradients)
