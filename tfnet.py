@@ -23,9 +23,10 @@ class TFNet(object):
 			self.forward()
 			self.setup_meta_ops()
 
+
 	def forward(self):
 		self.ckpt = self.FLAGS.savepb is None
-		verbalise = not self.ckpt
+		verbalise = self.FLAGS.verbalise
 
 		# Placeholder
 		inp_size = [None] + self.meta['inp_size']
@@ -61,14 +62,11 @@ class TFNet(object):
 		self.sess.run(tf.initialize_all_variables())
 		
 		if self.ckpt: return
-		# There are variable in self.graph
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
 
-		self.step = int()
+		self.rebuild = False
 		if self.FLAGS.load <= 0: return
-		self.step = self.FLAGS.load
-
 		load_point = 'backup/{}'.format(self.meta['model'])
 		load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 		print 'Loading from {}'.format(load_point)
@@ -101,7 +99,7 @@ class TFNet(object):
 		err = 'Error: {}'.format(msg + 'failed')
 
 		allw = tf.all_variables()
-		with tf.Graph().as_default() as graph:
+		with tf.Graph().as_default() as g:
 			with tf.Session().as_default() as sess:
 				old_meta = tf.train.import_meta_graph(meta)
 				old_meta.restore(sess, load_point)
@@ -109,16 +107,36 @@ class TFNet(object):
 				for i, this in enumerate(tf.all_variables()):
 					if allw == list(): break
 					val = this.eval(sess)
-					args = [allw, this.name, val.shape]
-					idx = lookup(*args)
-					assert idx is not None, err; 
-					w = allw[idx]; op = tf.assign(w, val)
+					name = this.name
+					args = [allw, name, val.shape]
+					idx = lookup(*args);
+					assert idx is not None, err
+					# broadcast graph from w.graph
+					w = allw[idx]
+					op = tf.assign(w, val)
 					self.sess.run(op)
-					del allw[idx];
+					del allw[idx]
 
+		# Make sure all old vars are covered
 		assert allw == list(), err
-		print msg + 'done'
 
+
+	def to_darknet(self):
+		"""
+		Translate from TFNet back to darknet
+		"""
+		darknet_ckpt = self.darknet
+		
+		with self.graph.as_default() as g:
+			for var in tf.trainable_variables():
+				name = var.name.split(':')[0]
+				val = var.eval(self.sess)
+				var_name = name.split('-')
+				l_idx = int(var_name[0])
+				w_sig = var_name[-1]
+				darknet_ckpt.layers[l_idx].w[w_sig] = val
+
+		return darknet_ckpt
 
 	def savepb(self):
 		"""
@@ -128,25 +146,16 @@ class TFNet(object):
 		1. Don't double the necessary size
 		2. Convert on the fly - at any point you want
 		"""
-		darknet_ckpt = self.darknet
+
+		# placeholder takes default vals
+		darknet_ckpt = self.to_darknet()
 		flags_ckpt = self.FLAGS
 		flags_ckpt.savepb = None # signal
-		
-		with self.graph.as_default() as g:
-			for var in tf.trainable_variables():
-				print var.name
-				name = ':'.join(var.name.split(':')[:-1])
-				var_name = name.split('-')
-				val = var.eval(self.sess)
-				l_idx = int(var_name[0])
-				w_sig = var_name[-1]
-				trained = var.eval(self.sess)
-				darknet_ckpt.layers[l_idx].w[w_sig] = trained
+		flags_ckpt.verbalise = False
 
 		for layer in darknet_ckpt.layers:
-			for ph in layer.h: # Set all placeholders to dfault val
-				layer.h[ph] = self.feed[layer.h[ph]]['dfault']
-
+			for ph in layer.h: 
+				layer.h[ph] =  layer.h[ph]['dfault']
 		tfnet_ckpt = TFNet(darknet_ckpt, self.FLAGS)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
 		# tfnet_ckpt.predict() # uncomment for unit testing
@@ -174,9 +183,10 @@ class TFNet(object):
 			for k in self.feed: feed_dict[k] = self.feed[k]['feed']
 
 			_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
-			print 'step {} - batch {} - loss {}'.format(i+self.step, i, loss)
+
+			step_now = self.FLAGS.load + i
+			print 'step {} - loss {}'.format(step_now, loss)
 			if i % (self.FLAGS.save/batch) == 0 or i == total:
-				step_now = self.step + i
 				checkpoint_file = 'backup/{}-{}'.format(self.meta['model'], step_now)
 				print 'Checkpoint at step {}'.format(step_now)
 				self.saver.save(self.sess, checkpoint_file)
