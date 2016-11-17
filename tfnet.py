@@ -60,23 +60,24 @@ class TFNet(object):
 		if self.FLAGS.train: yolo_loss(self)
 		self.sess.run(tf.initialize_all_variables())
 		
-		if not self.ckpt: 
-			# There are variable in self.graph
-			graph_def = self.sess.graph_def
-			name = '{}.pb'.format(self.meta['model'])
-			tf.train.write_graph(graph_def,'./backup/', name, False)
+		if self.ckpt: return
+		# There are variable in self.graph
+		self.saver = tf.train.Saver(tf.all_variables(), 
+			max_to_keep = self.FLAGS.keep)
 
-			self.saver = tf.train.Saver(tf.all_variables(), 
-				max_to_keep = self.FLAGS.keep)
+		graph_def = self.sess.graph_def
+		name = '{}.pb'.format(self.meta['model'])
+		tf.train.write_graph(graph_def,'./backup/', name, False)
 
-			self.step = int()
-			if self.FLAGS.load > 0:
-				self.step = self.FLAGS.load
-				load_point = 'backup/{}'.format(self.meta['model'])
-				load_point = '{}-{}'.format(load_point, self.FLAGS.load)
-				print 'Loading from {}'.format(load_point)
-				try: self.saver.restore(self.sess, load_point)
-				except: self.load_old_graph(load_point)
+		self.step = int()
+		if self.FLAGS.load <= 0: return
+		self.step = self.FLAGS.load
+
+		load_point = 'backup/{}'.format(self.meta['model'])
+		load_point = '{}-{}'.format(load_point, self.FLAGS.load)
+		print 'Loading from {}'.format(load_point)
+		try: self.saver.restore(self.sess, load_point)
+		except: self.load_old_graph(load_point)
 
 	def load_old_graph(self, load_point):
 		"""
@@ -84,7 +85,6 @@ class TFNet(object):
 		so for backward compatibility, a matching between
 		new and old graph_def has to be done.
 		"""
-
 		print 'Resolve imcompatible graph def ...'			
 		meta = '{}.meta'.format(load_point)
 		msg = 'Recovery from {} '.format(meta)
