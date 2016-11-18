@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-def parser(model):
+def parser(FLAGS):
 	"""
 	Read the .cfg file to extract layers into `layers`
 	as well as model-specific parameters into `meta`
 	"""
 	def _parse(l): return l.split('=')[1].strip()
-	with open('configs/{}.cfg'.format(model), 'rb') as f:
+	with open('{}{}.cfg'.format(FLAGS.config, FLAGS.model), 'rb') as f:
 		lines = f.readlines()		
 	
 	layers = [] # will contains layers' info
@@ -37,7 +37,7 @@ def parser(model):
 				except:
 					pass
 	meta = layer # last layer contains meta info
-	meta['model'] = model
+	meta['model'] = FLAGS.model
 	meta['inp_size'] = [h, w, c]
 	return layers, meta
 
@@ -91,18 +91,18 @@ def discoverer(weightf, s, c):
 	print 'Last convolutional kernel size = {}'.format(size)
 	return last_convo, int(size)
 
-def cfg_yielder(model, undiscovered = True):
+def cfg_yielder(FLAGS, undiscovered = True):
 	"""
 	yielding each layer information, if model is discovered 
 	for the first time (undiscovered = True), discoverer
 	will be employed
 	"""
-	layers, meta = parser(model); yield meta
+	layers, meta = parser(FLAGS); yield meta
 	h, w, c = meta['inp_size']; l = w * h * c
 
 	last_convo = None; size = None
 	if undiscovered:
-		weightf = '{}.weights'.format(model)
+		weightf = FLAGS.binary + '{}.weights'.format(FLAGS.model)
 		last_convo, size = discoverer(weightf, layers, c)
 
 	# Start yielding

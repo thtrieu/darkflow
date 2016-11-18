@@ -154,16 +154,16 @@ class TFNet(object):
 		1. Don't double the necessary size
 		2. Convert on the fly - at any point you want
 		"""
-
-		# placeholder takes default vals
 		darknet_ckpt = self.to_darknet()
 		flags_ckpt = self.FLAGS
 		flags_ckpt.savepb = None # signal
 		flags_ckpt.verbalise = False
 
+		# placeholder takes default vals
 		for layer in darknet_ckpt.layers:
 			for ph in layer.h:
 				layer.h[ph] =  layer.h[ph]['dfault']
+		
 		tfnet_ckpt = TFNet(darknet_ckpt, flags_ckpt)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
 		# tfnet_ckpt.predict() # uncomment for unit testing
@@ -173,13 +173,19 @@ class TFNet(object):
 		graph_def = tfnet_ckpt.sess.graph_def
 		tf.train.write_graph(graph_def,'./',name,False)
 	
-	def train(self, train_set, parsed_annota, batch, epoch):
-		batches = shuffle(train_set, parsed_annota, batch, epoch, self.meta)
+	def train(self):
+		
+		args = list()
+		args += [self.FLAGS.dataset]
+		args += [self.FLAGS.annotation]
+		args += [self.FLAGS.batch]
+		args += [self.FLAGS.epoch]
+		batches = shuffle(*args)
 
 		print 'Training statistics:'
 		print '\tLearning rate : {}'.format(self.FLAGS.lr)
-		print '\tBatch size    : {}'.format(batch)
-		print '\tEpoch number  : {}'.format(epoch)
+		print '\tBatch size    : {}'.format(self.FLAGS.batch)
+		print '\tEpoch number  : {}'.format(self.FLAGS.epoch)
 		print '\tBackup every  : {}'.format(self.FLAGS.save)
 
 		total = int() # total number of batches
@@ -194,7 +200,7 @@ class TFNet(object):
 
 			step_now = self.FLAGS.load + i
 			print 'step {} - loss {}'.format(step_now, loss)
-			if i % (self.FLAGS.save/batch) == 0 or i == total:
+			if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
 				checkpoint_file = 'backup/{}-{}'.format(self.meta['model'], step_now)
 				print 'Checkpoint at step {}'.format(step_now)
 				self.saver.save(self.sess, checkpoint_file)
@@ -211,7 +217,7 @@ class TFNet(object):
 			new_all = list()
 			for inp in all_inp:
 				new_all += [inp]
-				this_inp = '{}/{}'.format(inp_path, inp)
+				this_inp = '{}{}'.format(inp_path, inp)
 				this_inp = yolo_preprocess(this_inp)
 				inp_feed.append(this_inp)
 			all_inp = new_all
@@ -229,5 +235,5 @@ class TFNet(object):
 
 			for i, prediction in enumerate(out[0]):
 				yolo_postprocess(
-					prediction, '{}/{}'.format(inp_path, all_inp[i]), 
+					prediction, '{}{}'.format(inp_path, all_inp[i]), 
 					self.FLAGS, self.meta)

@@ -4,7 +4,9 @@ from darknet import *
 from tfnet import *
 from tensorflow import flags
 
-flags.DEFINE_string("testset", "test", "path to testing directory")
+flags.DEFINE_string("testset", "./test/", "path to testing directory")
+flags.DEFINE_string("binary", "./bin/", "path to .weights directory")
+flags.DEFINE_string("config", "./configs/", "path to .cfg directory")
 flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
 flags.DEFINE_string("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
 flags.DEFINE_float("threshold", 0.1, "detection threshold")
@@ -21,14 +23,12 @@ flags.DEFINE_integer("epoch", 1000, "Number of epoch")
 flags.DEFINE_integer("save", 2000, "Save checkpoint every ? training examples")
 
 FLAGS = flags.FLAGS
-image = FLAGS.dataset
-annot = FLAGS.annotation + 'parsed.bin'
 
 def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
-get_dir([FLAGS.testset, 'results', 'backup'])
+get_dir([FLAGS.testset, FLAGS.binary, 'results', 'backup'])
 
 checkpoint = 'backup/checkpoint'
 recent = os.path.isfile(checkpoint)
@@ -42,7 +42,7 @@ if recent:
 		last = int(name.split('-')[-1])
 
 if FLAGS.load < 0: FLAGS.load = last
-darknet = Darknet(FLAGS.model)
+darknet = Darknet(FLAGS)
 
 print ('\nCompiling net & fill in parameters...')
 start = time.time()
@@ -52,8 +52,7 @@ else: tfnet = TFNet(darknet, FLAGS)
 print ('Finished in {}s\n'.format(time.time() - start))
 
 if FLAGS.train:
-	print 'Enter training ...'
-	tfnet.train(image, annot, FLAGS.batch, FLAGS.epoch)
+	print 'Enter training ...';	tfnet.train()
 	if not FLAGS.savepb: exit('Training finished')
 
 if FLAGS.savepb:

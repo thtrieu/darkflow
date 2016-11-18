@@ -65,8 +65,10 @@ class conv(tfop):
 		self.pad = padding
 
 	def batchnorm(self, l, x, name):
+		batch_mean, batch_var = tf.nn.moments(x, [0, 1, 2])
+                
 		return tf.nn.batch_normalization(
-			x = x, mean = l.w['mean'], variance = l.w['var'], 
+			x = x, mean = batch_mean, variance = batch_var, 
 			offset = None, scale = l.w['scale'], name = name,
 			variance_epsilon = 1e-6)
 

@@ -82,7 +82,7 @@ From now on, all operations are performed by file `darktf`.
 # Have a look at its options
 ./darktf --h
 # Forward all images in ./test using tiny yolo and 100% GPU usage
-./darktf --test test --model yolo-tiny --gpu 1.0
+./darktf --test ./test --model yolo-tiny --gpu 1.0
 # The results are stored in results/
 ```
 

@@ -23,25 +23,27 @@ class Darknet(object):
     model = str()
     partial = bool()
 
-    def __init__(self, model, partial = False):        
+    def __init__(self, FLAGS, partial = False):        
         self.partial = partial 
-        self.model = model
-        self.parse(model) # produce self.layers
+        self.FLAGS = FLAGS
+        self.parse() # produce self.layers
         self.checkpoint = False # load from a checkpoint?
         
-        weight_file = '{}.weights'.format(model)
+        weight_file = '{}.weights'.format(FLAGS.model)
+        weight_file = FLAGS.binary + weight_file
         print ('Loading {} ...'.format(weight_file))
         start = time.time()
         self.load_weights(weight_file)
         stop = time.time()
         print ('Finished in {}s'.format(stop - start))
 
-    def parse(self, model):
+    def parse(self):
         """
         Use process.py to build `layers`
         """
-        print ('Parsing {}.cfg'.format(model))
-        layers = cfg_yielder(model)
+        cfg_path = [self.FLAGS.config, self.FLAGS.model]
+        print ('Parsing {}{}.cfg'.format(*cfg_path))
+        layers = cfg_yielder(self.FLAGS)
         for i, info in enumerate(layers):
             if i == 0: self.meta = info; continue
             else: new = create_darkop(*info)
