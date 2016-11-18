@@ -2,21 +2,20 @@
 file: ./data.py
 includes: shuffle()
 """
-from yolo.train import *
+import numpy as np
 
 off_bound_msg = 'Random scale/translate sends obj off bound'
 
-def shuffle(FLAGS, meta):
+def shuffle(FLAGS, meta, framework):
 	"""
 	Call the specific to parse annotations, where or not doing the parse
 	is up to the model. Then use the parsed object to yield minibatches
 	minibatches will be preprocessed before yielding to be appropriate
 	placeholders for model's loss evaluation.
 	"""
-	parsed_path = yolo_parse(FLAGS, meta)
-	with open(parsed_path, 'rb') as f: data = pickle.load(f)[0]
-	
+	data = framework.parse(FLAGS, meta)
 	size = len(data); batch = FLAGS.batch
+
 	print 'Dataset of {} instance(s)'.format(size)
 	if batch > size: exit('Error: batch size is too big')
 	batch_per_epoch = int(size / batch)
@@ -36,7 +35,7 @@ def shuffle(FLAGS, meta):
 			for j in range(start_idx,end_idx):
 				real_idx = shuffle_idx[j]
 				this = data[real_idx]
-				inp, tensors = yolo_batch(FLAGS, meta, this)
+				inp, tensors = framework.batch(FLAGS, meta, this)
 				if inp is None: offbound = True; break
 				x_batch += [inp]
 				for k in tensors:

@@ -1,12 +1,12 @@
 """
-file: ./ops.py
+file: ./tfops.py
 includes: convl, batchnorm, dense, maxpool, etc
 functions that takes input `x`, layer `l` of type layer
 defined in ./darknet.py and return the output of the
 corresponding layer.
 """
-from yolo.train import *
-from yolo.test import *
+
+from framework import *
 
 def _shape(tensor):
 	if hasattr(tensor, 'shape'): return tensor.shape

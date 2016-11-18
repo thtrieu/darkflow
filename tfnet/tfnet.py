@@ -5,17 +5,18 @@ this class initializes by building the forward pass
 its methods include train, predict and savepb - saving
 the current model to a protobuf file (no variable included)
 """
-
 from darknet import *
 from tfop import *
-from data import *
+from shuffle import *
 
 class TFNet(object):
 
 	def __init__(self, darknet, FLAGS):
-		self.meta = yolo_metaprocess(darknet.meta)
+		self.framework = create_framework(darknet.meta['type'])
+		self.meta = self.framework.metaprocess(darknet.meta)
 		self.darknet = darknet
 		self.FLAGS = FLAGS
+
 		self.graph = tf.Graph()
 		with self.graph.as_default() as g:
 			self.forward()
@@ -56,8 +57,9 @@ class TFNet(object):
 			cfg['allow_soft_placement'] = True
 
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
-		if self.FLAGS.train: 
-			self.placeholders, self.loss, self.train_op = yolo_loss(self)
+		if self.FLAGS.train:
+			loss_return = self.framework.loss(self)
+			self.placeholders, self.loss, self.train_op = loss_return
 		self.sess.run(tf.initialize_all_variables())
 		
 		if self.ckpt: return
@@ -78,7 +80,6 @@ class TFNet(object):
 		so for backward compatibility, a matching between
 		new and old graph_def has to be done.
 		"""
-
 		def lookup(allw, name, shape):
 			"""
 			Look for variable with name `name`
@@ -171,7 +172,7 @@ class TFNet(object):
 		tf.train.write_graph(graph_def,'./',name,False)
 	
 	def train(self):
-		batches = shuffle(self.FLAGS, self.meta)
+		batches = shuffle(self.FLAGS, self.meta, self.framework)
 
 		print 'Training statistics:'
 		print '\tLearning rate : {}'.format(self.FLAGS.lr)
@@ -206,7 +207,7 @@ class TFNet(object):
 	def predict(self):
 		inp_path = self.FLAGS.testset
 		all_inp_ = os.listdir(inp_path)
-		all_inp_ = [i for i in all_inp_ if is_yolo_inp(i)]
+		all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
 		batch = min(self.FLAGS.batch, len(all_inp_))
 
 		for j in range(len(all_inp_)/batch):
@@ -216,7 +217,7 @@ class TFNet(object):
 			for inp in all_inp:
 				new_all += [inp]
 				this_inp = '{}{}'.format(inp_path, inp)
-				this_inp = yolo_preprocess(this_inp)
+				this_inp = self.framework.preprocess(this_inp)
 				inp_feed.append(this_inp)
 			all_inp = new_all
 
@@ -232,6 +233,6 @@ class TFNet(object):
 				last, len(inp_feed), len(inp_feed) / last))
 
 			for i, prediction in enumerate(out[0]):
-				yolo_postprocess(
+				self.framework.postprocess(
 					prediction, '{}{}'.format(inp_path, all_inp[i]), 
 					self.FLAGS, self.meta)

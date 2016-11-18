@@ -10,8 +10,8 @@ Namely, they answers the following questions:
 	1. what to do before flowing the net?
 	2. what to do after flowing the net?
 """
-
 from misc import *
+from ..utils.im_transform import *
 import cv2
 import os
 
@@ -46,62 +46,39 @@ def yolo_preprocess(imPath, allobj = None):
 	image will be transformed with random noise to augment training data, 
 	using scale, translation, flipping and recolor. The accompanied 
 	parsed annotation (allobj) will also be modified accordingly.
-	"""
-	def recolor(im):
-	# `im` is a numpy python object
-	# recolor `im` by adding in random
-	# intensity transformations, DO NOT
-	# perform shift/scale or rotate here
-	# ADD YOUR CODE BELOW:
-		alpha = np.random.uniform() + .5
-		beta = np.random.uniform() * 40 - 20
-		im = im * alpha
-		im = im + beta
-		return im
-	
-	def fix(x,c): # fit x inside [0,c]
-		return max(min(x,c),0)
+	"""	
+	def fix(obj, dims, scale, offs):
+		for i in range(1, 5):
+			dim = dims[(i + 1) % 2]
+			off = offs[(i + 1) % 2]
+			obj[i] = int(obj[i]*scale-off)
+			obj[i] = max(min(obj[i], dim), 0)
 	
 	im = cv2.imread(imPath)
 	if allobj is not None: # in training mode
-		h, w, _ = im.shape
-		# Scale and translate
-		scale = np.random.uniform() / 10. + 1.
-		max_offx = (scale-1.) * w
-		max_offy = (scale-1.) * h
-		offx = int(np.random.uniform() * max_offx)
-		offy = int(np.random.uniform() * max_offy)
-		im = cv2.resize(im, (0,0), fx = scale, fy = scale)
-		im = im[offy : (offy + h), offx : (offx + w)]
-		flip = np.random.binomial(1, .5)
+		result = imcv2_affine_trans(im)
+		im, dims, trans_param = result
+		scale, offs, flip = trans_param
 		for obj in allobj:
-			obj[1] = int(obj[1]*scale-offx)
-			obj[3] = int(obj[3]*scale-offx)
-			obj[2] = int(obj[2]*scale-offy)
-			obj[4] = int(obj[4]*scale-offy)
-			obj[1] = fix(obj[1], w) #xmin
-			obj[3] = fix(obj[3], w) #xmax
-			obj[2] = fix(obj[2], h) #ymin
-			obj[4] = fix(obj[4], h) #ymax	
-			if flip:
-				temp = obj[1]
-				obj[1] = w - obj[3]
-				obj[3] = w - temp
-		if flip: im = cv2.flip(im, 1)
+			fix(obj, dims, scale, offs)
+			if not flip: continue
+			obj_1_ = obj[1]
+			obj[1] = dims[0] - obj[3]
+			obj[3] = dims[0] - obj_1_
 
-	im = cv2.resize(im, (448, 448))
-	image_array = np.array(im)
+	size = (448, 448)
+	resized = cv2.resize(im, size)
+	image_array = np.array(resized)
 
-	# recoloring in training mode
+	# recoloring as np is fast.
 	if allobj is not None:
-		image_array = recolor(image_array)
+		image_array = im_np_recolor(image_array)
 
 	# return np array input to YOLO
 	image_array = image_array / 255.
 	image_array = image_array * 2. - 1.
 	image_array = np.expand_dims(image_array, 0)
-	if allobj is not None: return image_array, allobj
-	else: return image_array
+	return image_array#, im_ # for unit testing
 	
 
 def yolo_postprocess(predictions, img_path, FLAGS, meta):

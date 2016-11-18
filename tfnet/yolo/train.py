@@ -4,7 +4,7 @@ includes: yolo_parse(), yolo_batch(), yolo_feed_dict() and yolo_loss()
 together they support the pipeline: 
     annotation -> minibatch -> loss evaluation -> training
 namely,
-yolo_parse() takes the path to annotation directory, returns a path to a cPickple dump
+yolo_parse() takes the path to annotation directory, returns the loaded cPickple dump
              that contains a list of parsed objects, each for an input image in trainset
 yolo_batch() receive one such parsed objects, return feed value for net's input & output
              feed value for net's input will go to the input layer of net
@@ -13,12 +13,11 @@ yolo_loss() basically build the loss layer of the net, namely,
             returns the corresponding placeholders for feed values of this loss layer
             as well as loss & train_op built from these placeholders and net.out
 """
-
 import tensorflow.contrib.slim as slim
 import cPickle as pickle
 import tensorflow as tf
 
-from utils.pascal_voc_clean_xml import *
+from ..utils.pascal_voc_clean_xml import *
 from copy import deepcopy
 from test import *
 
@@ -28,36 +27,37 @@ def yolo_parse(FLAGS, meta):
     If the parsed file is not already there, parse.
     """
     ext = '.parsed'; ann = FLAGS.annotation
-    history = './yolo/parse-history.txt'
+    history = '/'.join(str(__file__).split('/')[:-1])
+    history = '{}/parse-history.txt'.format(history)
     if not os.path.isfile(history):
         file = open(history, 'w')
         file.close()
-
     with open(history, 'r') as f:
         lines = f.readlines()
     for line in lines:
         line = line.strip().split(' ')
         labels = line[1:]
         if labels == meta['labels']:
-            return line[0]
+            with open(line[0], 'rb') as f:
+                return pickle.load(f)[0]
 
     # actual parsing
-    print '{} parsing {}'.format(meta['model'], ann)
+    print '\n{} parsing {}'.format(meta['model'], ann)
     dumps = pascal_voc_clean_xml(ann, meta['labels'])
-
-    save_to = './yolo/{}'.format(meta['model'])
-    if os.path.isfile(save_to + ext): save_to += '_'
+    save_to = './tfnet/yolo/{}'.format(meta['model'])   
+    while True:
+        if not os.path.isfile(save_to + ext): break
+        save_to = save_to + '_'
     save_to += ext
 
     with open(save_to, 'wb') as f:
-        pickle.dump([dumps], f, protocol=-1)
+        pickle.dump([dumps], f, protocol = -1)
     with open(history, 'a') as f:
         f.write('{} '.format(save_to))
         f.write(' '.join(meta['labels']))
         f.write('\n')
     print 'Result saved to {}'.format(save_to)
-    return save_to
-
+    return dumps
 
 def yolo_batch(FLAGS, meta, chunk):
     """
@@ -72,8 +72,7 @@ def yolo_batch(FLAGS, meta, chunk):
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
     path = '{}{}'.format(FLAGS.dataset, jpg)
-    img, allobj = yolo_preprocess(path, allobj)
-    # img = yolo_preprocess(path)
+    img = yolo_preprocess(path, allobj)
 
     # Calculate regression target
     cellx = 1. * w / S
@@ -91,6 +90,8 @@ def yolo_batch(FLAGS, meta, chunk):
         obj[1] = cx - np.floor(cx) # centerx
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * S + np.floor(cx))]
+        
+    # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([S*S,C])
