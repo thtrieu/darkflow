@@ -6,6 +6,7 @@ defined in ./darknet.py and return the output of the
 corresponding layer.
 """
 from yolo.train import *
+from yolo.test import *
 
 def _shape(tensor):
 	if hasattr(tensor, 'shape'): return tensor.shape

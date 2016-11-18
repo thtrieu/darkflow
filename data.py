@@ -1,45 +1,47 @@
 """
 file: ./data.py
 includes: shuffle()
-shuffle will load the cPickle dump parsed.bin inside
 """
-
-import cPickle as pickle
 from yolo.train import *
 
 off_bound_msg = 'Random scale/translate sends obj off bound'
 
-def shuffle(train_path, parsed, batch, epoch, meta):
-	with open(parsed, 'rb') as f: data = pickle.load(f)[0]
-	size = len(data)
+def shuffle(FLAGS, meta):
+	"""
+	Call the specific to parse annotations, where or not doing the parse
+	is up to the model. Then use the parsed object to yield minibatches
+	minibatches will be preprocessed before yielding to be appropriate
+	placeholders for model's loss evaluation.
+	"""
+	parsed_path = yolo_parse(FLAGS, meta)
+	with open(parsed_path, 'rb') as f: data = pickle.load(f)[0]
+	
+	size = len(data); batch = FLAGS.batch
 	print 'Dataset of {} instance(s)'.format(size)
 	if batch > size: exit('Error: batch size is too big')
 	batch_per_epoch = int(size / batch)
-	total = epoch * batch_per_epoch
+	total = FLAGS.epoch * batch_per_epoch
 	yield total
 
-	for i in range(epoch):
+	for i in range(FLAGS.epoch):
 		print 'EPOCH {}'.format(i+1)
-		# Shuffle data
 		shuffle_idx = np.random.permutation(np.arange(size))
 		for b in range(batch_per_epoch):
 			start_idx = b * batch
 			end_idx = (b+1) * batch
 
-			datum = list()
+			datum = dict()
 			x_batch = list()
 			offbound = False
 			for j in range(start_idx,end_idx):
 				real_idx = shuffle_idx[j]
 				this = data[real_idx]
-				img, tensors = yolo_batch(train_path, this, meta)
-				if img is None: offbound = True; break
-				x_batch += [img]
-				if datum == list():	datum = tensors
-				else: 
-					for i in range(len(datum)):
-						new_datum_i = [datum[i], tensors[i]]
-						datum[i] = np.concatenate(new_datum_i)		
+				inp, tensors = yolo_batch(FLAGS, meta, this)
+				if inp is None: offbound = True; break
+				x_batch += [inp]
+				for k in tensors:
+					if k not in datum: datum[k] = [tensors[k]]; continue
+					datum[k] = np.concatenate([datum[k], [tensors[k]]])		
 			
 			if offbound: print off_bound_msg; continue
 			x_batch = np.concatenate(x_batch, 0)

@@ -1,26 +1,23 @@
 """
 file: yolo/drawer.py
 includes: yolo_metaprocess(), yolo_preprocess() and yolo_postprocess()
-together they add yolo framework's specificities into the general framework:
-	0. what to do with the net's hyper-parameters?
+together they supports two ends of the testing process:
+		preprocess -> flow the net -> post process
+		where flow the net is taken care of the general framework
+Namely, they answers the following questions:
+	0. what to prepare given `meta`, the net's hyper-parameters?
+		e.g. prepare color for drawing, load labels from labels.txt
 	1. what to do before flowing the net?
-	2. what to do with the net's output?
+	2. what to do after flowing the net?
 """
 
-from box import *
-from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+from misc import *
 import cv2
-
-labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
-    "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
-    "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
-    "train", "tvmonitor"]
-default_models = ['yolo-full', 'yolo-new', 'yolo-small', 'yolo-tiny', 'yolo-baby']
+import os
 
 def yolo_metaprocess(meta):
 	"""
-	Add to meta (a dict) `labels` correspond to that model and
+	Add to meta (a dict) `labels` correspond to current model and
 	`colors` correspond to these labels, for drawing predictions.
 	"""
 	def to_color(indx, base):
@@ -29,12 +26,7 @@ def yolo_metaprocess(meta):
 		r = (indx % base2) / base
 		g = (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
-	if meta['model'] in default_models: 
-		meta['labels'] = labels20
-	else: 
-		with open('labels.txt','r') as f:
-			meta['labels'] = [l.strip() for l in f.readlines()]
-	if len(meta['labels']) == 0: meta['labels'] = labels20
+	yolo_labels(meta)
 	if len(meta['labels']) != meta['classes']:
 		msg = 'labels.txt and configs/{}.cfg '
 		msg+= 'indicate different class number'
@@ -45,8 +37,6 @@ def yolo_metaprocess(meta):
 		colors += [to_color(x, base)]
 	meta['colors'] = colors
 	return meta
-
-def is_yolo_inp(name): return name[-4:] in ['.jpg','.JPG']
 
 def yolo_preprocess(imPath, allobj = None):
 	"""
@@ -114,8 +104,7 @@ def yolo_preprocess(imPath, allobj = None):
 	else: return image_array
 	
 
-def yolo_postprocess(predictions, 
-	img_path, FLAGS, meta):
+def yolo_postprocess(predictions, img_path, FLAGS, meta):
 	"""
 	Takes net output, draw predictions, save to results/
 	prediction is a numpy tensor - net's output
@@ -195,6 +184,5 @@ def yolo_postprocess(predictions,
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
 	
-	img_name = 'results/{}'.format(
-		img_path.split('/')[-1].split('.')[0])
-	cv2.imwrite(img_name + '.jpg', imgcv)
+	img_name = 'results/{}'.format(img_path.split('/')[-1])
+	cv2.imwrite(img_name, imgcv)

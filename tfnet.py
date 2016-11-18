@@ -6,8 +6,6 @@ its methods include train, predict and savepb - saving
 the current model to a protobuf file (no variable included)
 """
 
-import sys
-from yolo.drawer import *
 from darknet import *
 from tfop import *
 from data import *
@@ -58,7 +56,8 @@ class TFNet(object):
 			cfg['allow_soft_placement'] = True
 
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
-		if self.FLAGS.train: yolo_loss(self)
+		if self.FLAGS.train: 
+			self.placeholders, self.loss, self.train_op = yolo_loss(self)
 		self.sess.run(tf.initialize_all_variables())
 		
 		if self.ckpt: return
@@ -130,7 +129,6 @@ class TFNet(object):
 		Translate from TFNet back to darknet
 		"""
 		darknet_ckpt = self.darknet
-		
 		with self.graph.as_default() as g:
 			for var in tf.trainable_variables():
 				name = var.name.split(':')[0]
@@ -167,20 +165,13 @@ class TFNet(object):
 		tfnet_ckpt = TFNet(darknet_ckpt, flags_ckpt)		
 		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
 		# tfnet_ckpt.predict() # uncomment for unit testing
-
 		name = 'graph-{}.pb'.format(self.meta['model'])
 		print 'Saving const graph def to {}'.format(name)
 		graph_def = tfnet_ckpt.sess.graph_def
 		tf.train.write_graph(graph_def,'./',name,False)
 	
 	def train(self):
-		
-		args = list()
-		args += [self.FLAGS.dataset]
-		args += [self.FLAGS.annotation]
-		args += [self.FLAGS.batch]
-		args += [self.FLAGS.epoch]
-		batches = shuffle(*args)
+		batches = shuffle(self.FLAGS, self.meta)
 
 		print 'Training statistics:'
 		print '\tLearning rate : {}'.format(self.FLAGS.lr)
@@ -190,11 +181,18 @@ class TFNet(object):
 
 		total = int() # total number of batches
 		for i, packet in enumerate(batches):
-			if i == 0: total = packet; continue
+			if i == 0: \
+			total = packet; continue
+
 			x_batch, datum = packet
-			feed_dict = yolo_feed_dict(self, x_batch, datum)
-			feed_dict[self.inp] = x_batch
+			if i == 1: \
+			assert set(list(datum)) == set(list(self.placeholders)), \
+			'Mismatch between placeholders and datum for loss evaluation'
+
+			feed_pair = [(self.placeholders[k], datum[k]) for k in datum]
+			feed_dict = {holder:val for (holder,val) in feed_pair}
 			for k in self.feed: feed_dict[k] = self.feed[k]['feed']
+			feed_dict[self.inp] = x_batch
 
 			_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
 

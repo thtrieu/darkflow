@@ -1,48 +1,77 @@
 """
 file: /yolo/train.py
-includes: yolo_batch(), yolo_feed_dict() and yolo_loss()
+includes: yolo_parse(), yolo_batch(), yolo_feed_dict() and yolo_loss()
 together they support the pipeline: 
     annotation -> minibatch -> loss evaluation -> training
+namely,
+yolo_parse() takes the path to annotation directory, returns a path to a cPickple dump
+             that contains a list of parsed objects, each for an input image in trainset
+yolo_batch() receive one such parsed objects, return feed value for net's input & output
+             feed value for net's input will go to the input layer of net
+             feed value for net's output will go to the loss layer of net
+yolo_loss() basically build the loss layer of the net, namely,
+            returns the corresponding placeholders for feed values of this loss layer
+            as well as loss & train_op built from these placeholders and net.out
 """
 
-import tensorflow as tf
 import tensorflow.contrib.slim as slim
+import cPickle as pickle
+import tensorflow as tf
+
+from utils.pascal_voc_clean_xml import *
 from copy import deepcopy
-from drawer import *
+from test import *
 
-# ignore this function
-def show(im, allobj, S, w, h, cellx, celly):
-    for obj in allobj:
-        a = obj[5] % S
-        b = obj[5] / S
-    	cx = a + obj[1]
-    	cy = b + obj[2]
-    	centerx = cx * cellx
-    	centery = cy * celly
-    	ww = obj[3] * w
-    	hh = obj[4] * h
-    	cv2.rectangle(im,
-    		(int(centerx - ww/2), int(centery - hh/2)),
-    		(int(centerx + ww/2), int(centery + hh/2)),
-    		(0,0,255), 2)
-    cv2.imshow("result", im)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+def yolo_parse(FLAGS, meta):
+    """
+    Decide whether to parse the annotation or not, 
+    If the parsed file is not already there, parse.
+    """
+    ext = '.parsed'; ann = FLAGS.annotation
+    history = './yolo/parse-history.txt'
+    if not os.path.isfile(history):
+        file = open(history, 'w')
+        file.close()
 
-def yolo_batch(train_path, chunk, meta):
+    with open(history, 'r') as f:
+        lines = f.readlines()
+    for line in lines:
+        line = line.strip().split(' ')
+        labels = line[1:]
+        if labels == meta['labels']:
+            return line[0]
+
+    # actual parsing
+    print '{} parsing {}'.format(meta['model'], ann)
+    dumps = pascal_voc_clean_xml(ann, meta['labels'])
+
+    save_to = './yolo/{}'.format(meta['model'])
+    if os.path.isfile(save_to + ext): save_to += '_'
+    save_to += ext
+
+    with open(save_to, 'wb') as f:
+        pickle.dump([dumps], f, protocol=-1)
+    with open(history, 'a') as f:
+        f.write('{} '.format(save_to))
+        f.write(' '.join(meta['labels']))
+        f.write('\n')
+    print 'Result saved to {}'.format(save_to)
+    return save_to
+
+
+def yolo_batch(FLAGS, meta, chunk):
     """
     Takes a chunk of parsed annotations
-    return placeholders for net's input
-    correspond to this chunk
+    returns value for placeholders of net's 
+    input & loss layer correspond to this chunk
     """
-    # meta
     S, B = meta['side'], meta['num']
     C, labels = meta['classes'], meta['labels']
 
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = '{}{}'.format(train_path, jpg)
+    path = '{}{}'.format(FLAGS.dataset, jpg)
     img, allobj = yolo_preprocess(path, allobj)
     # img = yolo_preprocess(path)
 
@@ -93,27 +122,22 @@ def yolo_batch(train_path, chunk, meta):
     botright = np.concatenate([botright] * B, 1)
     areas = np.concatenate([area] * B, 1)
 
-    # Assemble the placeholders' value 
-    tensors = [[probs], [confs] , [coord],
-               [proid], [conid] , [cooid],
-               [areas], [upleft], [botright]]
-    
-    return img, tensors
-
-def yolo_feed_dict(net, x_batch, datum):
-    return {
-        net.probs : datum[0], net.confs  : datum[1],
-        net.coord : datum[2], net.proid  : datum[3],
-        net.conid : datum[4], net.cooid  : datum[5],
-        net.areas : datum[6], net.upleft : datum[7], 
-        net.botright : datum[8]
+    # value for placeholder at input layer
+    inp_feed_val = img
+    # value for placeholder at loss layer 
+    loss_feed_val = {
+        'probs':probs, 'confs':confs, 'coord':coord, 
+        'proid':proid, 'conid':conid, 'cooid':cooid,
+        'areas':areas, 'upleft':upleft, 'botright':botright
     }
+    
+    return inp_feed_val, loss_feed_val
 
 def yolo_loss(net):
     """
-    Takes net.out and placeholders -
-    listed in feed_dict() func above, 
-    to build net.train_op and net.loss
+    Takes net.out and placeholders value
+    returned in yolo_batch() func above, 
+    to build train_op and loss
     """
     # meta
     m = net.meta
@@ -124,7 +148,7 @@ def yolo_loss(net):
     S, B, C = m['side'], m['num'], m['classes']
     SS = S * S # number of grid cells
 
-    print 'Loss hyper-parameters:'
+    print '{} loss hyper-parameters:'.format(m['model'])
     print '\tside    = {}'.format(m['side'])
     print '\tbox     = {}'.format(m['num'])
     print '\tclasses = {}'.format(m['classes'])
@@ -132,18 +156,25 @@ def yolo_loss(net):
 
     size1 = [None, SS, C]
     size2 = [None, SS, B]
-    # target of regression
-    net.probs = tf.placeholder(tf.float32, size1)
-    net.confs = tf.placeholder(tf.float32, size2)
-    net.coord = tf.placeholder(tf.float32, size2 + [4])
+
+    # return the below placeholders
+    _probs = tf.placeholder(tf.float32, size1)
+    _confs = tf.placeholder(tf.float32, size2)
+    _coord = tf.placeholder(tf.float32, size2 + [4])
     # weights term for L2 loss
-    net.proid = tf.placeholder(tf.float32, size1)
-    net.conid = tf.placeholder(tf.float32, size2)
-    net.cooid = tf.placeholder(tf.float32, size2 + [4])
+    _proid = tf.placeholder(tf.float32, size1)
+    _conid = tf.placeholder(tf.float32, size2)
+    _cooid = tf.placeholder(tf.float32, size2 + [4])
     # material for loss calculation
-    net.upleft = tf.placeholder(tf.float32, size2 + [2])
-    net.botright = tf.placeholder(tf.float32, size2 + [2])
-    net.areas = tf.placeholder(tf.float32, size2)
+    _areas = tf.placeholder(tf.float32, size2)
+    _upleft = tf.placeholder(tf.float32, size2 + [2])
+    _botright = tf.placeholder(tf.float32, size2 + [2])
+
+    placeholders = {
+        'probs':_probs, 'confs':_confs, 'coord':_coord,
+        'proid':_proid, 'conid':_conid, 'cooid':_cooid,
+        'areas':_areas, 'upleft':_upleft, 'botright':_botright
+    }
 
     # Extract the coordinate prediction from net.out
     coords = net.out[:, SS * (C + B):]
@@ -155,40 +186,44 @@ def yolo_loss(net):
     ceil  = centers + (wh * .5) # [batch, SS, B, 2]
 
     # calculate the intersection areas
-    intersect_upleft   = tf.maximum(floor, net.upleft) 
-    intersect_botright = tf.minimum(ceil , net.botright)
+    intersect_upleft   = tf.maximum(floor, _upleft) 
+    intersect_botright = tf.minimum(ceil , _botright)
     intersect_wh = intersect_botright - intersect_upleft
     intersect_wh = tf.maximum(intersect_wh, 0.0)
     intersect = tf.mul(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
     
     # calculate the best IOU, set 0.0 confidence for worse boxes
-    iou = tf.div(intersect, net.areas + area_pred - intersect)
+    iou = tf.div(intersect, _areas + area_pred - intersect)
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
-    confs = tf.mul(best_box, net.confs)
+    confs = tf.mul(best_box, _confs)
 
     # take care of the weight terms
     weight_con = snoob*(1.-best_box) + sconf*best_box
-    conid = tf.mul(net.conid, weight_con)
+    conid = tf.mul(_conid, weight_con)
     weight_coo = tf.concat(3, 4 * [tf.expand_dims(best_box, -1)])
-    cooid = tf.mul(net.cooid, scoor * weight_coo)
-    proid = sprob * net.proid
+    cooid = tf.mul(_cooid, scoor * weight_coo)
+    proid = sprob * _proid
 
     # flatten 'em all
-    probs = slim.flatten(net.probs)
+    probs = slim.flatten(_probs)
     proid = slim.flatten(proid)
     confs = slim.flatten(confs)
     conid = slim.flatten(conid)
-    coord = slim.flatten(net.coord)
+    coord = slim.flatten(_coord)
     cooid = slim.flatten(cooid)
     true = tf.concat(1, [probs, confs, coord])
     wght = tf.concat(1, [proid, conid, cooid])
     
-    net.loss = tf.pow(net.out - true, 2)
-    net.loss = tf.mul(net.loss, wght)
-    net.loss = tf.reduce_sum(net.loss, 1)
-    net.loss = .5 * tf.reduce_mean(net.loss)
+    print 'Building {} loss'.format(m['model'])
+    loss = tf.pow(net.out - true, 2)
+    loss = tf.mul(loss, wght)
+    loss = tf.reduce_sum(loss, 1)
+    loss = .5 * tf.reduce_mean(loss)
 
+    print 'Building {} train op'.format(m['model'])
     optimizer = tf.train.RMSPropOptimizer(net.FLAGS.lr)
-    gradients = optimizer.compute_gradients(net.loss)
-    net.train_op = optimizer.apply_gradients(gradients)
+    gradients = optimizer.compute_gradients(loss)
+    train_op = optimizer.apply_gradients(gradients)
+
+    return placeholders, loss, train_op
