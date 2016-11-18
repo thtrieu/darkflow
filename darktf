@@ -21,7 +21,6 @@ flags.DEFINE_integer("keep",20,"Number of most recent training results to save")
 flags.DEFINE_integer("batch", 12, "Batch size")
 flags.DEFINE_integer("epoch", 1000, "Number of epoch")
 flags.DEFINE_integer("save", 2000, "Save checkpoint every ? training examples")
-
 FLAGS = flags.FLAGS
 
 def get_dir(dirs):
@@ -30,19 +29,17 @@ def get_dir(dirs):
 		if not os.path.exists(this): os.makedirs(this)
 get_dir([FLAGS.testset, FLAGS.binary, 'results', 'backup'])
 
+darknet = Darknet(FLAGS)
+
 checkpoint = 'backup/checkpoint'
 recent = os.path.isfile(checkpoint)
-last = int()
-
-if recent:
+if recent and FLAGS.load < 0:
 	with open(checkpoint,'r') as f:
 		lines = f.readlines()
 		name = lines[-1].split(' ')
 		name = name[1].split('"')[1]
 		last = int(name.split('-')[-1])
-
-if FLAGS.load < 0: FLAGS.load = last
-darknet = Darknet(FLAGS)
+	FLAGS.load = last
 
 print ('\nCompiling net & fill in parameters...')
 start = time.time()
