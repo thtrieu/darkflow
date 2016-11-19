@@ -34,7 +34,7 @@ This is understandable since building the loss op of YOLO in `Tensorflow` is not
 
 Skip this if you are not training or fine-tuning anything (you simply want to forward flow a trained net)
 
-The first thing to do is specifying the classes you want to work with, write them down in the `labels.txt` file. For example, if you want to work with only 3 classes `tvmonitor`, `person`, `pottedplant`; edit `labels.txt` as follows
+The only thing to do is specifying the classes you want to work with, write them down in the `labels.txt` file. For example, if you want to work with only 3 classes `tvmonitor`, `person`, `pottedplant`; edit `labels.txt` as follows
 
 ```
 tvmonitor
@@ -42,14 +42,7 @@ person
 pottedplant
 ```
 
-Then run `clean.py` to parse xml files in the annotation folder (according to what has been specified in `labels.txt`)
-
-```bash
-python clean.py /path/to/annotation/folder
-# the default path is ../pascal/VOCdevkit/ANN
-```
-
-This will print some stats on the parsed dataset to screen. Parsed bounding boxes and their associated classes is stored in `parsed.yolotf`.
+And that's it. `darktf` will parse the annotation if necessary.
 
 ### Design the net
 
@@ -76,45 +69,45 @@ After all this, `yolo-3c.weights` is created. Bear in mind that unlike `yolo-tin
 
 ### Flowing the graph
 
-From now on, all operations are performed by file `darktf`. 
+From now on, all operations are performed by file `flow`. 
 
 ```bash
 # Have a look at its options
-./darktf --h
+./flow --h
 # Forward all images in ./test using tiny yolo and 100% GPU usage
-./darktf --test ./test --model yolo-tiny --gpu 1.0
+./flow --test ./test --model yolo-tiny --gpu 1.0
 # The results are stored in results/
 ```
 
-Training the new configuration:
+Or training the new configuration:
 
 ```bash
-./darktf --train --model yolo-3c --gpu 1.0
+./flow --train --model yolo-3c --gpu 1.0
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `./backup/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
 
-To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darktf` will load the most recent save.
+To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darktf` will load the most recent save. Here are a few examples:
 
 ```bash
 # To resume the most recent checkpoint for training
-./darktf --train --model yolo-3c --load -1
+./flow --train --model yolo-3c --load -1
 # To run testing with checkpoint at step 1500
-./darktf --notrain --model yolo-3c --load 1500
+./flow --notrain --model yolo-3c --load 1500
 # Without the --load option, you will be using the untrained yolo-3c.weights
 # Fine tuning tiny yolo from the original one
-./darktf --train --model yolo-tiny
+./flow --train --model yolo-tiny
 ```
 
 ### Migrating the graph to C++ and Objective-C++
 
-Now this is the tricky part since there is no official support for loading variables in C++ API. Some suggest adding assigning ops from variable to constants into the graph and save it down as a `.pb` (protobuf) file [_like this_](https://alexjoz.gitbooks.io/code-life/content/chapter7.html). However this will double the necessary size of this file, which is very undesirable in, say, building mobile applications. 
+Now this is the tricky part since there is no official support for loading variables in C++ API. Some suggest adding assigning ops from variable to constants into the graph and save it down as a `.pb` (protobuf) file [_like this_](https://alexjoz.gitbooks.io/code-life/content/chapter7.html). However this will double the necessary size of this file (or even triple if there is training ops), which is very undesirable in, say, building mobile applications. 
 
-There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`, however doing so would require running on a separate script. `darktf` allows freezing the graph on the fly, during training or testing, without double the necessary size.
+There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`. I did not have the time to check its implementation and performance, however doing so would certainly require running on a separate script. `darktf` allows freezing the graph on the fly, during training or testing, without doubling/tripling the necessary size.
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-./darktf --model yolo-3c --load -1 --savepb
+./flow --model yolo-3c --load -1 --savepb
 ```
 
 For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
