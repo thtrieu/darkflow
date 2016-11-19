@@ -46,7 +46,8 @@ def pascal_voc_clean_xml(ANN, pick):
 		percentage = 1. * (i+1) / size
 		progress = int(percentage * 20)
 		bar_arg = [progress*'=', ' '*(19-progress), percentage*100]
-		sys.stdout.write('[{}>{}]{:.0f}%'.format(*bar_arg))
+		bar_arg += [file]
+		sys.stdout.write('[{}>{}]{:.0f}%  {}'.format(*bar_arg))
 		sys.stdout.flush()
 		
 		# actual parsing 

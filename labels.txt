@@ -1,4 +1,0 @@
-person
-chair
-tvmonitor
-pottedplant
