@@ -12,7 +12,7 @@ flags.DEFINE_float("threshold", 0.1, "detection threshold")
 flags.DEFINE_string("model", "", "configuration of choice")
 flags.DEFINE_boolean("verbalise", True, "say out loud while building graph")
 flags.DEFINE_boolean("train", False, "training mode or not?")
-flags.DEFINE_integer("load", 0, "load a saved backup/checkpoint, -1 for newest")
+flags.DEFINE_string("load", "", "How to initialize the net? Either from .weights or a checkpoint, or even from scratch")
 flags.DEFINE_boolean("savepb", False, "save net and weight to a .pb file")
 flags.DEFINE_float("gpu", 0.0, "How much gpu (from 0.0 to 1.0)")
 flags.DEFINE_float("lr", 1e-5, "Learning rate")
@@ -22,23 +22,20 @@ flags.DEFINE_integer("epoch", 1000, "Number of epoch")
 flags.DEFINE_integer("save", 2000, "Save checkpoint every ? training examples")
 FLAGS = flags.FLAGS
 
+# make sure all necessary dirs exist
 def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
 get_dir([FLAGS.testset, FLAGS.binary, 'results', 'backup'])
 
-darknet = Darknet(FLAGS)
+# fix FLAGS.load to appropriate type
+try: FLAGS.load = int(FLAGS.load)
+except: pass
 
-checkpoint = 'backup/checkpoint'
-recent = os.path.isfile(checkpoint)
-if recent and FLAGS.load < 0:
-	with open(checkpoint,'r') as f:
-		lines = f.readlines()
-		name = lines[-1].split(' ')
-		name = name[1].split('"')[1]
-		last = int(name.split('-')[-1])
-	FLAGS.load = last
+# now get to the real work
+darknet = Darknet(FLAGS)
+darknet.load_weights()
 
 print ('\nCompiling net & fill in parameters...')
 start = time.time()

@@ -20,50 +20,96 @@ import os
 class Darknet(object):
 
     layers = list()
-    model = str()
-    partial = bool()
+    extension = '.weights'
 
-    def __init__(self, FLAGS, partial = False):        
-        self.partial = partial 
-        self.FLAGS = FLAGS
-        self.parse() # produce self.layers
+    def __init__(self, FLAGS):
         self.checkpoint = False # load from a checkpoint?
+        self.model = FLAGS.model
+        self.get_weight_src(FLAGS)
         
-        weight_file = '{}.weights'.format(FLAGS.model)
-        weight_file = FLAGS.binary + weight_file
-        print ('Loading {} ...'.format(weight_file))
-        start = time.time()
-        self.load_weights(weight_file)
-        stop = time.time()
-        print ('Finished in {}s'.format(stop - start))
+        src_parsed = self.parse_cfg(self.src_cfg, FLAGS)
+        self.src_meta, self.src_layers = src_parsed
+        if self.src_cfg == self.model: # reading its own .weights
+            self.meta, self.layers = src_parsed
+        else: self.meta, self.layers = \
+            self.parse_cfg(self.model, FLAGS)
 
-    def parse(self):
+    def get_weight_src(self, FLAGS):
         """
-        Use process.py to build `layers`
+        analyse FLAGS.load to know
+        where is the source binary
+        and what is its config.
+        can be: None, itself, or some other
         """
-        cfg_path = [self.FLAGS.config, self.FLAGS.model]
-        print ('Parsing {}{}.cfg'.format(*cfg_path))
-        layers = cfg_yielder(self.FLAGS)
-        for i, info in enumerate(layers):
-            if i == 0: self.meta = info; continue
+        self.src_bin = self.model + self.extension
+        self.src_bin = FLAGS.binary + self.src_bin
+        self.src_bin = os.path.abspath(self.src_bin)
+        exist = os.path.isfile(self.src_bin)
+
+        if FLAGS.load == str(): FLAGS.load = int()
+        if type(FLAGS.load) is int:
+            self.src_cfg = self.model
+            if FLAGS.load: self.src_bin = None
+            elif not exist: self.src_bin = None
+        else:
+            assert os.path.isfile(FLAGS.load), \
+            '{} not found'.format(FLAGS.load)
+            self.src_bin = FLAGS.load
+            bin_name = FLAGS.load.split('/')[-1]
+            name = '.'.join(bin_name.split('.')[:-1])
+            self.src_cfg = name
+            FLAGS.load = int()
+
+
+    def parse_cfg(self, model, FLAGS):
+        """
+        return a list of `layers` objects (darkop.py)
+        given path to binaries/ and configs/
+        """
+        args = [model, FLAGS.binary, FLAGS.config]
+        cfg_layers = cfg_yielder(*args)
+        meta = dict(); layers = list()
+        for i, info in enumerate(cfg_layers):
+            if i == 0: meta = info; continue
             else: new = create_darkop(*info)
-            self.layers.append(new)
+            layers.append(new)
+        return meta, layers
 
-    def load_weights(self, weight_path):
+    def load_weights(self):
         """
         Use `layers` and Loader to load .weights file
-        """
-        file_len = os.path.getsize(weight_path);         
-        loader = Loader(weight_path, 16)
-        
-        for l in self.layers:
-            if l.type in ['convolutional', 'connected']:
-                l.load(loader)
+        """        
+        wlayer = ['convolutional', 'connected']
+        loader = Loader(self.src_bin)
+        srcl = self.src_layers
+        len_src = len(srcl); 
+        i = int() # iterator for srcl
+
+        print ('Loading {} ...'.format(self.src_bin))
+        start = time.time()
+        for layer in self.layers:
+            if layer.type not in wlayer: continue
+            itype = srcl[i].type
+            while i < len_src and itype not in wlayer:
+                i = i + 1 
+                if i == len_src: break 
+                itype = srcl[i].type
+            if i == len_src: loader.eof = True
+            elif layer != srcl[i]: loader.eof = True
+            else: i += 1
+            layer.load(loader)
+            if not loader.eof and self.src_bin is not None: 
+                print 'Re-collect', layer.sig
+            else: print 'Initialize', layer.sig 
               
         # Defensive python right here bietch.
-        if loader.offset == file_len:
-            msg = 'Successfully identified all {} bytes'
-            print msg.format(loader.offset)
-        else:
-            msg = 'Error: expect {} bytes, found {}' 
-            exit(msg.format(loader.offset, file_len))
+        # if self.src_cfg == self.model:
+        #     if loader.offset == loader.size:
+        #         msg = 'Successfully identified all {} bytes'
+        #         print msg.format(loader.offset)
+        #     else:
+        #         msg = 'Error: expect {} bytes, found {}' 
+        #         exit(msg.format(loader.offset, loader.size))
+
+        stop = time.time()
+        print ('Finished in {}s'.format(stop - start))

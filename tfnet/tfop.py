@@ -8,17 +8,23 @@ corresponding layer.
 
 from framework import *
 
-def _shape(tensor):
-	if hasattr(tensor, 'shape'): return tensor.shape
-	else: return tensor.get_shape()
+def _shape(tensor): # work for both tf.Tensor & np.ndarray
+	if type(tensor) is tf.Variable: return tensor.get_shape()
+	else: return tensor.shape
 
 class tfop(object):
+	"""
+	tfop objects initialise with a darknet's `layer` object
+	and input tensor of that layer `x`, it calculates the 
+	output of this layer and place the result in self.x
+	self.x is returned whenever the object is called.
+	"""
 	def __init__(self, l, x, name, feed = None):
 		if feed is not None: self.wrap(l, feed, name)
 		if 'tfnetoutput' in name: name = 'output'
 		
 		self.l = l; self.inp_layer = False
-		self.inp_layer = x.name[:5] == 'input'
+		self.inp_layer = x.name.split(':')[0] == 'input'
 		self.inp_size = x.get_shape()
 		self.forward(l, x, name)
 
@@ -28,28 +34,35 @@ class tfop(object):
 
 	def wrap(self, layer, feed, name):
 		"""
-		wraps `layer` into tf variables & placeholder
+		wraps `layer` into tf variables & placeholders
+		if layer does not carry value (partial net loaded)
+		the corresponding tf variable will also be initialised 
 		"""
 		for var in layer.w: # trainable vars
-			sig = '{}-{}'.format(name, var)
-			layer.w[var] = tf.Variable(layer.w[var],name=sig)
+			sig = '{}-{}'.format(name, var) # signature
+			val = layer.w.get(var, None) # can be a np array or None
+			if val is None: # darknet is partially loaded
+				args = [layer.shape[var], 0., 1e-2]
+				val = tf.truncated_normal(*args)
+			layer.w[var] = tf.Variable(val, name = sig)
 		
 		for ph in layer.h: # placeholders
-			sig = '{}-{}'.format(name, ph)
-			val = layer.h[ph]; s = val['size']
-			layer.h[ph] = tf.placeholder(tf.float32,s,sig)
-			feed[layer.h[ph]] = val
+			sig = '{}-{}'.format(name, ph) # signature/name
+			values = layer.h[ph]; shp = layer.shape[ph] # ph shape
+			layer.h[ph] = tf.placeholder(tf.float32, shp, sig)
+			feed[layer.h[ph]] = values
 
 	def verbalise(self):
 		self.detail()
-		form = '{:<40} : {}'
-		if self.inp_layer:
+		form = '{:<40} : {}' # verbalise template
+		if self.inp_layer: # this is the 1st layer
 			print form.format('Input size', self.inp_size)
 		print form.format(self.msg, self.x.get_shape())
 
 class conv(tfop):
 	def forward(self, l, x, name):
 		if l.pad < 0: # figure the pad out
+			l.size = l.shape['kernel'][0]
 			size = np.int(x.get_shape()[1])
 			expect = -(l.pad + 1) * l.stride 
 			expect += l.size - size
@@ -65,11 +78,9 @@ class conv(tfop):
 		self.x = tf.nn.bias_add(x, l.w['biases'])
 		self.pad = padding
 
-	def batchnorm(self, l, x, name):
-		batch_mean, batch_var = tf.nn.moments(x, [0, 1, 2])
-                
+	def batchnorm(self, l, x, name):                
 		return tf.nn.batch_normalization(
-			x = x, mean = batch_mean, variance = batch_var, 
+			x = x, mean = l.w['mean'], variance = l.mean['var'], 
 			offset = None, scale = l.w['scale'], name = name,
 			variance_epsilon = 1e-6)
 
@@ -96,8 +107,8 @@ class flatten(tfop):
 class maxpool(tfop):
 	def forward(self, l, x, name):
 		self.x = tf.nn.max_pool(x, padding = 'VALID',
-	        ksize = [1,l.size,l.size,1], name = name, 
-	        strides = [1,l.stride,l.stride,1])
+	        ksize = [1, l.size, l.size, 1], name = name, 
+	        strides = [1, l.stride, l.stride, 1])
 	
 	def verbalise(self): pass
 

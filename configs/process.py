@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-def parser(FLAGS):
+def parser(config, model):
 	"""
 	Read the .cfg file to extract layers into `layers`
 	as well as model-specific parameters into `meta`
 	"""
 	def _parse(l): return l.split('=')[1].strip()
-	with open('{}{}.cfg'.format(FLAGS.config, FLAGS.model), 'rb') as f:
+	with open('{}{}.cfg'.format(config, model), 'rb') as f:
 		lines = f.readlines()		
 	
 	layers = [] # will contains layers' info
@@ -37,7 +37,7 @@ def parser(FLAGS):
 				except:
 					pass
 	meta = layer # last layer contains meta info
-	meta['model'] = FLAGS.model
+	meta['model'] = model
 	meta['inp_size'] = [h, w, c]
 	return layers, meta
 
@@ -91,18 +91,18 @@ def discoverer(weightf, s, c):
 	print 'Last convolutional kernel size = {}'.format(size)
 	return last_convo, int(size)
 
-def cfg_yielder(FLAGS, undiscovered = True):
+def cfg_yielder(model, binary, config):
 	"""
 	yielding each layer information, if model is discovered 
 	for the first time (undiscovered = True), discoverer
 	will be employed
 	"""
-	layers, meta = parser(FLAGS); yield meta
+	layers, meta = parser(config, model); yield meta;
 	h, w, c = meta['inp_size']; l = w * h * c
 
-	last_convo = None; size = None
-	if undiscovered:
-		weightf = FLAGS.binary + '{}.weights'.format(FLAGS.model)
+	last_convo = None; size = None;
+	weightf = binary + '{}.weights'.format(model)
+	if os.path.isfile(weightf): # there is an assisting binary
 		last_convo, size = discoverer(weightf, layers, c)
 
 	# Start yielding

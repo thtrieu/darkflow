@@ -66,8 +66,7 @@ class TFNet(object):
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
 
-		self.rebuild = False
-		if self.FLAGS.load <= 0: return
+		if self.FLAGS.load == 0: return
 		load_point = 'backup/{}'.format(self.meta['model'])
 		load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 		print 'Loading from {}'.format(load_point)
@@ -182,10 +181,9 @@ class TFNet(object):
 
 		total = int() # total number of batches
 		for i, packet in enumerate(batches):
-			if i == 0: \
-			total = packet; continue
-
+			if i == 0: total = packet; continue
 			x_batch, datum = packet
+
 			if i == 1: \
 			assert set(list(datum)) == set(list(self.placeholders)), \
 			'Mismatch between placeholders and datum for loss evaluation'
