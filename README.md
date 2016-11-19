@@ -52,21 +52,6 @@ In this step you create a configuration `[config_name].cfg` and put it inside `.
 
 Note that these files, besides being descriptions of the net structures, also store technical specifications that is read by Darknet framework (e.g. learning rate, batch size, epoch number). `darktf` therefore, ignore these Darknet specifications.
 
-### Initialize weights
-
-Skip this if you are working with one of the original configurations since the `.weights` files are already there.
-
-Now as you have already specified the new configuration, next step is to initialize the weights. In this step, it is reasonable to recollect a few first layers from some trained configuration before randomly initialize the rest. `makew.py` does exactly this.
-
-```bash
-# Recollect weights from yolo-tiny.weights to yolo-3c.weights
-python genw.py --src yolo-tiny --des yolo-3c
-```
-
-The script prints out which layers are recollected and which are randomly initialized. The recollected layers are a few first ones that are identical between two configurations. In case there is no such layer, all the new net will be randomly initialized. 
-
-After all this, `yolo-3c.weights` is created. Bear in mind that unlike `yolo-tiny.weights`, `yolo-3c.weights` is not yet trained.
-
 ### Flowing the graph
 
 From now on, all operations are performed by file `flow`. 
@@ -74,15 +59,34 @@ From now on, all operations are performed by file `flow`.
 ```bash
 # Have a look at its options
 ./flow --h
+```
+
+But first, let's take a closer look at one of a very useful option `--load`
+
+```bash
+# 1. With no --load option, yolo-tiny.weights are loaded
+./flow --model yolo-tiny
+# 2. With yolo-3c however, since there are no yolo-3c.weights,
+# its parameters will be initialized
+./flow --model yolo-3c
+# 3. It is useful to reuse the first identical layers of tiny for 3c
+./flow --model yolo-3c --load ./bin/yolo-tiny.weights
+# this will print out which layers are reused, which are initialized
+```
+
+More on `--load` later. All of the above `flow` commands essentially perform forward pass of the net. In fact, they flow all input images from default folder `./test` through the net and draw predictions into `./results/`. We can always specify more parameters for such forward passes, such as detection threshold, batch size, test folder, etc. Below is one example where the forward pass is told to utilize 100% GPU capacity:
+
+```bash
 # Forward all images in ./test using tiny yolo and 100% GPU usage
 ./flow --test ./test --model yolo-tiny --gpu 1.0
 # The results are stored in results/
 ```
 
-Or training the new configuration:
+Training is simple as you only have to add option `--train` like below:
 
 ```bash
-./flow --train --model yolo-3c --gpu 1.0
+# Init yolo-3c from yolo-tiny, then train the net on 100% GPU:
+./flow --model yolo-3c --load ./bin/yolo-tiny.weights --train --gpu 1.0
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `./backup/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
@@ -94,9 +98,9 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 ./flow --train --model yolo-3c --load -1
 # To run testing with checkpoint at step 1500
 ./flow --notrain --model yolo-3c --load 1500
-# Without the --load option, you will be using the untrained yolo-3c.weights
+# Without the --load option, you will be using the random initialized, untrained yolo-3c
 # Fine tuning tiny yolo from the original one
-./flow --train --model yolo-tiny
+./flow --train --model yolo-tiny --load ./bin/yolo-tiny.weights
 ```
 
 ### Migrating the graph to C++ and Objective-C++
