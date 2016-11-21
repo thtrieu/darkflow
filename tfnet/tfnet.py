@@ -73,7 +73,7 @@ class TFNet(object):
 		if self.ckpt: return
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
-
+		
 		if self.FLAGS.load == 0: return
 		if self.FLAGS.load < 0:
 			with open('backup/checkpoint', 'r') as f:
