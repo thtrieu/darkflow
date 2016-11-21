@@ -1,6 +1,11 @@
 import numpy as np
 import os
 
+available = [
+	'[convolutional]', '[connected]',
+	'[maxpool]', '[dropout]'
+]
+
 def parser(config, model):
 	"""
 	Read the .cfg file to extract layers into `layers`
@@ -23,7 +28,10 @@ def parser(config, model):
 				elif layer['type'] == '[crop]':
 					h = layer['crop_height']
 					w = layer['crop_width']
-				else: layers += [layer]				
+				else: 
+					assert layer['type'] in available, \
+					'Layer {} not implemented'.format(layer['type'])
+					layers += [layer]				
 			layer = {'type':line}
 		else:
 			try:
