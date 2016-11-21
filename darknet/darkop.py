@@ -28,7 +28,7 @@ class Loader(object):
 
 class layer:
     def __init__(self, type, *args):
-        self.sig = [type, args]
+        self.signature = type, args
         self.type = type
         self.w = dict() # weights
         self.h = dict() # placeholders

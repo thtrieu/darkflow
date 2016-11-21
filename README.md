@@ -1,3 +1,7 @@
+## Update
+
+There is a lot of work to do, including yolov2 with new layers like `batch_norm` or `local`. It is not going to work for any time soon :( except if someone help me out with this project - that's why I've been refactoring the code lately.
+
 ## Intro
 
 This repo aims at building a tensorflow version of [darknet framework](https://github.com/pjreddie/darknet), where the famous framework [YOLO](http://pjreddie.com/darknet/yolo/) (real time object detection & classification) is created. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
@@ -61,13 +65,13 @@ From now on, all operations are performed by file `flow`.
 ./flow --h
 ```
 
-But first, let's take a closer look at one of a very useful option `--load`
+First, let's take a closer look at one of a very useful option `--load`
 
 ```bash
 # 1. With no --load option, yolo-tiny.weights are loaded
 ./flow --model yolo-tiny
 # 2. With yolo-3c however, since there are no yolo-3c.weights,
-# its parameters will be initialized
+# its parameters will be randomly initialized
 ./flow --model yolo-3c
 # 3. It is useful to reuse the first identical layers of tiny for 3c
 ./flow --model yolo-3c --load ./bin/yolo-tiny.weights
@@ -85,7 +89,7 @@ More on `--load` later. All of the above `flow` commands essentially perform for
 Training is simple as you only have to add option `--train` like below:
 
 ```bash
-# Init yolo-3c from yolo-tiny, then train the net on 100% GPU:
+# Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
 ./flow --model yolo-3c --load ./bin/yolo-tiny.weights --train --gpu 1.0
 ```
 

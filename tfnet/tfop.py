@@ -73,14 +73,14 @@ class conv(tfop):
 			padding = [l.pad, l.pad]
 		x = tf.pad(x, [[0, 0], padding, padding, [0, 0]])
 		x = tf.nn.conv2d(x, l.w['kernel'], padding = 'VALID', 
-	        name = name,strides=[1, l.stride, l.stride, 1])
+	        name = name, strides = [1, l.stride, l.stride, 1])
 		if l.batch_norm: x = self.batchnorm(l, x, name+'-bnorm')
 		self.x = tf.nn.bias_add(x, l.w['biases'])
 		self.pad = padding
 
 	def batchnorm(self, l, x, name):                
 		return tf.nn.batch_normalization(
-			x = x, mean = l.w['mean'], variance = l.mean['var'], 
+			x = x, mean = l.w['mean'], variance = l.w['var'], 
 			offset = None, scale = l.w['scale'], name = name,
 			variance_epsilon = 1e-6)
 

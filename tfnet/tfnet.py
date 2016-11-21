@@ -5,11 +5,19 @@ this class initializes by building the forward pass
 its methods include train, predict and savepb - saving
 the current model to a protobuf file (no variable included)
 """
+
+from tfnet_flow import *
 from darknet import *
 from tfop import *
-from shuffle import *
 
 class TFNet(object):
+
+	# imported methods
+	train = tf_train
+	predict = tf_predict
+	shuffle = tf_shuffle
+	to_darknet = to_darknet
+	load_old_graph = load_old_graph
 
 	def __init__(self, darknet, FLAGS):
 		self.framework = create_framework(darknet.meta['type'])
@@ -19,11 +27,11 @@ class TFNet(object):
 
 		self.graph = tf.Graph()
 		with self.graph.as_default() as g:
-			self.forward()
+			self.build_forward()
 			self.setup_meta_ops()
 
 
-	def forward(self):
+	def build_forward(self):
 		self.ckpt = self.FLAGS.savepb is None
 		verbalise = self.FLAGS.verbalise
 
@@ -67,82 +75,19 @@ class TFNet(object):
 			max_to_keep = self.FLAGS.keep)
 
 		if self.FLAGS.load == 0: return
+		if self.FLAGS.load < 0:
+			with open('backup/checkpoint', 'r') as f:
+				last = f.readlines()[-1].strip()
+				load_point = last.split(' ')[1]
+				load_point = load_point.split('"')[1]
+				load_point = load_point.split('-')[-1]
+				self.FLAGS.load = int(load_point)
+		
 		load_point = 'backup/{}'.format(self.meta['model'])
-		load_point = '{}-{}'.format(load_point, self.FLAGS.load)
+		load_point = '{}-{}'.format(load_point, self.FLAGS.load)		
 		print 'Loading from {}'.format(load_point)
 		try: self.saver.restore(self.sess, load_point)
 		except: self.load_old_graph(load_point)
-
-	def load_old_graph(self, load_point):
-		"""
-		new versions of code name variables differently,
-		so for backward compatibility, a matching between
-		new and old graph_def has to be done.
-		"""
-		def lookup(allw, name, shape):
-			"""
-			Look for variable with name `name`
-			and shape `shape` in list `allw`
-			"""
-			for idx, w in enumerate(allw):
-				if w.name == name: # highly unlikely
-					return idx	
-			for idx, w in enumerate(allw):
-				if w.get_shape() == shape:
-					return idx
-			return None
-
-		print 'Resolve incompatible graph def ...'	
-		meta = '{}.meta'.format(load_point)
-		msg = 'Recovery from {} '.format(meta)
-		err = '{}'.format(msg + 'failed')
-
-		feed = dict()
-		allw = tf.all_variables()
-		with tf.Graph().as_default() as g:
-			with tf.Session().as_default() as sess:
-				old_meta = tf.train.import_meta_graph(meta)
-				old_meta.restore(sess, load_point)
-				for i, this in enumerate(tf.all_variables()):
-					name = this.name
-					shape = this.get_shape()
-					args = [allw, name, shape]
-					idx = lookup(*args)
-					if idx is None: continue
-					val = this.eval(sess)
-					feed[allw[idx]] = val
-					del allw[idx]
-
-		# Make sure all new vars are covered
-		assert allw == list(), err
-		
-		# restore values
-		for w in feed:
-			val = feed[w]; shape = val.shape
-			ph = tf.placeholder(tf.float32, shape)
-			op = tf.assign(w, ph)
-			self.sess.run(op, {ph: val})
-
-
-	def to_darknet(self):
-		"""
-		Translate from TFNet back to darknet
-		"""
-		darknet_ckpt = self.darknet
-		with self.graph.as_default() as g:
-			for var in tf.trainable_variables():
-				name = var.name.split(':')[0]
-				val = var.eval(self.sess)
-				var_name = name.split('-')
-				l_idx = int(var_name[0])
-				w_sig = var_name[-1]
-				darknet_ckpt.layers[l_idx].w[w_sig] = val
-		for layer in darknet_ckpt.layers:
-			for ph in layer.h:
-				feed = self.feed[layer.h[ph]]
-				layer.h[ph] = feed
-
-		return darknet_ckpt
 
 	def savepb(self):
 		"""
@@ -169,68 +114,3 @@ class TFNet(object):
 		print 'Saving const graph def to {}'.format(name)
 		graph_def = tfnet_ckpt.sess.graph_def
 		tf.train.write_graph(graph_def,'./',name,False)
-	
-	def train(self):
-		batches = shuffle(self.FLAGS, self.meta, self.framework)
-
-		print 'Training statistics:'
-		print '\tLearning rate : {}'.format(self.FLAGS.lr)
-		print '\tBatch size    : {}'.format(self.FLAGS.batch)
-		print '\tEpoch number  : {}'.format(self.FLAGS.epoch)
-		print '\tBackup every  : {}'.format(self.FLAGS.save)
-
-		total = int() # total number of batches
-		for i, packet in enumerate(batches):
-			if i == 0: total = packet; continue
-			x_batch, datum = packet
-
-			if i == 1: \
-			assert set(list(datum)) == set(list(self.placeholders)), \
-			'Mismatch between placeholders and datum for loss evaluation'
-
-			feed_pair = [(self.placeholders[k], datum[k]) for k in datum]
-			feed_dict = {holder:val for (holder,val) in feed_pair}
-			for k in self.feed: feed_dict[k] = self.feed[k]['feed']
-			feed_dict[self.inp] = x_batch
-
-			_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
-
-			step_now = self.FLAGS.load + i
-			print 'step {} - loss {}'.format(step_now, loss)
-			if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
-				checkpoint_file = 'backup/{}-{}'.format(self.meta['model'], step_now)
-				print 'Checkpoint at step {}'.format(step_now)
-				self.saver.save(self.sess, checkpoint_file)
-
-	def predict(self):
-		inp_path = self.FLAGS.testset
-		all_inp_ = os.listdir(inp_path)
-		all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
-		batch = min(self.FLAGS.batch, len(all_inp_))
-
-		for j in range(len(all_inp_)/batch):
-			inp_feed = list()
-			all_inp = all_inp_[j*batch: (j*batch+batch)]
-			new_all = list()
-			for inp in all_inp:
-				new_all += [inp]
-				this_inp = '{}{}'.format(inp_path, inp)
-				this_inp = self.framework.preprocess(this_inp)
-				inp_feed.append(this_inp)
-			all_inp = new_all
-
-			feed_dict = {self.inp : np.concatenate(inp_feed, 0)}
-			for k in self.feed: feed_dict[k] = self.feed[k]['dfault']
-		
-			print ('Forwarding {} inputs ...'.format(len(inp_feed)))
-			start = time.time()
-			out = self.sess.run([self.out], feed_dict)
-			stop = time.time()
-			last = stop - start
-			print ('Total time = {}s / {} inps = {} ips'.format(
-				last, len(inp_feed), len(inp_feed) / last))
-
-			for i, prediction in enumerate(out[0]):
-				self.framework.postprocess(
-					prediction, '{}{}'.format(inp_path, all_inp[i]), 
-					self.FLAGS, self.meta)

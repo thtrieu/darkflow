@@ -82,7 +82,6 @@ class Darknet(object):
         wlayer = ['convolutional', 'connected']
         loader = Loader(self.src_bin)
         srcl = self.src_layers
-        len_src = len(srcl); 
         i = int() # iterator for srcl
 
         print ('Loading {} ...'.format(self.src_bin))
@@ -90,17 +89,17 @@ class Darknet(object):
         for layer in self.layers:
             if layer.type not in wlayer: continue
             itype = srcl[i].type
-            while i < len_src and itype not in wlayer:
+            while i < len(srcl) and itype not in wlayer:
                 i = i + 1 
-                if i == len_src: break 
+                if i == len(srcl): break 
                 itype = srcl[i].type
-            if i == len_src: loader.eof = True
+            if i == len(srcl): loader.eof = True
             elif layer != srcl[i]: loader.eof = True
             else: i += 1
-            layer.load(loader)
             if not loader.eof and self.src_bin is not None: 
-                print 'Re-collect', layer.sig
-            else: print 'Initialize', layer.sig 
+                print 'Re-collect', layer.signature
+            else: print 'Initialize', layer.signature
+            layer.load(loader)
               
         # Defensive python right here bietch.
         # if self.src_cfg == self.model:
