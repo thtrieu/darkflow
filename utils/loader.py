@@ -20,17 +20,17 @@ class loader(object):
 
     def __call__(self, *key):
         key = list(key)
-        for i in range(len(self.src_key)):
-            val = self.load(key[i], i)
+        for i in range(self.key_len):
+            val = self.load(key[i:], i)
             if val is not None: 
                 return val
         return None
     
     def load(self, key, idx):
         b = self.base
-        keys = self.src_key[idx]
-        while b + 1 < len(keys):
-            b = b + 1; key_b = keys[b]
+        while b + 1 < len(self.src_key):
+            b = b + 1; 
+            key_b = self.src_key[b][idx:]
             if key_b == key:
                 if self.inc: self.base = b
                 return self.value(b)
@@ -47,10 +47,12 @@ class weights_loader(loader):
 
     def value(self, i): return self.src_weights[i]
     def setup(self, path, src_layers):
+        self.key_len = 1
         self.inc = True # incremental reading
+
         self.src_layers = src_layers
         walker = float32_walker(path, 16)
-        self.src_key = [self.src_layers]
+        self.src_key = [[l] for l in self.src_layers]
 
         self.src_weights = list()
         for layer in src_layers:
@@ -82,11 +84,14 @@ class checkpoint_loader(loader):
     """
     def value(self, i): return self.val[i]
     def setup(self, ckpt, ignore):
+        self.key_len = 2
         self.inc = False # non-incremental reading
+
         meta = ckpt + '.meta'
         self.names = list()
         self.shape = list()
         self.val = list()
+        self.src_key = list()
 
         with tf.Graph().as_default() as graph:
             with tf.Session().as_default() as sess:
@@ -94,11 +99,9 @@ class checkpoint_loader(loader):
                 saver.restore(sess, ckpt)
                 for var in tf.all_variables():
                     name = var.name.split(':')[0]
-                    self.names += [name]
-                    self.shape += [var.get_shape()]
+                    packet = [name, var.get_shape()]
+                    self.src_key += [packet]
                     self.val += [var.eval(sess)]
-
-        self.src_key = [self.names, self.shape]
 
 def create_loader(*args):
     path = list(args)[0]
