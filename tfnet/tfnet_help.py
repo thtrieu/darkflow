@@ -98,7 +98,7 @@ def load_old_graph(self, ckpt):
 		# soft assignment 
 		shp = val.shape
 		plh = tf.placeholder(tf.float32, shp)
-		op = tf.assign(var, ph)
+		op = tf.assign(var, plh)
 		self.sess.run(op, {plh: val})
 
 
