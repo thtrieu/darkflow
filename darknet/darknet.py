@@ -26,14 +26,16 @@ class Darknet(object):
         self.model = FLAGS.model
         self.get_weight_src(FLAGS)
         
+        print 'Parsing {}'.format(self.src_cfg)
         src_parsed = self.parse_cfg(self.src_cfg, FLAGS)
         self.src_meta, self.src_layers = src_parsed
         
-        if self.src_cfg == self.model: # reading its own .weights
+        if self.src_cfg == self.model:
             self.meta, self.layers = src_parsed
-
-        else: self.meta, self.layers = \
-            self.parse_cfg(self.model, FLAGS)
+        else: 
+        	print 'Parsing {}'.format(self.model)
+        	des_parsed = self.parse_cfg(self.model, FLAGS)
+        	self.meta, self.layers = des_parsed
 
     def get_weight_src(self, FLAGS):
         """
@@ -83,8 +85,6 @@ class Darknet(object):
 
         print ('Loading {} ...'.format(self.src_bin))
         start = time.time()
-        for i, layer in enumerate(self.layers):
-            layer.load(wgts_loader)
-
+        for layer in self.layers: layer.load(wgts_loader)
         stop = time.time()
         print ('Finished in {}s'.format(stop - start))

@@ -2,41 +2,50 @@ from utils import loader
 import numpy as np
 
 class layer(object):
-    def __init__(self, *args):
+    def __init__(self, num, ltype, *args):
         self.signature = list(args)
-        self.number = list(args)[0]
-        self.type = list(args)[1]
+        self.number = num
+        self.type = ltype
+
         self.w = dict() # weights
         self.h = dict() # placeholders
         self.shape = dict() # weight shape
         self.size = dict() # weight size
-        self.setup(*args[2:]) # set attr up
-        self.cal_size() # calculate sizes
-
-    def cal_size(self):
+        self.setup(*args) # set attr up
         for var in self.shape:
-            shape = self.shape[var]
-            self.size[var] = np.prod(shape)
+            shp = self.shape[var]
+            size = np.prod(shp)
+            self.size[var] = size
 
     def load(self, src_loader):
         if self.type not in src_loader.VAR_LAYER: return
-        if type(src_loader) is loader.weights_loader:
-            loaded_layer = src_loader(self)
-            sig = self.signature[1:]
-            if loaded_layer is not None:
-                print 'Re-collect {}'.format(sig)
-                self.w = loaded_layer.w
-            else: print 'Initialize {}'.format(sig)
-            return
+        src_type = type(src_loader)
+        if src_type is loader.weights_loader:
+            self.load_weights(src_loader)
+        else: self.load_ckpt(src_loader)
 
+    def load_weights(self, src_loader):
+        val = src_loader(self)
+        sig = [self.type, self.signature]
+        if val is not None: self.w = val.w
+        self.verbalise(val, sig)
+
+    def load_ckpt(self, src_loader):
         for var in self.shape:
             name = str(self.number)
             name += '-' + self.type
             name += '-' + var
             shape = self.shape[var]
-            val = src_loader(name, shape)
+            sig = [name, shape]
+            val = src_loader(*sig)
             self.w[var] = val
-            print 'Re-collect {}: {}'.format(name, shape)
+            self.verbalise(val, sig)
+
+    def verbalise(self, val, sig):
+        msg = 'Initialize'
+        if val is not None: msg = 'Recollect '
+        print '{} {}: {}'.format(msg, *sig)
+
 
     # For comparing two layers
     def __eq__(self, other):
@@ -102,6 +111,10 @@ class connect_layer(layer):
             self.shape['weights'])
         self.w['weights'] = weights
 
+"""
+Darkop Factory
+"""
+
 darkops = {
     'dropout': dropout_layer,
     'connected': connect_layer,
@@ -109,7 +122,6 @@ darkops = {
     'convolutional': convolu_layer
 }
 
-def create_darkop(*args):
-    op_type = list(args)[1]
-    op_class = darkops.get(op_type, layer)
-    return op_class(*args)
+def create_darkop(num, ltype, *args):
+    op_class = darkops.get(ltype, layer)
+    return op_class(num, ltype, *args)

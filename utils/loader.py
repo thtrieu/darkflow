@@ -55,11 +55,11 @@ class weights_loader(loader):
         self.src_key = [[l] for l in self.src_layers]
 
         self.src_weights = list()
-        for layer in src_layers:
+        for i, layer in enumerate(src_layers):
             if walker.eof: 
                 new = None
             else: 
-                args = layer.signature
+                args = [i, layer.type]+layer.signature
                 new = dn.darknet.create_darkop(*args)
             self.src_weights += [new]
 
@@ -103,15 +103,13 @@ class checkpoint_loader(loader):
                     self.src_key += [packet]
                     self.val += [var.eval(sess)]
 
-def create_loader(*args):
-    path = list(args)[0]
-    load_type = None
+def create_loader(path, *args):
     if path is None:
         load_type = weights_loader
     elif 'weights' in path:
         load_type = weights_loader
     else: load_type = checkpoint_loader
-    return load_type(*args)
+    return load_type(path, *args)
 
 class float32_walker(object):
     """
