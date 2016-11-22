@@ -27,7 +27,7 @@ def yolo_parse(FLAGS, meta):
     Decide whether to parse the annotation or not, 
     If the parsed file is not already there, parse.
     """
-    ext = '.parsed'; ann = FLAGS.annotation
+    ext = '.parsed'
     history = os.path.join('tfnet', 'yolo', 'parse-history.txt');
     if not os.path.isfile(history):
         file = open(history, 'w')
@@ -42,6 +42,10 @@ def yolo_parse(FLAGS, meta):
                 return pickle.load(f)[0]
 
     # actual parsing
+    ann = FLAGS.annotation
+    if not os.path.isdir(ann):
+        msg = 'Annotation directory not found {} .'
+        exit('Error: {}'.format(msg.format(ann)))
     print '\n{} parsing {}'.format(meta['model'], ann)
     dumps = pascal_voc_clean_xml(ann, meta['labels'])
     save_to = os.path.join("tfnet", "yolo", meta['model'])
