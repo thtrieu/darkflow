@@ -2,103 +2,104 @@
 tfnet secondary (helper) methods
 """
 
+from tfop import *
 import tensorflow as tf
 import numpy as np
+from numpy.random import permutation as perm
 
 off_bound_msg = 'Random scale/translate sends obj off bound'
 too_big_batch = 'Batch size is bigger than training data size'
-old_graph_msg = 'Resolving incompatible graph definition'
+old_graph_msg = 'Resolving incompatible graph def from {}'
 
-def tf_shuffle(self):
+def tf_build_train_op(self):
+	loss_ops = self.framework.loss(self)
+	self.placeholders, self.loss = loss_ops
+
+	print 'Building {} train op'.format(self.meta['model'])
+	optimizer = self._TRAINER[self.FLAGS.trainer](self.FLAGS.lr)
+	gradients = optimizer.compute_gradients(self.loss)
+	self.train_op = optimizer.apply_gradients(gradients)
+
+
+def tf_load_from_ckpt(self):
+	if self.FLAGS.load < 0: # load lastest ckpt
+		with open('backup/checkpoint', 'r') as f:
+			last = f.readlines()[-1].strip()
+			load_point = last.split(' ')[1]
+			load_point = load_point.split('"')[1]
+			load_point = load_point.split('-')[-1]
+			self.FLAGS.load = int(load_point)
+	
+	load_point = 'backup/{}'.format(self.meta['model'])
+	load_point = '{}-{}'.format(load_point, self.FLAGS.load)		
+	print 'Loading from {}'.format(load_point)
+	try: self.saver.restore(self.sess, load_point)
+	except: load_old_graph(self, load_point)
+
+
+def shuffle(self):
 	"""
-	Call the specific to parse annotations, where or not doing the parse
-	is up to the model. Then use the parsed object to yield minibatches
-	minibatches will be preprocessed before yielding to be appropriate
-	placeholders for model's loss evaluation.
+	Call the specific framework to parse annotations, then use the parsed 
+	object to yield minibatches. minibatches should be preprocessed before
+	yielding to be appropriate placeholders for model's loss evaluation.
 	"""
 	data = self.framework.parse(self.FLAGS, self.meta)
 	size = len(data); batch = self.FLAGS.batch
 
 	print 'Dataset of {} instance(s)'.format(size)
-	assert batch <= size, too_big_batch
+	if batch > size:
+		self.FLAGS.batch = batch = size
 	batch_per_epoch = int(size / batch)
 	total = self.FLAGS.epoch * batch_per_epoch
 	yield total
 
 	for i in range(self.FLAGS.epoch):
-		print 'EPOCH {}'.format(i+1)
-		shuffle_idx = np.random.permutation(np.arange(size))
-		for b in range(batch_per_epoch):
-			start_idx = b * batch
+		print 'EPOCH {}'.format(i + 1)
+		shuffle_idx = perm(np.arange(size))
+		for b in range(batch_per_epoch): 
 			end_idx = (b+1) * batch
-
-			datum = dict()
-			x_batch = list()
+			start_idx = b * batch 
 			offbound = False
-			for j in range(start_idx,end_idx):
+			# two yieldee
+			x_batch = list()
+			feed_batch = dict()
+
+			for j in range(start_idx, end_idx):
 				real_idx = shuffle_idx[j]
 				this = data[real_idx]
-				inp, tensors = self.framework.batch(
+				inp, feedval = self.framework.batch(
 					self.FLAGS, self.meta, this)
-				if inp is None: offbound = True; break
+				if inp is None: 
+					offbound = True; break
+
 				x_batch += [inp]
-				for k in tensors:
-					if k not in datum: datum[k] = [tensors[k]]; continue
-					datum[k] = np.concatenate([datum[k], [tensors[k]]])		
+				for k in feedval:
+					if k not in feed_batch: 
+						feed_batch[k] = [feedval[k]]; 
+						continue
+					feed_batch[k] = np.concatenate(
+						[feed_batch[k], [feedval[k]]])		
 			
-			if offbound: print off_bound_msg; continue
+			if offbound: 
+				print off_bound_msg; continue
 			x_batch = np.concatenate(x_batch, 0)
-			yield (x_batch, datum)
+			yield (x_batch, feed_batch)
 
-def load_old_graph(self, load_point):
-	"""
-	new versions of code name variables differently,
-	so for backward compatibility, a matching between
-	new and old graph_def has to be done.
-	"""
-	def lookup(allw, name, shape):
-		"""
-		Look for variable with name `name`
-		and shape `shape` in list `allw`
-		"""
-		for idx, w in enumerate(allw):
-			if w.name == name: # highly unlikely
-				return idx	
-		for idx, w in enumerate(allw):
-			if w.get_shape() == shape:
-				return idx
-		return None
 
-	print old_graph_msg
-	meta = '{}.meta'.format(load_point)
-	msg = 'Recovery from {} '.format(meta)
-	err = '{}'.format(msg + 'failed')
-
-	feed = dict()
-	allw = tf.all_variables()
-	with tf.Graph().as_default() as g:
-		with tf.Session().as_default() as sess:
-			old_meta = tf.train.import_meta_graph(meta)
-			old_meta.restore(sess, load_point)
-			for i, this in enumerate(tf.all_variables()):
-				name = this.name
-				shape = this.get_shape()
-				args = [allw, name, shape]
-				idx = lookup(*args)
-				if idx is None: continue
-				val = this.eval(sess)
-				feed[allw[idx]] = val
-				del allw[idx]
-
-	# Make sure all new vars are covered
-	assert allw == list(), err
+def load_old_graph(self, ckpt):	
+	ckpt_loader = loader.create_loader(ckpt)
+	print old_graph_msg.format(ckpt)
 	
-	# restore values
-	for w in feed:
-		val = feed[w]; shape = val.shape
-		ph = tf.placeholder(tf.float32, shape)
-		op = tf.assign(w, ph) # use placeholder
-		self.sess.run(op, {ph: val})
+	for var in all_var:
+		args = [var.name, var.get_shape()]
+		val = ckpt_loader(*args)
+		assert val is not None, \
+		'Failed on {}'.format(var.name)
+		# soft assignment 
+		shp = val.shape
+		plh = tf.placeholder(tf.float32, shp)
+		op = tf.assign(var, ph)
+		self.sess.run(op, {plh: val})
 
 
 def to_darknet(self):
@@ -109,11 +110,12 @@ def to_darknet(self):
 	with self.graph.as_default() as g:
 		for var in tf.trainable_variables():
 			name = var.name.split(':')[0]
-			val = var.eval(self.sess)
 			var_name = name.split('-')
 			l_idx = int(var_name[0])
 			w_sig = var_name[-1]
-			darknet_ckpt.layers[l_idx].w[w_sig] = val
+			l = darknet_ckpt.layers[l_idx]
+			l.w[w_sig] = var.eval(self.sess)
+
 	for layer in darknet_ckpt.layers:
 		for ph in layer.h:
 			feed = self.feed[layer.h[ph]]

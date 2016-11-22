@@ -23,14 +23,15 @@ class Darknet(object):
     extension = '.weights'
 
     def __init__(self, FLAGS):
-        self.checkpoint = False # load from a checkpoint?
         self.model = FLAGS.model
         self.get_weight_src(FLAGS)
         
         src_parsed = self.parse_cfg(self.src_cfg, FLAGS)
         self.src_meta, self.src_layers = src_parsed
+        
         if self.src_cfg == self.model: # reading its own .weights
             self.meta, self.layers = src_parsed
+
         else: self.meta, self.layers = \
             self.parse_cfg(self.model, FLAGS)
 
@@ -39,7 +40,7 @@ class Darknet(object):
         analyse FLAGS.load to know
         where is the source binary
         and what is its config.
-        can be: None, itself, or some other
+        can be: None, FLAGS.model, or some other
         """
         self.src_bin = self.model + self.extension
         self.src_bin = FLAGS.binary + self.src_bin
@@ -55,9 +56,7 @@ class Darknet(object):
             assert os.path.isfile(FLAGS.load), \
             '{} not found'.format(FLAGS.load)
             self.src_bin = FLAGS.load
-            bin_name = FLAGS.load.split('/')[-1]
-            name = '.'.join(bin_name.split('.')[:-1])
-            self.src_cfg = name
+            self.src_cfg = loader.model_name(FLAGS.load)
             FLAGS.load = int()
 
 
@@ -71,7 +70,7 @@ class Darknet(object):
         meta = dict(); layers = list()
         for i, info in enumerate(cfg_layers):
             if i == 0: meta = info; continue
-            else: new = create_darkop(*info)
+            else: new = create_darkop(i-1, *info)
             layers.append(new)
         return meta, layers
 
@@ -79,36 +78,13 @@ class Darknet(object):
         """
         Use `layers` and Loader to load .weights file
         """        
-        wlayer = ['convolutional', 'connected']
-        loader = Loader(self.src_bin)
-        srcl = self.src_layers
-        i = int() # iterator for srcl
+        args = [self.src_bin, self.src_layers]
+        wgts_loader = loader.create_loader(*args)
 
         print ('Loading {} ...'.format(self.src_bin))
         start = time.time()
-        for layer in self.layers:
-            if layer.type not in wlayer: continue
-            itype = srcl[i].type
-            while i < len(srcl) and itype not in wlayer:
-                i = i + 1 
-                if i == len(srcl): break 
-                itype = srcl[i].type
-            if i == len(srcl): loader.eof = True
-            elif layer != srcl[i]: loader.eof = True
-            else: i += 1
-            if not loader.eof and self.src_bin is not None: 
-                print 'Re-collect', layer.signature
-            else: print 'Initialize', layer.signature
-            layer.load(loader)
-              
-        # Defensive python right here bietch.
-        # if self.src_cfg == self.model:
-        #     if loader.offset == loader.size:
-        #         msg = 'Successfully identified all {} bytes'
-        #         print msg.format(loader.offset)
-        #     else:
-        #         msg = 'Error: expect {} bytes, found {}' 
-        #         exit(msg.format(loader.offset, loader.size))
+        for i, layer in enumerate(self.layers):
+            layer.load(wgts_loader)
 
         stop = time.time()
         print ('Finished in {}s'.format(stop - start))

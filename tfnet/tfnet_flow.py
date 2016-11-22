@@ -8,7 +8,7 @@ import os
 import time
 
 def tf_train(self):
-	batches = self.shuffle()
+	batches = shuffle(self)
 
 	print 'Training statistics:'
 	print '\tLearning rate : {}'.format(self.FLAGS.lr)
@@ -38,6 +38,7 @@ def tf_train(self):
 			ckpt = 'backup/{}-{}'.format(self.meta['model'], step_now)
 			print 'Checkpoint at step {}'.format(step_now)
 			self.saver.save(self.sess, ckpt)
+
 
 def tf_predict(self):
 	inp_path = self.FLAGS.testset

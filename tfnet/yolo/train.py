@@ -17,7 +17,7 @@ import tensorflow.contrib.slim as slim
 import cPickle as pickle
 import tensorflow as tf
 
-from ..utils.pascal_voc_clean_xml import *
+from utils.pascal_voc_clean_xml import *
 from copy import deepcopy
 from test import *
 
@@ -222,9 +222,4 @@ def yolo_loss(net):
     loss = tf.reduce_sum(loss, 1)
     loss = .5 * tf.reduce_mean(loss)
 
-    print 'Building {} train op'.format(m['model'])
-    optimizer = tf.train.RMSPropOptimizer(net.FLAGS.lr)
-    gradients = optimizer.compute_gradients(loss)
-    train_op = optimizer.apply_gradients(gradients)
-
-    return placeholders, loss, train_op
+    return placeholders, loss

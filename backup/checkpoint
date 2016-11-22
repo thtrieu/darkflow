@@ -1,0 +1,4 @@
+model_checkpoint_path: "yolo-4c-11"
+all_model_checkpoint_paths: "yolo-4c-7"
+all_model_checkpoint_paths: "yolo-4c-9"
+all_model_checkpoint_paths: "yolo-4c-11"

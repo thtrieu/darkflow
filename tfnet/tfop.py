@@ -38,17 +38,17 @@ class tfop(object):
 		if layer does not carry value (partial net loaded)
 		the corresponding tf variable will also be initialised 
 		"""
-		for var in layer.w: # trainable vars
-			sig = '{}-{}'.format(name, var) # signature
-			val = layer.w.get(var, None) # can be a np array or None
+		for var in layer.shape: # trainable vars
+			sig = '{}-{}'.format(name, var) 
+			val = layer.w.get(var, None) 
 			if val is None: # darknet is partially loaded
 				args = [layer.shape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
 			layer.w[var] = tf.Variable(val, name = sig)
 		
 		for ph in layer.h: # placeholders
-			sig = '{}-{}'.format(name, ph) # signature/name
-			values = layer.h[ph]; shp = layer.shape[ph] # ph shape
+			sig = '{}-{}'.format(name, ph)
+			values = layer.h[ph]; shp = values['shape']
 			layer.h[ph] = tf.placeholder(tf.float32, shp, sig)
 			feed[layer.h[ph]] = values
 
@@ -62,10 +62,10 @@ class tfop(object):
 class conv(tfop):
 	def forward(self, l, x, name):
 		if l.pad < 0: # figure the pad out
-			l.size = l.shape['kernel'][0]
+			l.ksize = l.shape['kernel'][0]
 			size = np.int(x.get_shape()[1])
 			expect = -(l.pad + 1) * l.stride 
-			expect += l.size - size
+			expect += l.ksize - size
 			padding = [expect / 2, expect - expect / 2]
 			if padding[0] < 0: padding[0] = 0
 			if padding[1] < 0: padding[1] = 0
@@ -88,6 +88,12 @@ class conv(tfop):
 		msg = 'conv{}'.format(_shape(self.l.w['kernel']))
 		self.msg = '{:<23} pad{}'.format(msg, self.pad)
 
+
+"""
+Simpler ops:
+full, flatten, maxpool, leaky, dropout
+"""
+
 class full(tfop):
 	def forward(self, l, x, name):
 		self.x = tf.nn.xw_plus_b(x, l.w['weights'], 
@@ -107,7 +113,7 @@ class flatten(tfop):
 class maxpool(tfop):
 	def forward(self, l, x, name):
 		self.x = tf.nn.max_pool(x, padding = 'VALID',
-	        ksize = [1, l.size, l.size, 1], name = name, 
+	        ksize = [1, l.ksize, l.ksize, 1], name = name, 
 	        strides = [1, l.stride, l.stride, 1])
 	
 	def verbalise(self): pass

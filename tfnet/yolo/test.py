@@ -11,7 +11,8 @@ Namely, they answers the following questions:
 	2. what to do after flowing the net?
 """
 from misc import *
-from ..utils.im_transform import *
+from utils.im_transform import *
+from utils.box import *
 import cv2
 import os
 
