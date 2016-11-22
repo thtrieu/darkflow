@@ -12,5 +12,6 @@ test/*.jpg
 results/
 
 # Intermediate training data
+backup/
 tfnet/yolo/parse-history.txt
 tfnet/yolo/*.parsed
