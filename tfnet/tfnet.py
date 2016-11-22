@@ -66,7 +66,7 @@ class TFNet(object):
 			'allow_soft_placement': False,
 			'log_device_placement': False}
 		if self.FLAGS.gpu > 0: 
-			utility = min(FLAGS.gpu, 1.)
+			utility = min(self.FLAGS.gpu, 1.)
 			print 'GPU mode with {} usage'.format(utility)
 			cfg['gpu_options'] = tf.GPUOptions(
 				per_process_gpu_memory_fraction = utility)
