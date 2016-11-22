@@ -1,6 +1,6 @@
 ## Update
 
-There is a lot of work to do, including yolov2 with new layers like `batch_norm` or `local`. It is not going to work for any time soon :( except if someone help me out with this project - that's why I've been refactoring the code lately.
+TODO: yolov2 with new layers like `batch_norm` or `local`.
 
 ## Intro
 
@@ -105,6 +105,12 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 # Without the --load option, you will be using the random initialized, untrained yolo-3c
 # Fine tuning tiny yolo from the original one
 ./flow --train --model yolo-tiny --load ./bin/yolo-tiny.weights
+```
+
+You can even initialize a new net by `ckpt` file with `--load`:
+```bash
+./flow --train --model yolo-2c --load ./backup/yolo-3c-1500
+# recollected and initialized layers will be printed to console
 ```
 
 ### Migrating the graph to C++ and Objective-C++
