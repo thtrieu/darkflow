@@ -91,6 +91,8 @@ Training is simple as you only have to add option `--train` like below:
 ```bash
 # Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
 ./flow --model yolo-3c --load ./bin/yolo-tiny.weights --train --gpu 1.0
+# Completely initialize yolo-3c and train it with ADAM optimizer
+./flow --model yolo-3c --train --trainer adam
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `./backup/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
