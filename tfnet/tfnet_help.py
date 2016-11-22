@@ -6,6 +6,7 @@ from tfop import *
 import tensorflow as tf
 import numpy as np
 from numpy.random import permutation as perm
+import os.path
 
 off_bound_msg = 'Random scale/translate sends obj off bound'
 too_big_batch = 'Batch size is bigger than training data size'
@@ -30,8 +31,8 @@ def tf_load_from_ckpt(self):
 			load_point = load_point.split('-')[-1]
 			self.FLAGS.load = int(load_point)
 	
-	load_point = 'backup/{}'.format(self.meta['model'])
-	load_point = '{}-{}'.format(load_point, self.FLAGS.load)		
+	load_point = os.path.join('backup', self.meta['model'])
+	load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 	print 'Loading from {}'.format(load_point)
 	try: self.saver.restore(self.sess, load_point)
 	except: load_old_graph(self, load_point)

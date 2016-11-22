@@ -11,8 +11,11 @@ def parser(config, model):
 	Read the .cfg file to extract layers into `layers`
 	as well as model-specific parameters into `meta`
 	"""
-	def _parse(l): return l.split('=')[1].strip()
-	with open('{}{}.cfg'.format(config, model), 'rb') as f:
+	def _parse(l):
+		return l.split('=')[1].strip()
+
+	cfg = os.path.join(config, model + '.cfg')
+	with open(cfg, 'rb') as f:
 		lines = f.readlines()		
 	
 	layers = [] # will contains layers' info

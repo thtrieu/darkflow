@@ -16,6 +16,7 @@ yolo_loss() basically build the loss layer of the net, namely,
 import tensorflow.contrib.slim as slim
 import cPickle as pickle
 import tensorflow as tf
+import os.path
 
 from utils.pascal_voc_clean_xml import *
 from copy import deepcopy
@@ -27,8 +28,7 @@ def yolo_parse(FLAGS, meta):
     If the parsed file is not already there, parse.
     """
     ext = '.parsed'; ann = FLAGS.annotation
-    history = '/'.join(str(__file__).split('/')[:-1])
-    history = '{}/parse-history.txt'.format(history)
+    history = os.path.join('tfnet', 'yolo', 'parse-history.txt');
     if not os.path.isfile(history):
         file = open(history, 'w')
         file.close()
@@ -44,7 +44,7 @@ def yolo_parse(FLAGS, meta):
     # actual parsing
     print '\n{} parsing {}'.format(meta['model'], ann)
     dumps = pascal_voc_clean_xml(ann, meta['labels'])
-    save_to = './tfnet/yolo/{}'.format(meta['model'])   
+    save_to = os.path.join("tfnet", "yolo", meta['model'])
     while True:
         if not os.path.isfile(save_to + ext): break
         save_to = save_to + '_'
@@ -71,7 +71,7 @@ def yolo_batch(FLAGS, meta, chunk):
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = '{}{}'.format(FLAGS.dataset, jpg)
+    path = os.path.join(FLAGS.dataset, jpg)
     img = yolo_preprocess(path, allobj)
 
     # Calculate regression target
@@ -90,7 +90,7 @@ def yolo_batch(FLAGS, meta, chunk):
         obj[1] = cx - np.floor(cx) # centerx
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * S + np.floor(cx))]
-        
+
     # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
@@ -131,7 +131,7 @@ def yolo_batch(FLAGS, meta, chunk):
         'proid':proid, 'conid':conid, 'cooid':cooid,
         'areas':areas, 'upleft':upleft, 'botright':botright
     }
-    
+
     return inp_feed_val, loss_feed_val
 
 def yolo_loss(net):
@@ -215,7 +215,7 @@ def yolo_loss(net):
     cooid = slim.flatten(cooid)
     true = tf.concat(1, [probs, confs, coord])
     wght = tf.concat(1, [proid, conid, cooid])
-    
+
     print 'Building {} loss'.format(m['model'])
     loss = tf.pow(net.out - true, 2)
     loss = tf.mul(loss, wght)

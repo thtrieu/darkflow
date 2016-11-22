@@ -138,7 +138,6 @@ def yolo_postprocess(predictions, img_path, FLAGS, meta):
 						boxes[i].probs[c] = 0.
 
 	imgcv = cv2.imread(img_path)
-	print img_path
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
@@ -161,6 +160,6 @@ def yolo_postprocess(predictions, img_path, FLAGS, meta):
 			mess = '{}:{:.3f}'.format(label, max_prob)
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
-	
-	img_name = 'results/{}'.format(img_path.split('/')[-1])
+
+	img_name = os.path.join('results', img_path.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
