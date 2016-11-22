@@ -44,6 +44,10 @@ def tf_predict(self):
 	inp_path = self.FLAGS.testset
 	all_inp_ = os.listdir(inp_path)
 	all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
+	if not all_inp_:
+		msg = 'Failed to find any test files in {} .'
+		exit('Error: {}'.format(msg.format(inp_path)))
+
 	batch = min(self.FLAGS.batch, len(all_inp_))
 
 	for j in range(len(all_inp_)/batch):
