@@ -1,5 +1,16 @@
 
+# Python bytecode
 *.pyc
 
+# Weight files
 bin/
+
+# Test data
+test/*.jpg
+
+# Annotated test results
 results/
+
+# Intermediate training data
+tfnet/yolo/parse-history.txt
+tfnet/yolo/*.parsed
