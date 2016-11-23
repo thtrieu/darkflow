@@ -1,3 +1,7 @@
+"""
+helpers of train, test
+"""
+
 import numpy as np
 import cv2
 
@@ -7,7 +11,7 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "train", "tvmonitor"]
 default_models = ['yolo-full', 'yolo-new', 'yolo-small', 'yolo-tiny', 'yolo-baby']
 
-def yolo_labels(meta):
+def labels(meta):
     if meta['model'] in default_models: 
         meta['labels'] = labels20
     else: 
@@ -15,7 +19,7 @@ def yolo_labels(meta):
             meta['labels'] = [l.strip() for l in f.readlines()]
     if len(meta['labels']) == 0: meta['labels'] = labels20
 
-def is_yolo_inp(name): 
+def is_inp(name): 
     return name[-4:] in ['.jpg','.JPG']
 
 def show(im, allobj, S, w, h, cellx, celly):

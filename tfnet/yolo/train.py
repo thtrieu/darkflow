@@ -1,15 +1,15 @@
 """
 file: /yolo/train.py
-includes: yolo_parse(), yolo_batch(), yolo_feed_dict() and yolo_loss()
+includes: parse(), batch(), and loss()
 together they support the pipeline: 
     annotation -> minibatch -> loss evaluation -> training
 namely,
-yolo_parse() takes the path to annotation directory, returns the loaded cPickple dump
+parse() takes the path to annotation directory, returns the loaded cPickple dump
              that contains a list of parsed objects, each for an input image in trainset
-yolo_batch() receive one such parsed objects, return feed value for net's input & output
+batch() receive one such parsed objects, return feed value for net's input & output
              feed value for net's input will go to the input layer of net
              feed value for net's output will go to the loss layer of net
-yolo_loss() basically build the loss layer of the net, namely,
+loss() basically build the loss layer of the net, namely,
             returns the corresponding placeholders for feed values of this loss layer
             as well as loss & train_op built from these placeholders and net.out
 """
@@ -18,11 +18,11 @@ import cPickle as pickle
 import tensorflow as tf
 import os.path
 
-from utils.pascal_voc_clean_xml import *
+from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from copy import deepcopy
-from test import *
+from test import preprocess
 
-def yolo_parse(FLAGS, meta):
+def parse(FLAGS, meta):
     """
     Decide whether to parse the annotation or not, 
     If the parsed file is not already there, parse.
@@ -63,7 +63,7 @@ def yolo_parse(FLAGS, meta):
     print 'Result saved to {}'.format(save_to)
     return dumps
 
-def yolo_batch(FLAGS, meta, chunk):
+def batch(FLAGS, meta, chunk):
     """
     Takes a chunk of parsed annotations
     returns value for placeholders of net's 
@@ -76,7 +76,7 @@ def yolo_batch(FLAGS, meta, chunk):
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
     path = os.path.join(FLAGS.dataset, jpg)
-    img = yolo_preprocess(path, allobj)
+    img = preprocess(path, allobj)
 
     # Calculate regression target
     cellx = 1. * w / S
@@ -138,10 +138,10 @@ def yolo_batch(FLAGS, meta, chunk):
 
     return inp_feed_val, loss_feed_val
 
-def yolo_loss(net):
+def loss(net):
     """
     Takes net.out and placeholders value
-    returned in yolo_batch() func above, 
+    returned in batch() func above, 
     to build train_op and loss
     """
     # meta

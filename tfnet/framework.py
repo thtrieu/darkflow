@@ -2,24 +2,24 @@
 framework factory
 """
 
-from yolo import *
+import yolo
 
 class framework(object):
 	def __init__(self):
 		pass
 
-class yolo(framework):
+class YOLO(framework):
 	def __init__(self):
-		self.loss = yolo_loss
-		self.parse = yolo_parse
-		self.batch = yolo_batch
-		self.metaprocess = yolo_metaprocess
-		self.preprocess = yolo_preprocess
-		self.postprocess = yolo_postprocess
-		self.is_inp = is_yolo_inp
+		self.loss = yolo.train.loss
+		self.parse = yolo.train.parse
+		self.batch = yolo.train.batch
+		self.metaprocess = yolo.test.metaprocess
+		self.preprocess = yolo.test.preprocess
+		self.postprocess = yolo.test.postprocess
+		self.is_inp = yolo.misc.is_inp
 
 types = {
-	'[detection]': yolo
+	'[detection]': YOLO
 }
 
 def create_framework(net_type):

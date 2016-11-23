@@ -1,2 +1,3 @@
-from train import *
-from test import *
+import train
+import test
+import misc

@@ -1,6 +1,6 @@
 """
 file: yolo/drawer.py
-includes: yolo_metaprocess(), yolo_preprocess() and yolo_postprocess()
+includes: metaprocess(), preprocess() and postprocess()
 together they supports two ends of the testing process:
 		preprocess -> flow the net -> post process
 		where flow the net is taken care of the general framework
@@ -10,13 +10,14 @@ Namely, they answers the following questions:
 	1. what to do before flowing the net?
 	2. what to do after flowing the net?
 """
-from misc import *
-from utils.im_transform import *
-from utils.box import *
+from misc import labels
+from utils.im_transform import im_np_recolor, imcv2_affine_trans
+from utils.box import BoundBox, box_intersection, prob_compare
+import numpy as np
 import cv2
 import os
 
-def yolo_metaprocess(meta):
+def metaprocess(meta):
 	"""
 	Add to meta (a dict) `labels` correspond to current model and
 	`colors` correspond to these labels, for drawing predictions.
@@ -27,7 +28,7 @@ def yolo_metaprocess(meta):
 		r = (indx % base2) / base
 		g = (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
-	yolo_labels(meta)
+	labels(meta)
 	if len(meta['labels']) != meta['classes']:
 		msg = 'labels.txt and configs/{}.cfg '
 		msg+= 'indicate different class number'
@@ -39,7 +40,7 @@ def yolo_metaprocess(meta):
 	meta['colors'] = colors
 	return meta
 
-def yolo_preprocess(imPath, allobj = None):
+def preprocess(imPath, allobj = None):
 	"""
 	Takes an image, return it as a numpy tensor that is readily
 	to be fed into tfnet. If there is an accompanied annotation (allobj),
@@ -82,7 +83,7 @@ def yolo_preprocess(imPath, allobj = None):
 	return image_array#, im_ # for unit testing
 	
 
-def yolo_postprocess(predictions, img_path, FLAGS, meta):
+def postprocess(predictions, img_path, FLAGS, meta):
 	"""
 	Takes net output, draw predictions, save to results/
 	prediction is a numpy tensor - net's output

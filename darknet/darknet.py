@@ -12,8 +12,9 @@ its attribute .layers - a well structured list, with each
 element is an object of class layer() defined in ./darkop.py
 """
 
-from configs.process import *
-from darkop import *
+from configs.process import cfg_yielder
+from darkop import create_darkop
+from utils import loader
 import time
 import os
 

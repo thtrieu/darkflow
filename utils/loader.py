@@ -22,8 +22,7 @@ class loader(object):
         key = list(key)
         for i in range(self.key_len):
             val = self.load(key[i:], i)
-            if val is not None: 
-                return val
+            if val is not None: return val
         return None
     
     def load(self, key, idx):
@@ -32,9 +31,14 @@ class loader(object):
             b = b + 1; 
             key_b = self.src_key[b][idx:]
             if key_b == key:
-                if self.inc: self.base = b
-                return self.value(b)
+                return self.yields(b)
         return None
+
+    def yields(self, idx):
+        del self.src_key[idx]
+        temp = self.vals[idx]
+        del self.vals[idx]
+        return temp
 
 class weights_loader(loader):
     """one who understands .weights file"""
@@ -45,23 +49,21 @@ class weights_loader(loader):
         'connected': ['biases', 'weights']
     })
 
-    def value(self, i): return self.src_weights[i]
     def setup(self, path, src_layers):
         self.key_len = 1
-        self.inc = True # incremental reading
 
         self.src_layers = src_layers
         walker = float32_walker(path, 16)
         self.src_key = [[l] for l in self.src_layers]
 
-        self.src_weights = list()
+        self.vals = list()
         for i, layer in enumerate(src_layers):
             if walker.eof: 
                 new = None
             else: 
                 args = [i, layer.type]+layer.signature
                 new = dn.darknet.create_darkop(*args)
-            self.src_weights += [new]
+            self.vals += [new]
 
             if new is None: continue
             if new.type not in self.VAR_LAYER: continue
@@ -84,15 +86,13 @@ class checkpoint_loader(loader):
     """
     one who understands .ckpt files, very much
     """
-    def value(self, i): return self.val[i]
     def setup(self, ckpt, ignore):
         self.key_len = 2
-        self.inc = False # non-incremental reading
 
         meta = ckpt + '.meta'
         self.names = list()
         self.shape = list()
-        self.val = list()
+        self.vals = list()
         self.src_key = list()
 
         with tf.Graph().as_default() as graph:
@@ -103,15 +103,17 @@ class checkpoint_loader(loader):
                     name = var.name.split(':')[0]
                     packet = [name, var.get_shape()]
                     self.src_key += [packet]
-                    self.val += [var.eval(sess)]
+                    self.vals += [var.eval(sess)]
 
-def create_loader(path, *args):
+def create_loader(path, cfg = None):
     if path is None:
         load_type = weights_loader
     elif 'weights' in path:
         load_type = weights_loader
-    else: load_type = checkpoint_loader
-    return load_type(path, *args)
+    else: 
+        load_type = checkpoint_loader
+    
+    return load_type(path, cfg)
 
 class float32_walker(object):
     """
@@ -131,9 +133,9 @@ class float32_walker(object):
         'Over read {}'.format(self.path)
 
         float32_1D_array = np.memmap(
-            self.path, shape=(), 
-            mode='r', offset=self.offset,
-            dtype = '({})float32,'.format(size)
+            self.path, shape=(), mode='r', 
+            offset = self.offset,
+            dtype='({})float32,'.format(size)
         )
 
         self.offset = end_point

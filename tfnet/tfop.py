@@ -5,11 +5,13 @@ functions that takes input `x`, layer `l` of type layer
 defined in ./darknet.py and return the output of the
 corresponding layer.
 """
-
-from framework import *
+import tensorflow as tf
+import tensorflow.contrib.slim as slim
+import numpy as np
 
 def _shape(tensor): # work for both tf.Tensor & np.ndarray
-	if type(tensor) is tf.Variable: return tensor.get_shape()
+	if type(tensor) in [tf.Variable, tf.Tensor]: 
+		return tensor.get_shape()
 	else: return tensor.shape
 
 class tfop(object):
@@ -17,78 +19,78 @@ class tfop(object):
 	tfop objects initialise with a darknet's `layer` object
 	and input tensor of that layer `x`, it calculates the 
 	output of this layer and place the result in self.x
-	self.x is returned whenever the object is called.
 	"""
-	def __init__(self, l, x, name, feed = None):
-		if feed is not None: self.wrap(l, feed, name)
-		if 'tfnetoutput' in name: name = 'output'
-		
-		self.l = l; self.inp_layer = False
-		self.inp_layer = x.name.split(':')[0] == 'input'
-		self.inp_size = x.get_shape()
-		self.forward(l, x, name)
+	def __init__(self, layer, inp, name, feed = None):
+		self.inp = inp # class = tfop
+		self.out = None # class = tf.Tensor
+		self.lay = layer
+		self.sig = name
+		self.wrap(feed)
+		self.forward()
 
 	def __call__(self, verbalise = True):
 		if verbalise: self.verbalise()
-		return self.x
+		return self
 
-	def detail(self): pass
-
-	def wrap(self, layer, feed, name):
+	def wrap(self, feed):
 		"""
-		wraps `layer` into tf variables & placeholders
+		wraps `self.lay` into tf variables & placeholders
 		if layer does not carry value (partial net loaded)
 		the corresponding tf variable will also be initialised 
 		"""
-		for var in layer.shape: # trainable vars
-			sig = '{}-{}'.format(name, var) 
-			val = layer.w.get(var, None) 
+		if feed is None: return
+
+		for var in self.lay.shape: # trainable vars
+			sig = '{}-{}'.format(self.sig, var) 
+			val = self.lay.w.get(var, None) 
 			if val is None: # darknet is partially loaded
-				args = [layer.shape[var], 0., 1e-2]
+				args = [self.lay.shape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
-			layer.w[var] = tf.Variable(val, name = sig)
+			self.lay.w[var] = tf.Variable(val, name = sig)
 		
-		for ph in layer.h: # placeholders
-			sig = '{}-{}'.format(name, ph)
-			values = layer.h[ph]; shp = values['shape']
-			layer.h[ph] = tf.placeholder(tf.float32, shp, sig)
-			feed[layer.h[ph]] = values
+		for ph in self.lay.h: # placeholders
+			sig = '{}-{}'.format(self.sig, ph)
+			values = self.lay.h[ph]; shp = values['shape']
+			self.lay.h[ph] = tf.placeholder(tf.float32, shp, sig)
+			feed[self.lay.h[ph]] = values
 
 	def verbalise(self):
-		self.detail()
 		form = '{:<40} : {}' # verbalise template
-		if self.inp_layer: # this is the 1st layer
-			print form.format('Input size', self.inp_size)
-		print form.format(self.msg, self.x.get_shape())
+		if self.inp.out.name.split(':')[0] == 'input': \
+		print form.format('Input size', _shape(self.inp.out))
+		print form.format(self.speak(), _shape(self.out))
+	
+	def speak(self): pass
 
-class conv(tfop):
-	def forward(self, l, x, name):
-		if l.pad < 0: # figure the pad out
-			l.ksize = l.shape['kernel'][0]
-			size = np.int(x.get_shape()[1])
-			expect = -(l.pad + 1) * l.stride 
-			expect += l.ksize - size
-			padding = [expect / 2, expect - expect / 2]
-			if padding[0] < 0: padding[0] = 0
-			if padding[1] < 0: padding[1] = 0
+class convolutional(tfop):
+	def forward(self):
+		if self.lay.pad < 0: # figure the pad out
+			size = np.int(_shape(self.inp.out)[1])
+			expect = -(self.lay.pad+1) * self.lay.stride 
+			expect += self.lay.shape['kernel'][0] - size
+			pad = [expect / 2, expect - expect / 2]
+			if pad[0] < 0: pad[0] = 0
+			if pad[1] < 0: pad[1] = 0
 		else:
-			padding = [l.pad, l.pad]
-		x = tf.pad(x, [[0, 0], padding, padding, [0, 0]])
-		x = tf.nn.conv2d(x, l.w['kernel'], padding = 'VALID', 
-	        name = name, strides = [1, l.stride, l.stride, 1])
-		if l.batch_norm: x = self.batchnorm(l, x, name+'-bnorm')
-		self.x = tf.nn.bias_add(x, l.w['biases'])
-		self.pad = padding
+			pad = [self.lay.pad, self.lay.pad]
+		self.lay.pad = pad
 
-	def batchnorm(self, l, x, name):                
+		temp = tf.pad(self.inp.out, [[0, 0]] + [pad]*2 + [[0, 0]])
+		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
+	        name = self.sig, strides = [1] + [self.lay.stride]*2 + [1])
+
+		if self.lay.batch_norm: temp = self.batchnorm(self.lay, temp)
+		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
+
+	def batchnorm(self, l, x):                
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], variance = l.w['var'], 
-			offset = None, scale = l.w['scale'], name = name,
+			offset = None, scale = l.w['scale'], name = self.sig + '-bnorm',
 			variance_epsilon = 1e-6)
 
-	def detail(self):
-		msg = 'conv{}'.format(_shape(self.l.w['kernel']))
-		self.msg = '{:<23} pad{}'.format(msg, self.pad)
+	def speak(self):
+		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
+		return '{:<23} pad{}'.format(msg, self.lay.pad)
 
 
 """
@@ -96,65 +98,90 @@ Simpler ops:
 full, flatten, maxpool, avgpool, leaky, dropout
 """
 
-class full(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.nn.xw_plus_b(x, l.w['weights'], 
-			l.w['biases'], name = name)
+class connected(tfop):
+	def forward(self):
+		self.out = tf.nn.xw_plus_b(
+			self.inp.out, 
+			self.lay.w['weights'], 
+			self.lay.w['biases'], 
+			name = self.sig)
 
-	def detail(self):
-		self.msg = 'full{}'.format(_shape(self.l.w['weights']))
+	def speak(self):
+		return 'full{}'.format(_shape(self.lay.w['weights']))
 
 class flatten(tfop):
-	def forward(self, l, x, name):
-		x = tf.transpose(x, [0,3,1,2])
-		self.x = slim.flatten(x, scope = name)
+	def forward(self):
+		temp = tf.transpose(self.inp.out, [0,3,1,2])
+		self.out = slim.flatten(temp, scope = self.sig)
 
-	def detail(self):
-		self.msg = 'flat()'
+	def speak(self): return 'flat()'
 
 class softmax(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.nn.softmax(x)
+	def forward(self):
+		self.out = tf.nn.softmax(self.inp.out)
 
-	def detail(self):
-		self.msg = 'softmax()'
+	def speak(self): return 'softmax()'
 
 class avgpool(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.reduce_mean(x, [1, 2], name = name)
+	def forward(self):
+		self.out = tf.reduce_mean(
+			self.inp.out, [1, 2], 
+			name = self.sig
+		)
 
-	def detail(self):
-		self.msg = 'avgpool()'
+	def speak(self): return 'avgpool()'
 
 class maxpool(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.nn.max_pool(x, padding = 'VALID',
-	        ksize = [1, l.ksize, l.ksize, 1], name = name, 
-	        strides = [1, l.stride, l.stride, 1])
+	def forward(self):
+		self.out = tf.nn.max_pool(
+			self.inp.out, padding = 'VALID',
+	        ksize = [1] + [self.lay.ksize]*2 + [1], 
+	        strides = [1] + [self.lay.stride]*2 + [1],
+	        name = self.sig
+	    )
 	
 	def verbalise(self): pass
 
 class leaky(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.maximum(.1*x, x, name = name)
+	def forward(self):
+		self.out = tf.maximum(
+			.1 * self.inp.out, 
+			self.inp.out, 
+			name = self.sig
+		)
 
 	def verbalise(self): pass
 
 class dropout(tfop):
-	def forward(self, l, x, name):
-		self.x = tf.nn.dropout(x, l.h['pdrop'], name = name)
+	def forward(self):
+		self.out = tf.nn.dropout(
+			self.inp.out, 
+			self.lay.h['pdrop'], 
+			name = self.sig
+		)
 
 	def verbalise(self): pass
 
+
+class identity(tfop):
+	"""
+	A special tfop that signals
+	the begining of the stack
+	"""
+	def __init__(self, inp):
+		self.inp = None
+		self.out = inp
+
 op_types = {
-	'convolutional': conv,
-	'connected': full,
+	'convolutional': convolutional,
+	'connected': connected,
 	'maxpool': maxpool,
 	'leaky': leaky,
 	'dropout': dropout,
 	'flatten': flatten,
 	'avgpool': avgpool,
-	'softmax': softmax
+	'softmax': softmax,
+	'identity': identity
 }
 
 def op_create(*args):

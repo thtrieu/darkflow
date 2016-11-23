@@ -2,11 +2,11 @@
 tfnet secondary (helper) methods
 """
 
-from tfop import *
+from numpy.random import permutation as perm
+from utils.loader import create_loader
 import tensorflow as tf
 import numpy as np
-from numpy.random import permutation as perm
-import os.path
+import os
 
 off_bound_msg = 'Random scale/translate sends obj off bound'
 too_big_batch = 'Batch size is bigger than training data size'
@@ -88,10 +88,10 @@ def shuffle(self):
 
 
 def load_old_graph(self, ckpt):	
-	ckpt_loader = loader.create_loader(ckpt)
+	ckpt_loader = create_loader(ckpt)
 	print old_graph_msg.format(ckpt)
 	
-	for var in all_var:
+	for var in tf.all_variables():
 		args = [var.name, var.get_shape()]
 		val = ckpt_loader(*args)
 		assert val is not None, \

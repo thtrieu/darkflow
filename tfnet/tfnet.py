@@ -6,7 +6,11 @@ its methods include train, predict and savepb - saving
 the current model to a protobuf file (no variable included)
 """
 
-from tfnet_flow import *
+import tensorflow as tf
+from tfop import op_create, identity
+from tfnet_flow import tf_train, tf_predict
+from tfnet_help import tf_build_train_op, tf_load_from_ckpt
+from framework import create_framework
 
 class TFNet(object):
 
@@ -45,21 +49,20 @@ class TFNet(object):
 		# Placeholder
 		inp_size = [None] + self.meta['inp_size']
 		self.inp = tf.placeholder(tf.float32, inp_size, 'input')
-		self.ops, self.feed = dict(), dict()
+		self.feed = dict() # other placeholders
 
-		now = self.inp
-		# Iterate through darknet layers
+		# Build the forward pass
+		now = identity(self.inp)
 		num = len(self.darknet.layers)
 		for i, layer in enumerate(self.darknet.layers):
 			name = '{}-{}'.format(str(i),layer.type)
-			if i + 1 == num: name += '-tfnetoutput'
 			args = [layer, now, name]
 			if not self.ckpt: args += [self.feed]
-			self.ops[name] = op_create(*args)
-			now = self.ops[name](verbalise)
+			now = op_create(*args)(verbalise)
+		self.top = now
 
-		# Attach the output to this tfnet
-		self.out = now
+		# Attach the now.out to self
+		self.out = tf.identity(now.out, name='output')
 
 	def setup_meta_ops(self):
 		cfg = {
