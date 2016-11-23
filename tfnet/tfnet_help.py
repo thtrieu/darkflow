@@ -92,7 +92,8 @@ def load_old_graph(self, ckpt):
 	print old_graph_msg.format(ckpt)
 	
 	for var in tf.all_variables():
-		args = [var.name, var.get_shape()]
+		name = var.name.split(':')[0]
+		args = [name, var.get_shape()]
 		val = ckpt_loader(*args)
 		assert val is not None, \
 		'Failed on {}'.format(var.name)
