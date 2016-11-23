@@ -11,8 +11,11 @@ def parser(config, model):
 	Read the .cfg file to extract layers into `layers`
 	as well as model-specific parameters into `meta`
 	"""
-	def _parse(l): return l.split('=')[1].strip()
-	with open('{}{}.cfg'.format(config, model), 'rb') as f:
+	def _parse(l):
+		return l.split('=')[1].strip()
+
+	cfg = os.path.join(config, model + '.cfg')
+	with open(cfg, 'rb') as f:
 		lines = f.readlines()		
 	
 	layers = [] # will contains layers' info
@@ -87,10 +90,10 @@ def discoverer(weightf, s, c):
 
 	allfloat -= out1 # substract the bias
 	if allfloat <= 0:
-		message = '{}.cfg suggests a bigger size'
-		message += ' than {}.weights actually is'
-		exit('Error: {}'.format(message.format(model, model)))
-	
+		msg = 'Configuration suggests a bigger size'
+		msg += ' than {} actually is.'
+		exit('Error: {}'.format(msg.format(weightf)))
+
 	# expected size of last convolution kernel
 	size = (np.sqrt(1.*allfloat/out1/channel))
 	n = last_convo + 1

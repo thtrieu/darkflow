@@ -35,7 +35,7 @@ def tf_train(self):
 		losses += [loss]; step_now = self.FLAGS.load + i
 		print 'step {} - loss {}'.format(step_now, loss)
 		if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
-			ckpt = 'backup/{}-{}'.format(self.meta['model'], step_now)
+			ckpt = os.path.join('backup', '{}-{}'.format(self.meta['model'], step_now))
 			print 'Checkpoint at step {}'.format(step_now)
 			self.saver.save(self.sess, ckpt)
 
@@ -44,6 +44,10 @@ def tf_predict(self):
 	inp_path = self.FLAGS.testset
 	all_inp_ = os.listdir(inp_path)
 	all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
+	if not all_inp_:
+		msg = 'Failed to find any test files in {} .'
+		exit('Error: {}'.format(msg.format(inp_path)))
+
 	batch = min(self.FLAGS.batch, len(all_inp_))
 
 	for j in range(len(all_inp_)/batch):
@@ -51,7 +55,7 @@ def tf_predict(self):
 		all_inp = all_inp_[j*batch: (j*batch+batch)]
 		for inp in all_inp:
 			new_all += [inp]
-			this_inp = '{}{}'.format(inp_path, inp)
+			this_inp = os.path.join(inp_path, inp)
 			this_inp = self.framework.preprocess(this_inp)
 			inp_feed.append(this_inp)
 		all_inp = new_all
@@ -67,6 +71,6 @@ def tf_predict(self):
 			last, len(inp_feed), len(inp_feed) / last))
 
 		for i, prediction in enumerate(out[0]):
-			self.framework.postprocess(prediction, 
-				'{}{}'.format(inp_path, all_inp[i]), 
+			self.framework.postprocess(prediction,
+				os.path.join(inp_path, all_inp[i]),
 				self.FLAGS, self.meta)
