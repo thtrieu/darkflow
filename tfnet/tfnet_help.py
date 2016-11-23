@@ -8,7 +8,6 @@ import tensorflow as tf
 import numpy as np
 import os
 
-off_bound_msg = 'Random scale/translate sends obj off bound'
 too_big_batch = 'Batch size is bigger than training data size'
 old_graph_msg = 'Resolving incompatible graph def from {}'
 
@@ -48,8 +47,7 @@ def shuffle(self):
 	size = len(data); batch = self.FLAGS.batch
 
 	print 'Dataset of {} instance(s)'.format(size)
-	if batch > size:
-		self.FLAGS.batch = batch = size
+	if batch > size: self.FLAGS.batch = batch = size
 	batch_per_epoch = int(size / batch)
 	total = self.FLAGS.epoch * batch_per_epoch
 	yield total
@@ -59,8 +57,7 @@ def shuffle(self):
 		shuffle_idx = perm(np.arange(size))
 		for b in range(batch_per_epoch): 
 			end_idx = (b+1) * batch
-			start_idx = b * batch 
-			offbound = False
+			start_idx = b * batch
 			# two yieldee
 			x_batch = list()
 			feed_batch = dict()
@@ -70,19 +67,16 @@ def shuffle(self):
 				this = data[real_idx]
 				inp, feedval = self.framework.batch(
 					self.FLAGS, self.meta, this)
-				if inp is None: 
-					offbound = True; break
+				if inp is None: continue
 
 				x_batch += [inp]
-				for k in feedval:
-					if k not in feed_batch: 
-						feed_batch[k] = [feedval[k]]; 
+				for key in feedval:
+					if key not in feed_batch: 
+						feed_batch[key] = [feedval[key]]; 
 						continue
-					feed_batch[k] = np.concatenate(
-						[feed_batch[k], [feedval[k]]])		
+					feed_batch[key] = np.concatenate(
+						[feed_batch[key], [feedval[key]]])		
 			
-			if offbound: 
-				print off_bound_msg; continue
 			x_batch = np.concatenate(x_batch, 0)
 			yield (x_batch, feed_batch)
 
