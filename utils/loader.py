@@ -77,6 +77,8 @@ class weights_loader(loader):
             assert walker.offset == walker.size, \
             '{} failed: expect {} bytes, found {}'.format(
                 path, walker.offset, walker.size)
+            print 'Successfully identified {} bytes'.format(
+                walker.size)
 
 class checkpoint_loader(loader):
     """
@@ -119,20 +121,23 @@ class float32_walker(object):
         self.eof = False # end of file
         self.offset = offset # current pos
         self.path = path # save the path
-        if path is not None:
-            self.size = os.path.getsize(path)
-        else: self.eof = True
+        if path is None: self.eof = True
+        else: self.size = os.path.getsize(path)
 
     def walk(self, size):
         if self.eof: return None
+        end_point = self.offset + 4 * size
+        assert end_point <= self.size, \
+        'Over read {}'.format(self.path)
+
         float32_1D_array = np.memmap(
             self.path, shape=(), 
             mode='r', offset=self.offset,
             dtype = '({})float32,'.format(size)
         )
-        self.offset += 4 * size
-        if self.offset == self.size:
-            self.eof = True
+
+        self.offset = end_point
+        if end_point == self.size: self.eof = True
         return float32_1D_array
 
 def model_name(file_path):

@@ -32,6 +32,8 @@ class tfop(object):
 		if verbalise: self.verbalise()
 		return self.x
 
+	def detail(self): pass
+
 	def wrap(self, layer, feed, name):
 		"""
 		wraps `layer` into tf variables & placeholders
@@ -91,7 +93,7 @@ class conv(tfop):
 
 """
 Simpler ops:
-full, flatten, maxpool, leaky, dropout
+full, flatten, maxpool, avgpool, leaky, dropout
 """
 
 class full(tfop):
@@ -109,6 +111,20 @@ class flatten(tfop):
 
 	def detail(self):
 		self.msg = 'flat()'
+
+class softmax(tfop):
+	def forward(self, l, x, name):
+		self.x = tf.nn.softmax(x)
+
+	def detail(self):
+		self.msg = 'softmax()'
+
+class avgpool(tfop):
+	def forward(self, l, x, name):
+		self.x = tf.reduce_mean(x, [1, 2], name = name)
+
+	def detail(self):
+		self.msg = 'avgpool()'
 
 class maxpool(tfop):
 	def forward(self, l, x, name):
@@ -136,7 +152,9 @@ op_types = {
 	'maxpool': maxpool,
 	'leaky': leaky,
 	'dropout': dropout,
-	'flatten': flatten
+	'flatten': flatten,
+	'avgpool': avgpool,
+	'softmax': softmax
 }
 
 def op_create(*args):

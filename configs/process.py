@@ -3,7 +3,8 @@ import os
 
 available = [
 	'[convolutional]', '[connected]',
-	'[maxpool]', '[dropout]'
+	'[maxpool]', '[dropout]', '[avgpool]',
+	'[softmax]'
 ]
 
 def parser(config, model):
@@ -60,19 +61,19 @@ def discoverer(weightf, s, c):
 	"""
 	allbytes = os.path.getsize(weightf)
 	allfloat = allbytes/4.; allfloat -= 4 
-	if allfloat != int(allfloat):
-		msg = '{} might be corrupted, '
-		msg += 'there is not an integer '
-		msg += 'number of floats in there.'
-		exit('Error:{}'.format(msg.format(weightf)))
+	assert allfloat == int(allfloat), (
+		'{} might be corrupted, ' +
+		'there is not an integer ' +
+		'number of floats in there.'
+	).format(weightf)
 
 	last_convo = int() 
 	for i, d in enumerate(s):
 		if d['type'] == '[convolutional]': 
 			last_convo = i
 	
-	out = int() # output_dim of 1st dense layer
-	channel = c; dense = False # for 1st dense layer
+	out = int(); out1 = None # output_dim of 1st dense layer
+	channel = c; flat = False # for 1st dense layer
 	for i, d in enumerate(s):
 		if d['type'] == '[convolutional]': 
 			kernel = d['size'] ** 2 * channel * d['filters']
@@ -80,14 +81,18 @@ def discoverer(weightf, s, c):
 			channel = d['filters']
 			if 'batch_normalize' in d: # scale, mean, var
 				allfloat -= 3 * d['filters'] 
+		elif d['type'] == '[avgpool]':
+			if not flat: return last_convo, None
+			else: out = 1
 		elif d['type'] == '[connected]':
-			if dense is False: 
+			if flat is False: 
 				out = out1 = d['output'] 
-				dense = True; continue 
+				flat = True; continue 
 			weight = out * d['output']
 			allfloat -= weight + d['output']
 			out = d['output']
 
+	if out1 is None: return last_convo, None
 	allfloat -= out1 # substract the bias
 	if allfloat <= 0:
 		msg = 'Configuration suggests a bigger size'
@@ -118,8 +123,10 @@ def cfg_yielder(model, binary, config):
 
 	# Start yielding
 	flat = False # flag for 1st dense layer
+	conv = '.conv.' in weightf
 	for i, d in enumerate(layers):
 
+		if conv and i > last_convo: break
 		if d['type'] == '[convolutional]':
 			mult = (d['size'] == 3) 
 			mult *= (d['stride'] != 2) + 1.
@@ -130,14 +137,14 @@ def cfg_yielder(model, binary, config):
 			h_ = (h + mult * d['pad'] - d['size'])/d['stride']
 			h_ = int(np.floor(h_ + 1.))
 
-			if i == last_convo:
+			if i == last_convo and size is not None:
     			# signal tfnet to figure out the pad itself
 				# for achieving the desired `size`. Namely, 
 				# to use the negative sign:
 				d['pad'] = -size
 				w_ = h_ = size
 
-			batch_norm = d.get('batch_normalize', 0)
+			batch_norm = d.get('batch_normalize', 0) or conv
 			yield ['convolutional', d['size'], c, d['filters'], 
 				   d['stride'], d['pad'], batch_norm]
 			w, h = w_, h_
@@ -154,6 +161,13 @@ def cfg_yielder(model, binary, config):
 			h_ = int(np.floor(h_))
 			w, h = w_, h_
 			l = w * h * c
+
+		if d['type'] == '[avgpool]':
+			flat = True; l = c
+			yield ['avgpool']
+
+		if d['type'] == '[softmax]':
+			yield ['softmax', d['groups']]
 
 		if d['type'] == '[connected]':
 			if not flat:

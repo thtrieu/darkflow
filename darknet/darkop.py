@@ -59,11 +59,18 @@ class layer(object):
     def setup(self, *args): pass
     def finalize(self): pass 
 
+class avgpool_layer(layer):
+    pass
+
 class maxpool_layer(layer):
     def setup(self, ksize, stride, pad):
         self.stride = stride
         self.ksize = ksize
         self.pad = pad
+
+class softmax_layer(layer):
+    def setup(self, groups):
+        self.groups = groups
 
 class dropout_layer(layer):
     def setup(self, p):
@@ -119,7 +126,9 @@ darkops = {
     'dropout': dropout_layer,
     'connected': connect_layer,
     'maxpool': maxpool_layer,
-    'convolutional': convolu_layer
+    'convolutional': convolu_layer,
+    'avgpool': avgpool_layer,
+    'softmax': softmax_layer
 }
 
 def create_darkop(num, ltype, *args):
