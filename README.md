@@ -103,8 +103,7 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 # To resume the most recent checkpoint for training
 ./flow --train --model yolo-3c --load -1
 # To run testing with checkpoint at step 1500
-./flow --notrain --model yolo-3c --load 1500
-# Without the --load option, you will be using the random initialized, untrained yolo-3c
+./flow --model yolo-3c --load 1500
 # Fine tuning tiny yolo from the original one
 ./flow --train --model yolo-tiny --load ./bin/yolo-tiny.weights
 ```

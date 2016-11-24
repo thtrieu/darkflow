@@ -16,8 +16,8 @@ loss() basically build the loss layer of the net, namely,
 import tensorflow.contrib.slim as slim
 import cPickle as pickle
 import tensorflow as tf
-import os.path
 import numpy as np
+import os
 
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from copy import deepcopy
