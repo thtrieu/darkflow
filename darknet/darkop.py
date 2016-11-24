@@ -25,7 +25,7 @@ class layer(object):
         else: self.load_ckpt(src_loader)
 
     def load_weights(self, src_loader):
-        val = src_loader(self)
+        val = src_loader([self])
         sig = [self.type, self.signature]
         if val is not None: self.w = val.w
         self.verbalise(val, sig)
@@ -36,10 +36,10 @@ class layer(object):
             name += '-' + self.type
             name += '-' + var
             shape = self.shape[var]
-            sig = [name, shape]
-            val = src_loader(*sig)
+            key = [name, shape]
+            val = src_loader(key)
             self.w[var] = val
-            self.verbalise(val, sig)
+            self.verbalise(val, key)
 
     def verbalise(self, val, sig):
         msg = 'Initialize'

@@ -16,19 +16,16 @@ class loader(object):
 
     def __init__(self, *args):
         self.setup(*args)
-        self.base = -1
 
-    def __call__(self, *key):
-        key = list(key)
-        for i in range(self.key_len):
+    def __call__(self, key):
+        for i in range(len(key)):
             val = self.load(key[i:], i)
             if val is not None: return val
         return None
     
     def load(self, key, idx):
-        b = self.base
-        while b + 1 < len(self.src_key):
-            b = b + 1; 
+        up_to = min(len(self.src_key), 1)
+        for b in range(up_to):
             key_b = self.src_key[b][idx:]
             if key_b == key:
                 return self.yields(b)
@@ -41,32 +38,29 @@ class loader(object):
         return temp
 
 class weights_loader(loader):
-    """one who understands .weights file"""
-
-    # order of param flattened into .weights file
-    _W_ORDER = dict({ 
+    """one who understands .weights files"""
+    
+    _W_ORDER = dict({ # order of param flattened into .weights file
         'convolutional': ['biases','scale','mean','var','kernel'],
         'connected': ['biases', 'weights']
     })
 
     def setup(self, path, src_layers):
-        self.key_len = 1
-
         self.src_layers = src_layers
         walker = float32_walker(path, 16)
-        self.src_key = [[l] for l in self.src_layers]
+        self.src_key = list()
 
         self.vals = list()
         for i, layer in enumerate(src_layers):
-            if walker.eof: 
-                new = None
+            if walker.eof: new = None
             else: 
                 args = [i, layer.type]+layer.signature
                 new = dn.darknet.create_darkop(*args)
-            self.vals += [new]
 
+            if layer.type not in self.VAR_LAYER: continue
+            self.src_key += [[layer]]
+            self.vals += [new]
             if new is None: continue
-            if new.type not in self.VAR_LAYER: continue
 
             order = self._W_ORDER[new.type]
             for par in order:
@@ -80,15 +74,13 @@ class weights_loader(loader):
             '{} failed: expect {} bytes, found {}'.format(
                 path, walker.offset, walker.size)
             print 'Successfully identified {} bytes'.format(
-                walker.size)
+                walker.offset)
 
 class checkpoint_loader(loader):
     """
     one who understands .ckpt files, very much
     """
     def setup(self, ckpt, ignore):
-        self.key_len = 2
-
         meta = ckpt + '.meta'
         self.names = list()
         self.shape = list()
