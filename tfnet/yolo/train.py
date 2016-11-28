@@ -103,7 +103,7 @@ def batch(FLAGS, meta, chunk):
     confs = np.zeros([S*S,B])
     coord = np.zeros([S*S,B,4])
     proid = np.zeros([S*S,C])
-    conid = np.zeros([S*S,B])
+    conid = np.ones([S*S,B])
     cooid = np.zeros([S*S,B,4])
     prear = np.zeros([S*S,4])
     for obj in allobj:
@@ -116,7 +116,6 @@ def batch(FLAGS, meta, chunk):
         prear[obj[5],2] = obj[1] + obj[3]**2 * .5 * S # xright
         prear[obj[5],3] = obj[2] + obj[4]**2 * .5 * S # ybot
         confs[obj[5], :] = [1.] * B
-        conid[obj[5], :] = [1.] * B
         cooid[obj[5], :, :] = [[1.] * 4] * B
 
     # Finalise the placeholders' values
