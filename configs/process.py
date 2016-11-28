@@ -43,9 +43,12 @@ def parser(model):
 				layer[line.split('=')[0]] = i
 			except:
 				if line == str(): continue
-				key = _parse(line, 0)
-				val = _parse(line, 1)
-				layer[key] = val
+				try: #
+					key = _parse(line, 0)
+					val = _parse(line, 1)
+					layer[key] = val
+				except:
+					pass
 
 	meta = layer # last layer contains meta info
 	meta['model'] = model
@@ -126,7 +129,7 @@ def cfg_yielder(model, binary):
 	flat = False # flag for 1st dense layer
 	conv = '.conv.' in weightf
 	for i, d in enumerate(layers):
-
+		
 		if conv and i > last_convo: break
 		if d['type'] == '[convolutional]':
 			mult = (d['size'] == 3) 

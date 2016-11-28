@@ -45,6 +45,7 @@ class tfop(object):
 			if val is None: # darknet is partially loaded
 				args = [self.lay.wshape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
+
 			self.lay.w[var] = tf.Variable(val, name = sig)
 		
 		for ph in self.lay.h: # placeholders
@@ -82,8 +83,6 @@ class convolutional(tfop):
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
 	def batchnorm(self, l, x): 
-		#return x
-
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], offset = None, 
 			variance = l.w['var'], scale = l.w['scale'], 

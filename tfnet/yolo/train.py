@@ -208,9 +208,9 @@ def loss(net):
     confs = tf.mul(best_box, _confs)
 
     # take care of the weight terms
-    weight_con = snoob*(1.-best_box) + sconf*best_box
+    weight_con = snoob * (1. - confs) + sconf * confs
     conid = tf.mul(_conid, weight_con)
-    weight_coo = tf.concat(3, 4 * [tf.expand_dims(best_box, -1)])
+    weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
     cooid = tf.mul(_cooid, scoor * weight_coo)
     proid = sprob * _proid
 
