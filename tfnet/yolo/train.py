@@ -49,7 +49,10 @@ def parse(FLAGS, meta):
         exit('Error: {}'.format(msg.format(ann)))
     print '\n{} parsing {}'.format(meta['model'], ann)
     dumps = pascal_voc_clean_xml(ann, meta['labels'])
-    save_to = os.path.join("tfnet", "yolo", meta['model'])
+
+    model = meta['model'].split('/')[-1]
+    model = '.'.join(model.split('.')[:-1])
+    save_to = os.path.join("tfnet", "yolo", model)
     while True:
         if not os.path.isfile(save_to + ext): break
         save_to = save_to + '_'
