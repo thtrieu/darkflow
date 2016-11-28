@@ -7,16 +7,15 @@ available = [
 	'[softmax]'
 ]
 
-def parser(config, model):
+def parser(model):
 	"""
 	Read the .cfg file to extract layers into `layers`
 	as well as model-specific parameters into `meta`
 	"""
-	def _parse(l):
-		return l.split('=')[1].strip()
+	def _parse(l, i = 1):
+		return l.split('=')[i].strip()
 
-	cfg = os.path.join(config, model + '.cfg')
-	with open(cfg, 'rb') as f:
+	with open(model, 'rb') as f:
 		lines = f.readlines()		
 	
 	layers = [] # will contains layers' info
@@ -43,11 +42,11 @@ def parser(config, model):
 				if i == int(i): i = int(i)
 				layer[line.split('=')[0]] = i
 			except:
-				try:
-					if _parse(line) == 'leaky':
-						layer['activation'] = 'leaky'
-				except:
-					pass
+				if line == str(): continue
+				key = _parse(line, 0)
+				val = _parse(line, 1)
+				layer[key] = val
+
 	meta = layer # last layer contains meta info
 	meta['model'] = model
 	meta['inp_size'] = [h, w, c]
@@ -107,17 +106,19 @@ def discoverer(weightf, s, c):
 	print 'Last convolutional kernel size = {}'.format(size)
 	return last_convo, int(size)
 
-def cfg_yielder(model, binary, config):
+def cfg_yielder(model, binary):
 	"""
 	yielding each layer information, if model is discovered 
 	for the first time (undiscovered = True), discoverer
 	will be employed
 	"""
-	layers, meta = parser(config, model); yield meta;
+	layers, meta = parser(model); yield meta;
 	h, w, c = meta['inp_size']; l = w * h * c
 
 	last_convo = None; size = None;
-	weightf = binary + '{}.weights'.format(model)
+	name = model.split('/')[-1]
+	name = name.split('.')[0]
+	weightf = binary + '{}.weights'.format(name)
 	if os.path.isfile(weightf): # there is an assisting binary
 		last_convo, size = discoverer(weightf, layers, c)
 
@@ -150,7 +151,9 @@ def cfg_yielder(model, binary, config):
 			w, h = w_, h_
 			c = d['filters']
 			l = w * h * c
-			if 'activation' in d: yield ['leaky']
+			if 'activation' in d:
+				if d['activation'] != 'linear':
+					yield [d['activation']]
 			
 		if d['type'] == '[maxpool]':
 			pad = d.get('pad', 0)
@@ -175,7 +178,9 @@ def cfg_yielder(model, binary, config):
 				flat = True
 			yield ['connected', l, d['output']]
 			l = d['output']
-			if 'activation' in d: yield ['leaky']
+			if 'activation' in d:
+				if d['activation'] != 'linear':
+					yield [d['activation']]
 
 		if d['type'] == '[dropout]': 
 			yield ['dropout', d['probability']]

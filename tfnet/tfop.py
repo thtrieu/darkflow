@@ -1,9 +1,9 @@
 """
 file: ./tfops.py
 includes: convl, batchnorm, dense, maxpool, etc
-functions that takes input `x`, layer `l` of type layer
-defined in ./darknet.py and return the output of the
-corresponding layer.
+functions that takes input `inp`, layer `layer` of type layer
+defined in ./darknet/darkop.py and return the output of the
+corresponding layer in .out
 """
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
@@ -36,15 +36,20 @@ class tfop(object):
 		"""
 		wraps `self.lay` into tf variables & placeholders
 		if layer does not carry value (partial net loaded)
-		the corresponding tf variable will also be initialised 
-		"""
+		the corresponding tf variable will be initialised 
+		""" 
 		if feed is None: return
 
-		for var in self.lay.shape: # trainable vars
+		# l = self.lay
+		# if l.type == 'convolutional':
+		# 	for p in ['mean', 'var', 'scale']:
+		# 		print p, l.w[p].shape, np.mean(l.w[p]), np.std(l.w[p])
+
+		for var in self.lay.wshape: # trainable vars
 			sig = '{}-{}'.format(self.sig, var) 
 			val = self.lay.w.get(var, None) 
 			if val is None: # darknet is partially loaded
-				args = [self.lay.shape[var], 0., 1e-2]
+				args = [self.lay.wshape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
 			self.lay.w[var] = tf.Variable(val, name = sig)
 		
@@ -67,7 +72,7 @@ class convolutional(tfop):
 		if self.lay.pad < 0: # figure the pad out
 			size = np.int(_shape(self.inp.out)[1])
 			expect = -(self.lay.pad+1) * self.lay.stride 
-			expect += self.lay.shape['kernel'][0] - size
+			expect += self.lay.wshape['kernel'][0] - size
 			pad = [expect / 2, expect - expect / 2]
 			if pad[0] < 0: pad[0] = 0
 			if pad[1] < 0: pad[1] = 0
@@ -77,16 +82,19 @@ class convolutional(tfop):
 
 		temp = tf.pad(self.inp.out, [[0, 0]] + [pad]*2 + [[0, 0]])
 		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
-	        name = self.sig, strides = [1] + [self.lay.stride]*2 + [1])
+	        name = self.sig, strides = [1] + [self.lay.stride] * 2 + [1])
 
 		if self.lay.batch_norm: temp = self.batchnorm(self.lay, temp)
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
-	def batchnorm(self, l, x):                
+	def batchnorm(self, l, x): 
+		#return x
+
 		return tf.nn.batch_normalization(
-			x = x, mean = l.w['mean'], variance = l.w['var'], 
-			offset = None, scale = l.w['scale'], name = self.sig + '-bnorm',
-			variance_epsilon = 1e-6)
+			x = x, mean = l.w['mean'], offset = None, 
+			variance = l.w['var'], scale = l.w['scale'], 
+			variance_epsilon = 1e-5, name = self.sig + '-bnorm'
+			)
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))

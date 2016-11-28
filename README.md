@@ -69,12 +69,12 @@ First, let's take a closer look at one of a very useful option `--load`
 
 ```bash
 # 1. With no --load option, yolo-tiny.weights are loaded
-./flow --model yolo-tiny
+./flow --model ./configs/yolo-tiny.cfg --load ./bin/yolo-tiny.weights
 # 2. With yolo-3c however, since there are no yolo-3c.weights,
 # its parameters will be randomly initialized
-./flow --model yolo-3c
+./flow --model ./configs/yolo-3c.cfg
 # 3. It is useful to reuse the first identical layers of tiny for 3c
-./flow --model yolo-3c --load ./bin/yolo-tiny.weights
+./flow --model ./configs/yolo-3c.cfg --load ./bin/yolo-tiny.weights
 # this will print out which layers are reused, which are initialized
 ```
 
@@ -82,7 +82,7 @@ More on `--load` later. All of the above `flow` commands essentially perform for
 
 ```bash
 # Forward all images in ./test using tiny yolo and 100% GPU usage
-./flow --test ./test --model yolo-tiny --gpu 1.0
+./flow --test ./test --model ./configs/yolo-tiny.cfg --load ./bin/yolo-tiny.weights --gpu 1.0
 # The results are stored in results/
 ```
 
@@ -90,9 +90,9 @@ Training is simple as you only have to add option `--train` like below:
 
 ```bash
 # Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
-./flow --model yolo-3c --load ./bin/yolo-tiny.weights --train --gpu 1.0
+./flow --model ./configs/yolo-3c.cfg --load ./bin/yolo-tiny.weights --train --gpu 1.0
 # Completely initialize yolo-3c and train it with ADAM optimizer
-./flow --model yolo-3c --train --trainer adam
+./flow --model ./configs/yolo-3c.cfg --train --trainer adam
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `./backup/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
@@ -101,16 +101,16 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 
 ```bash
 # To resume the most recent checkpoint for training
-./flow --train --model yolo-3c --load -1
+./flow --train --model ./configs/yolo-3c.cfg --load -1
 # To run testing with checkpoint at step 1500
-./flow --model yolo-3c --load 1500
+./flow --model ./configs/yolo-3c.cfg --load 1500
 # Fine tuning tiny yolo from the original one
-./flow --train --model yolo-tiny --load ./bin/yolo-tiny.weights
+./flow --train --model ./configs/yolo-tiny.cfg --load ./bin/yolo-tiny.weights
 ```
 
 You can even initialize a new net by `ckpt` file with `--load`:
 ```bash
-./flow --train --model yolo-2c --load ./backup/yolo-3c-1500
+./flow --train --model ./configs/yolo-2c.cfg --load ./backup/yolo-3c-1500
 # recollected and initialized layers will be printed to console
 ```
 
@@ -122,7 +122,7 @@ There is an official way to do the same thing using [this script](https://github
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-./flow --model yolo-3c --load -1 --savepb
+./flow --model ./configs/yolo-3c.cfg --load -1 --savepb
 ```
 
 For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.

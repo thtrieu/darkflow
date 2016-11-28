@@ -12,7 +12,9 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
 default_models = ['yolo-full', 'yolo-new', 'yolo-small', 'yolo-tiny', 'yolo-baby']
 
 def labels(meta):
-    if meta['model'] in default_models: 
+    model = meta['model'].split('/')[-1]
+    model = model.split('.')[0]
+    if model in default_models: 
         meta['labels'] = labels20
     else: 
         with open('labels.txt','r') as f:

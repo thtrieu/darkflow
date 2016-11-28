@@ -1,12 +1,24 @@
 """
 framework factory
 """
-
+import tensorflow as tf
 import yolo
 
 class framework(object):
 	def __init__(self):
 		pass
+	def metaprocess(self, meta):
+		return meta
+	def is_inp(self, inp):
+		return True
+	def loss(self, net):
+		m = net.meta
+		_truth = tf.placeholder(tf.float32, net.out.get_shape())
+		placeholders = {
+			'truth': _truth
+		}
+		loss = tf.nn.l2_loss(_truth - net.out)
+		return placeholders, loss
 
 class YOLO(framework):
 	def __init__(self):

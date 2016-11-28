@@ -74,3 +74,5 @@ def tf_predict(self):
 			self.framework.postprocess(prediction,
 				os.path.join(inp_path, all_inp[i]),
 				self.FLAGS, self.meta)
+			# p = prediction[:]
+			# print np.mean(p), np.std(p)

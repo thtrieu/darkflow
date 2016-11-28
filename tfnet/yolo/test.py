@@ -29,10 +29,10 @@ def metaprocess(meta):
 		g = (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
 	labels(meta)
-	if len(meta['labels']) != meta['classes']:
-		msg = 'labels.txt and configs/{}.cfg '
-		msg+= 'indicate different class number'
-		exit('Error: {}'.format(msg.format(meta['model'])))
+	assert len(meta['labels']) == meta['classes'], (
+		'labels.txt and {} indicate' + ' '
+		'inconsistent class numbers'
+	).format(meta['model'])
 	colors = list()
 	base = int(np.ceil(pow(meta['classes'], 1./3)))
 	for x in range(len(meta['labels'])): 
@@ -64,23 +64,24 @@ def preprocess(imPath, allobj = None):
 		for obj in allobj:
 			fix(obj, dims, scale, offs)
 			if not flip: continue
-			obj_1_ = obj[1]
+			obj_1_ =  obj[1]
 			obj[1] = dims[0] - obj[3]
 			obj[3] = dims[0] - obj_1_
 
 	size = (448, 448)
 	resized = cv2.resize(im, size)
-	image_array = np.array(resized)
+	im_np = np.array(resized)
 
 	# recoloring as np is fast.
 	if allobj is not None:
-		image_array = im_np_recolor(image_array)
+		im_np = im_np_recolor(im_np)
 
 	# return np array input to YOLO
-	image_array = image_array / 255.
-	image_array = image_array * 2. - 1.
-	image_array = np.expand_dims(image_array, 0)
-	return image_array#, im_ # for unit testing
+	im_np = im_np / 255.
+	im_np = im_np * 2. - 1.
+	im_np = np.expand_dims(im_np, 0)
+	if allobj is None: return im_np
+	return im_np #, im_ # for unit testing
 	
 
 def postprocess(predictions, img_path, FLAGS, meta):

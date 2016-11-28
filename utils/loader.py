@@ -15,20 +15,21 @@ class loader(object):
     VAR_LAYER = ['convolutional', 'connected']
 
     def __init__(self, *args):
-        self.setup(*args)
+        self.src_key = list()
+        self.vals = list()
+        self.load(*args)
 
     def __call__(self, key):
-        for i in range(len(key)):
-            val = self.load(key[i:], i)
+        for idx in range(len(key)):
+            val = self.find(key[idx:], idx)
             if val is not None: return val
         return None
     
-    def load(self, key, idx):
+    def find(self, key, idx):
         up_to = min(len(self.src_key), 1)
-        for b in range(up_to):
-            key_b = self.src_key[b][idx:]
-            if key_b == key:
-                return self.yields(b)
+        for i in range(up_to):
+            key_b = self.src_key[i][idx:]
+            if key_b == key: return self.yields(i)
         return None
 
     def yields(self, idx):
@@ -45,34 +46,32 @@ class weights_loader(loader):
         'connected': ['biases', 'weights']
     })
 
-    def setup(self, path, src_layers):
+    def load(self, path, src_layers):
         self.src_layers = src_layers
         walker = float32_walker(path, 16)
-        self.src_key = list()
 
-        self.vals = list()
         for i, layer in enumerate(src_layers):
+            if layer.type not in self.VAR_LAYER: continue
+            self.src_key.append([layer])
+            
             if walker.eof: new = None
             else: 
-                args = [i, layer.type]+layer.signature
+                args = [i] + layer.signature
                 new = dn.darknet.create_darkop(*args)
+            self.vals.append(new)
 
-            if layer.type not in self.VAR_LAYER: continue
-            self.src_key += [[layer]]
-            self.vals += [new]
             if new is None: continue
-
             order = self._W_ORDER[new.type]
             for par in order:
-                if par not in new.shape: continue
-                val = walker.walk(new.size[par])
+                if par not in new.wshape: continue
+                val = walker.walk(new.wsize[par])
                 new.w[par] = val
             new.finalize()
 
         if walker.path is not None:
             assert walker.offset == walker.size, \
-            '{} failed: expect {} bytes, found {}'.format(
-                path, walker.offset, walker.size)
+            'expect {} bytes, found {}'.format(
+                walker.offset, walker.size)
             print 'Successfully identified {} bytes'.format(
                 walker.offset)
 
@@ -80,13 +79,8 @@ class checkpoint_loader(loader):
     """
     one who understands .ckpt files, very much
     """
-    def setup(self, ckpt, ignore):
+    def load(self, ckpt, ignore):
         meta = ckpt + '.meta'
-        self.names = list()
-        self.shape = list()
-        self.vals = list()
-        self.src_key = list()
-
         with tf.Graph().as_default() as graph:
             with tf.Session().as_default() as sess:
                 saver = tf.train.import_meta_graph(meta)

@@ -3,19 +3,19 @@ import numpy as np
 
 class layer(object):
     def __init__(self, num, ltype, *args):
-        self.signature = list(args)
+        self.signature = [ltype] + list(args)
         self.number = num
         self.type = ltype
 
         self.w = dict() # weights
         self.h = dict() # placeholders
-        self.shape = dict() # weight shape
-        self.size = dict() # weight size
+        self.wshape = dict() # weight shape
+        self.wsize = dict() # weight size
         self.setup(*args) # set attr up
-        for var in self.shape:
-            shp = self.shape[var]
+        for var in self.wshape:
+            shp = self.wshape[var]
             size = np.prod(shp)
-            self.size[var] = size
+            self.wsize[var] = size
 
     def load(self, src_loader):
         if self.type not in src_loader.VAR_LAYER: return
@@ -26,25 +26,26 @@ class layer(object):
 
     def load_weights(self, src_loader):
         val = src_loader([self])
-        sig = [self.type, self.signature]
+        sig = [self.number, self.signature]
         if val is not None: self.w = val.w
-        self.verbalise(val, sig)
+        self.verbalise(val is None, sig)
 
     def load_ckpt(self, src_loader):
-        for var in self.shape:
+        for var in self.wshape:
             name = str(self.number)
             name += '-' + self.type
             name += '-' + var
-            shape = self.shape[var]
+            shape = self.wshape[var]
             key = [name, shape]
             val = src_loader(key)
             self.w[var] = val
-            self.verbalise(val, key)
+            self.verbalise(val is None, key)
 
-    def verbalise(self, val, sig):
-        msg = 'Initialize'
-        if val is not None: msg = 'Recollect '
-        print '{} {}: {}'.format(msg, *sig)
+    def verbalise(self, initialize, sig):
+        msg = 'Re-collect'
+        if initialize: msg = 'Initialize'
+        template = '{:<10} layer {:>3}: {}' 
+        print template.format(msg, *sig)
 
 
     # For comparing two layers
@@ -55,7 +56,7 @@ class layer(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    # Over-ride methods
+    # Derivative methods
     def setup(self, *args): pass
     def finalize(self): pass 
 
@@ -80,18 +81,18 @@ class dropout_layer(layer):
             'shape': []
         }
 
-class convolu_layer(layer):
+class convolutional_layer(layer):
     def setup(self, ksize, c, n, stride, pad, batch_norm):
         self.batch_norm = bool(batch_norm)
         self.stride = stride
         self.pad = pad
-        self.kshape = [n, c, ksize, ksize] # darknet shape
-        self.shape = {
+        self.dnshape = [n, c, ksize, ksize] # darknet shape
+        self.wshape = {
             'biases': [n], 
             'kernel': [ksize, ksize, c, n]
         }
         if self.batch_norm:
-            self.shape.update({
+            self.wshape.update({
                 'var'  : [n], 
                 'scale': [n], 
                 'mean' : [n]
@@ -100,13 +101,13 @@ class convolu_layer(layer):
     def finalize(self):
         kernel = self.w['kernel']
         if kernel is None: return
-        kernel = kernel.reshape(self.kshape)
+        kernel = kernel.reshape(self.dnshape)
         kernel = kernel.transpose([2,3,1,0])
         self.w['kernel'] = kernel
 
-class connect_layer(layer):
+class connected_layer(layer):
     def setup(self, input_size, output_size):
-        self.shape = {
+        self.wshape = {
             'biases': [output_size],
             'weights': [input_size, output_size]
         }
@@ -115,7 +116,7 @@ class connect_layer(layer):
         weights = self.w['weights']
         if weights is None: return
         weights = weights.reshape(
-            self.shape['weights'])
+            self.wshape['weights'])
         self.w['weights'] = weights
 
 """
@@ -124,9 +125,9 @@ Darkop Factory
 
 darkops = {
     'dropout': dropout_layer,
-    'connected': connect_layer,
+    'connected': connected_layer,
     'maxpool': maxpool_layer,
-    'convolutional': convolu_layer,
+    'convolutional': convolutional_layer,
     'avgpool': avgpool_layer,
     'softmax': softmax_layer
 }

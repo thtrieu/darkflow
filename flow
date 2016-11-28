@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from tfnet.tfnet import TFNet
-from darknet.darknet import Darknet
 from tensorflow import flags
 import tensorflow as tf
 import time
@@ -39,16 +38,7 @@ get_dir([FLAGS.testset, FLAGS.binary, 'results', 'backup'])
 try: FLAGS.load = int(FLAGS.load)
 except: pass
 
-# now get to the real work
-darknet = Darknet(FLAGS)
-darknet.load_weights()
-
-print ('\nCompiling net & fill in parameters...')
-start = time.time()
-if FLAGS.gpu <= 0.: 
-	with tf.device('cpu:0'): tfnet = TFNet(darknet, FLAGS)
-else: tfnet = TFNet(darknet, FLAGS)
-print ('Finished in {}s\n'.format(time.time() - start))
+tfnet = TFNet(FLAGS)
 
 if FLAGS.train:
 	print 'Enter training ...';	tfnet.train()
