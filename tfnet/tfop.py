@@ -39,12 +39,6 @@ class tfop(object):
 		the corresponding tf variable will be initialised 
 		""" 
 		if feed is None: return
-
-		# l = self.lay
-		# if l.type == 'convolutional':
-		# 	for p in ['mean', 'var', 'scale']:
-		# 		print p, l.w[p].shape, np.mean(l.w[p]), np.std(l.w[p])
-
 		for var in self.lay.wshape: # trainable vars
 			sig = '{}-{}'.format(self.sig, var) 
 			val = self.lay.w.get(var, None) 

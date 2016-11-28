@@ -30,7 +30,7 @@ def tf_load_from_ckpt(self):
 			self.FLAGS.load = int(load_point)
 	
 	model = self.meta['model'].split('/')[-1]
-	model = model.split('.')[0]
+	model = '.'.join(model.split('.')[:-1])
 	load_point = os.path.join('backup', model)
 	load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 	print 'Loading from {}'.format(load_point)
@@ -48,7 +48,9 @@ def shuffle(self):
 	size = len(data); batch = self.FLAGS.batch
 
 	print 'Dataset of {} instance(s)'.format(size)
-	if batch > size: self.FLAGS.batch = batch = size
+	if batch > size: 
+		print 'help!'
+		self.FLAGS.batch = batch = size
 	batch_per_epoch = int(size / batch)
 	total = self.FLAGS.epoch * batch_per_epoch
 	yield total

@@ -9,16 +9,20 @@ import time
 
 def tf_train(self):
 	batches = shuffle(self)
-
-	print 'Training statistics:'
-	print '\tLearning rate : {}'.format(self.FLAGS.lr)
-	print '\tBatch size    : {}'.format(self.FLAGS.batch)
-	print '\tEpoch number  : {}'.format(self.FLAGS.epoch)
-	print '\tBackup every  : {}'.format(self.FLAGS.save)
+	model = self.meta['model'].split('/')[-1]
+	model = '.'.join(model.split('.')[:-1])
 
 	losses = list(); total = int() # total number of batches
 	for i, packet in enumerate(batches):
-		if i == 0: total = packet; continue
+		if i == 0: 
+			total = packet; 
+			print 'Training statistics:'
+			print '\tLearning rate : {}'.format(self.FLAGS.lr)
+			print '\tBatch size    : {}'.format(self.FLAGS.batch)
+			print '\tEpoch number  : {}'.format(self.FLAGS.epoch)
+			print '\tBackup every  : {}'.format(self.FLAGS.save)
+			continue
+
 		x_batch, datum = packet
 
 		if i == 1: \
@@ -35,7 +39,7 @@ def tf_train(self):
 		losses += [loss]; step_now = self.FLAGS.load + i
 		print 'step {} - loss {}'.format(step_now, loss)
 		if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
-			ckpt = os.path.join('backup', '{}-{}'.format(self.meta['model'], step_now))
+			ckpt = os.path.join('backup', '{}-{}'.format(model, step_now))
 			print 'Checkpoint at step {}'.format(step_now)
 			self.saver.save(self.sess, ckpt)
 
