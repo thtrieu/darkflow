@@ -64,25 +64,18 @@ class tfop(object):
 
 class convolutional(tfop):
 	def forward(self):
-		if self.lay.pad < 0: # figure the pad out
-			size = np.int(_shape(self.inp.out)[1])
-			expect = -(self.lay.pad+1) * self.lay.stride 
-			expect += self.lay.wshape['kernel'][0] - size
-			pad = [expect / 2, expect - expect / 2]
-			if pad[0] < 0: pad[0] = 0
-			if pad[1] < 0: pad[1] = 0
-		else:
-			pad = [self.lay.pad, self.lay.pad]
-		self.lay.pad = pad
-
+		pad = [self.lay.pad, self.lay.pad];
 		temp = tf.pad(self.inp.out, [[0, 0]] + [pad]*2 + [[0, 0]])
+		
 		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
 	        name = self.sig, strides = [1] + [self.lay.stride] * 2 + [1])
 
 		if self.lay.batch_norm: temp = self.batchnorm(self.lay, temp)
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
-	def batchnorm(self, l, x): 
+	def batchnorm(self, l, x):
+		return (x-l.w['mean'])/(tf.sqrt(l.w['var'])+1e-6) * l.w['scale']
+
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], offset = None, 
 			variance = l.w['var'], scale = l.w['scale'], 
@@ -91,7 +84,8 @@ class convolutional(tfop):
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
-		return '{:<23} pad{}'.format(msg, self.lay.pad)
+		return '{:<23} pad {:<2} {}'.format(msg, 
+			self.lay.pad, self.lay.batch_norm * 'batchnorm')
 
 
 """
@@ -132,6 +126,16 @@ class avgpool(tfop):
 
 	def speak(self): return 'avgpool()'
 
+class dropout(tfop):
+	def forward(self):
+		self.out = tf.nn.dropout(
+			self.inp.out, 
+			self.lay.h['pdrop'], 
+			name = self.sig
+		)
+
+	def speak(self): return 'drop()'
+
 class maxpool(tfop):
 	def forward(self):
 		self.out = tf.nn.max_pool(
@@ -153,22 +157,8 @@ class leaky(tfop):
 
 	def verbalise(self): pass
 
-class dropout(tfop):
-	def forward(self):
-		self.out = tf.nn.dropout(
-			self.inp.out, 
-			self.lay.h['pdrop'], 
-			name = self.sig
-		)
-
-	def verbalise(self): pass
-
 
 class identity(tfop):
-	"""
-	A special tfop that signals
-	the begining of the stack
-	"""
 	def __init__(self, inp):
 		self.inp = None
 		self.out = inp

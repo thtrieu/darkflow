@@ -78,7 +78,7 @@ def preprocess(imPath, allobj = None):
 
 	# return np array input to YOLO
 	im_np = im_np / 255.
-	im_np = im_np * 2. - 1.
+	#im_np = im_np * 2. - 1.
 	im_np = np.expand_dims(im_np, 0)
 	return im_np #, im_ # for unit testing
 	

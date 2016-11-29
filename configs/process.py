@@ -55,65 +55,9 @@ def parser(model):
 	meta['inp_size'] = [h, w, c]
 	return layers, meta
 
-def discoverer(weightf, s, c):
-	"""
-	discoverer returns:
-	1. index of last convolutional layer
-	2. the expected size of this conv layer's kernel
-	"""
-	allbytes = os.path.getsize(weightf)
-	allfloat = allbytes/4.; allfloat -= 4 
-	assert allfloat == int(allfloat), (
-		'{} might be corrupted, ' +
-		'there is not an integer ' +
-		'number of floats in there.'
-	).format(weightf)
-
-	last_convo = int() 
-	for i, d in enumerate(s):
-		if d['type'] == '[convolutional]': 
-			last_convo = i
-	
-	out = int(); out1 = None # output_dim of 1st dense layer
-	channel = c; flat = False # for 1st dense layer
-	for i, d in enumerate(s):
-		if d['type'] == '[convolutional]': 
-			kernel = d['size'] ** 2 * channel * d['filters']
-			allfloat -= kernel + d['filters']
-			channel = d['filters']
-			if 'batch_normalize' in d: # scale, mean, var
-				allfloat -= 3 * d['filters'] 
-		elif d['type'] == '[avgpool]':
-			if not flat: return last_convo, None
-			else: out = 1
-		elif d['type'] == '[connected]':
-			if flat is False: 
-				out = out1 = d['output'] 
-				flat = True; continue 
-			weight = out * d['output']
-			allfloat -= weight + d['output']
-			out = d['output']
-
-	if out1 is None: return last_convo, None
-	allfloat -= out1 # substract the bias
-	if allfloat <= 0:
-		msg = 'Configuration suggests a bigger size'
-		msg += ' than {} actually is.'
-		exit('Error: {}'.format(msg.format(weightf)))
-
-	# expected size of last convolution kernel
-	size = (np.sqrt(1.*allfloat/out1/channel))
-	n = last_convo + 1
-	while 'output' not in s[n]: 
-		size *= s[n].get('size',1); n += 1
-	print 'Last convolutional kernel size = {}'.format(size)
-	return last_convo, int(size)
-
 def cfg_yielder(model, binary):
 	"""
-	yielding each layer information, if model is discovered 
-	for the first time (undiscovered = True), discoverer
-	will be employed
+	yielding each layer information to initialize `layer`
 	"""
 	layers, meta = parser(model); yield meta;
 	h, w, c = meta['inp_size']; l = w * h * c
@@ -122,8 +66,6 @@ def cfg_yielder(model, binary):
 	name = model.split('/')[-1]
 	name = name.split('.')[0]
 	weightf = binary + '{}.weights'.format(name)
-	if os.path.isfile(weightf): # there is an assisting binary
-		last_convo, size = discoverer(weightf, layers, c)
 
 	# Start yielding
 	flat = False # flag for 1st dense layer
@@ -132,39 +74,36 @@ def cfg_yielder(model, binary):
 		
 		if conv and i > last_convo: break
 		if d['type'] == '[convolutional]':
-			mult = (d['size'] == 3) 
-			mult *= (d['stride'] != 2) + 1.
-			if d['size'] == 1: d['pad'] = 0
 
-			w_ = (w + mult * d['pad'] - d['size'])/d['stride']
-			w_ = int(np.floor(w_ + 1.))
-			h_ = (h + mult * d['pad'] - d['size'])/d['stride']
-			h_ = int(np.floor(h_ + 1.))
+			n = d.get('filters', 1)
+			size = d.get('size', 1)
+			stride = d.get('stride', 1)
+			pad = d.get('pad', 0)
+			padding = d.get('padding', 0)
+			if pad: padding = size / 2
 
-			if i == last_convo and size is not None:
-    			# signal tfnet to figure out the pad itself
-				# for achieving the desired `size`. Namely, 
-				# to use the negative sign:
-				d['pad'] = -size
-				w_ = h_ = size
+			w_ = (w + 2 * padding - size)/stride + 1
+			h_ = (h + 2 * padding - size)/stride + 1
+			
 
 			batch_norm = d.get('batch_normalize', 0) or conv
-			yield ['convolutional', d['size'], c, d['filters'], 
-				   d['stride'], d['pad'], batch_norm]
-			w, h = w_, h_
-			c = d['filters']
+			yield ['convolutional', size, c, n, 
+				   stride, padding, batch_norm]
+			w, h, c = w_, h_, n
 			l = w * h * c
 			if 'activation' in d:
 				if d['activation'] != 'linear':
 					yield [d['activation']]
 			
 		if d['type'] == '[maxpool]':
-			pad = d.get('pad', 0)
-			yield ['maxpool', d['size'], d['stride'], pad]
-			w_ = (w * 1.0 - d['size'])/d['stride'] + 1
-			w_ = int(np.floor(w_))
-			h_ = (h * 1.0 - d['size'])/d['stride'] + 1
-			h_ = int(np.floor(h_))
+			stride = d.get('stride', 1)
+			size = d.get('size', stride)
+			padding = d.get('padding', (size-1)/2)
+
+			yield ['maxpool', size, stride, padding]
+
+			w_ = (w + 2*padding)/d['stride'] 
+			h_ = (h + 2*padding)/d['stride']
 			w, h = w_, h_
 			l = w * h * c
 
@@ -187,3 +126,5 @@ def cfg_yielder(model, binary):
 
 		if d['type'] == '[dropout]': 
 			yield ['dropout', d['probability']]
+
+	#exit()

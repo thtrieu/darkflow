@@ -9,7 +9,8 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
-default_models = ['yolo-full', 'yolo-new', 'yolo-small', 'yolo-tiny', 'yolo-baby']
+default_models = ['yolo-full', 'yolo-new', 'yolo-small', 
+                  'yolo-tiny', 'yolo-baby', 'tiny-yolo']
 
 def labels(meta):
     model = meta['model'].split('/')[-1]

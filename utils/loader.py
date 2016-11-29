@@ -9,7 +9,7 @@ import numpy as np
 
 class loader(object):
     """
-    interface to work with both .weights and .chkpt files
+    interface to work with both .weights and .ckpt files
     in loading / recollecting / resolving mode
     """
     VAR_LAYER = ['convolutional', 'connected']
