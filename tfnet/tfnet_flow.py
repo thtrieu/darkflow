@@ -45,7 +45,7 @@ def tf_train(self):
 
 
 def tf_predict(self):
-	inp_path = self.FLAGS.testset
+	inp_path = self.FLAGS.test
 	all_inp_ = os.listdir(inp_path)
 	all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
 	if not all_inp_:
