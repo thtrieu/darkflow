@@ -39,7 +39,7 @@ def tf_train(self):
 		losses += [loss]; step_now = self.FLAGS.load + i
 		print 'step {} - loss {}'.format(step_now, loss)
 		if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
-			ckpt = os.path.join('backup', '{}-{}'.format(model, step_now))
+			ckpt = os.path.join(self.FLAGS.backup, '{}-{}'.format(model, step_now))
 			print 'Checkpoint at step {}'.format(step_now)
 			self.saver.save(self.sess, ckpt)
 

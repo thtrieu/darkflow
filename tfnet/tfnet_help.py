@@ -21,7 +21,7 @@ def tf_build_train_op(self):
 
 def tf_load_from_ckpt(self):
 	if self.FLAGS.load < 0: # load lastest ckpt
-		with open('backup/checkpoint', 'r') as f:
+		with open(self.FLAGS.backup + 'checkpoint', 'r') as f:
 			last = f.readlines()[-1].strip()
 			load_point = last.split(' ')[1]
 			load_point = load_point.split('"')[1]
@@ -30,7 +30,7 @@ def tf_load_from_ckpt(self):
 	
 	model = self.meta['model'].split('/')[-1]
 	model = '.'.join(model.split('.')[:-1])
-	load_point = os.path.join('backup', model)
+	load_point = os.path.join(self.FLAGS.backup, model)
 	load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 	print 'Loading from {}'.format(load_point)
 	try: self.saver.restore(self.sess, load_point)

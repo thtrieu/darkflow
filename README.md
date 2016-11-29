@@ -97,7 +97,7 @@ Training is simple as you only have to add option `--train` like below:
 ./flow --model cfg/yolo-3c.cfg --train --trainer adam
 ```
 
-During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `backup/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
+During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
 
 To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darktf` will load the most recent save. Here are a few examples:
 
@@ -112,7 +112,7 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 
 You can even initialize new nets from `ckpt` files with `--load`:
 ```bash
-./flow --train --model cfg/yolo-2c.cfg --load backup/yolo-3c-1500
+./flow --train --model cfg/yolo-2c.cfg --load ckpt/yolo-3c-1500
 # recollected and initialized layers will be printed to console
 ```
 
