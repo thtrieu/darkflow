@@ -6,7 +6,7 @@ import tensorflow as tf
 import time
 import os
 
-flags.DEFINE_string("testset", "./test/", "path to testing directory")
+flags.DEFINE_string("test", "./test/", "path to testing directory")
 flags.DEFINE_string("binary", "./bin/", "path to .weights directory")
 flags.DEFINE_string("config", "./cfg/", "path to .cfg directory")
 flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
