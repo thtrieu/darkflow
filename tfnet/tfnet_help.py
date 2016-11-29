@@ -8,7 +8,6 @@ import tensorflow as tf
 import numpy as np
 import os
 
-too_big_batch = 'Batch size is bigger than training data size'
 old_graph_msg = 'Resolving incompatible graph def from {}'
 
 def tf_build_train_op(self):

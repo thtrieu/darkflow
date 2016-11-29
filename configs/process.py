@@ -18,7 +18,7 @@ def parser(model):
 	with open(model, 'rb') as f:
 		lines = f.readlines()		
 	
-	layers = [] # will contains layers' info
+	meta = dict(); layers = list() # will contains layers' info
 	h, w, c = [int()]*3; layer = dict()
 	for line in lines:
 		line = line.strip()
@@ -28,9 +28,11 @@ def parser(model):
 					h = layer['height']
 					w = layer['width']
 					c = layer['channels']
+					meta['net'] = layer
 				elif layer['type'] == '[crop]':
 					h = layer['crop_height']
 					w = layer['crop_width']
+					meta['crop'] = layer
 				else: 
 					assert layer['type'] in available, \
 					'Layer {} not implemented'.format(layer['type'])
@@ -50,7 +52,7 @@ def parser(model):
 				except:
 					pass
 
-	meta = layer # last layer contains meta info
+	meta.update(layer) # last layer contains meta info
 	meta['model'] = model
 	meta['inp_size'] = [h, w, c]
 	return layers, meta

@@ -48,7 +48,7 @@ class weights_loader(loader):
 
     def load(self, path, src_layers):
         self.src_layers = src_layers
-        walker = float32_walker(path, 16)
+        walker = weights_walker(path)
 
         for i, layer in enumerate(src_layers):
             if layer.type not in self.VAR_LAYER: continue
@@ -66,7 +66,7 @@ class weights_loader(loader):
                 if par not in new.wshape: continue
                 val = walker.walk(new.wsize[par])
                 new.w[par] = val
-            new.finalize()
+            new.finalize(walker.transpose)
 
         if walker.path is not None:
             assert walker.offset == walker.size, \
@@ -101,14 +101,19 @@ def create_loader(path, cfg = None):
     
     return load_type(path, cfg)
 
-class float32_walker(object):
+class weights_walker(object):
     """
     an incremental reader of float32 binary files.
     """
-    def __init__(self, path, offset):
+    def __init__(self, path):
         self.eof = False # end of file
-        self.offset = offset # current pos
         self.path = path # save the path
+        major, minor, revision, seen = np.memmap(path,
+            shape = (), mode = 'r', offset = 0,
+            dtype = '({})i4,'.format(4)
+        )
+        self.transpose = major > 1000 or minor > 1000
+        self.offset = 16 # current pos
         if path is None: self.eof = True
         else: self.size = os.path.getsize(path)
 

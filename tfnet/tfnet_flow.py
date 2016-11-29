@@ -60,7 +60,7 @@ def tf_predict(self):
 		for inp in all_inp:
 			new_all += [inp]
 			this_inp = os.path.join(inp_path, inp)
-			this_inp = self.framework.preprocess(this_inp)
+			this_inp = self.framework.preprocess(this_inp, self.meta)
 			expanded = np.expand_dims(this_inp, 0)
 			inp_feed.append(expanded)
 		all_inp = new_all
@@ -70,14 +70,12 @@ def tf_predict(self):
 	
 		print ('Forwarding {} inputs ...'.format(len(inp_feed)))
 		start = time.time()
-		out = self.sess.run([self.out], feed_dict)
+		out = self.sess.run([self.out], feed_dict)[0]
 		stop = time.time(); last = stop - start
 		print ('Total time = {}s / {} inps = {} ips'.format(
 			last, len(inp_feed), len(inp_feed) / last))
 
-		for i, prediction in enumerate(out[0]):
+		for i, prediction in enumerate(out):
 			self.framework.postprocess(prediction,
 				os.path.join(inp_path, all_inp[i]),
 				self.FLAGS, self.meta)
-			# p = prediction[:]
-			# print np.mean(p), np.std(p)

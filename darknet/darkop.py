@@ -28,7 +28,6 @@ class layer(object):
         val = src_loader([self])
         sig = [self.number, self.signature]
         if val is not None: self.w = val.w
-        self.verbalise(val is None, sig)
 
     def load_ckpt(self, src_loader):
         for var in self.wshape:
@@ -39,15 +38,7 @@ class layer(object):
             key = [name, shape]
             val = src_loader(key)
             self.w[var] = val
-            self.verbalise(val is None, key)
-
-    def verbalise(self, initialize, sig):
-        msg = 'Re-collect'
-        if initialize: msg = 'Initialize'
-        template = '{:<10} layer {:>3}: {}' 
-        print template.format(msg, *sig)
-
-
+            
     # For comparing two layers
     def __eq__(self, other):
         if type(other) is type(self):
@@ -98,7 +89,7 @@ class convolutional_layer(layer):
                 'mean' : [n]
             })
 
-    def finalize(self):
+    def finalize(self, _):
         kernel = self.w['kernel']
         if kernel is None: return
         kernel = kernel.reshape(self.dnshape)
@@ -112,11 +103,14 @@ class connected_layer(layer):
             'weights': [input_size, output_size]
         }
 
-    def finalize(self):
+    def finalize(self, transpose):
         weights = self.w['weights']
         if weights is None: return
-        weights = weights.reshape(
-            self.wshape['weights'])
+        shp = self.wshape['weights']
+        if not transpose:
+            weights = weights.reshape(shp[::-1])
+            weights = weights.transpose([1,0])
+        else: weights = weights.reshape(shp)
         self.w['weights'] = weights
 
 """

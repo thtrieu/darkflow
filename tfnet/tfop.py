@@ -20,11 +20,13 @@ class tfop(object):
 	and input tensor of that layer `x`, it calculates the 
 	output of this layer and place the result in self.x
 	"""
+
 	def __init__(self, layer, inp, name, feed = None):
 		self.inp = inp # class = tfop
 		self.out = None # class = tf.Tensor
 		self.lay = layer
 		self.sig = name
+		self.action = ''
 		self.wrap(feed)
 		self.forward()
 
@@ -40,11 +42,13 @@ class tfop(object):
 		""" 
 		if feed is None: return
 		for var in self.lay.wshape: # trainable vars
+			self.action = 'load'
 			sig = '{}-{}'.format(self.sig, var) 
-			val = self.lay.w.get(var, None) 
+			val = self.lay.w.get(var, None)
 			if val is None: # darknet is partially loaded
 				args = [self.lay.wshape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
+				self.action = 'init '
 
 			self.lay.w[var] = tf.Variable(val, name = sig)
 		
@@ -55,17 +59,17 @@ class tfop(object):
 			feed[self.lay.h[ph]] = values
 
 	def verbalise(self):
-		form = '{:<40} : {}' # verbalise template
+		form = '{:<5}{:<40} -> {}' # verbalise template
 		if self.inp.out.name.split(':')[0] == 'input': \
-		print form.format('Input size', _shape(self.inp.out))
-		print form.format(self.speak(), _shape(self.out))
+		print form.format('', 'Input size', _shape(self.inp.out))
+		print form.format(self.action, self.speak(), _shape(self.out))
 	
 	def speak(self): pass
 
 class convolutional(tfop):
 	def forward(self):
-		pad = [self.lay.pad, self.lay.pad];
-		temp = tf.pad(self.inp.out, [[0, 0]] + [pad]*2 + [[0, 0]])
+		pad = [[self.lay.pad, self.lay.pad]] * 2;
+		temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
 		
 		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
 	        name = self.sig, strides = [1] + [self.lay.stride] * 2 + [1])
@@ -82,8 +86,8 @@ class convolutional(tfop):
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
-		return '{:<23} pad {:<2} {}'.format(msg, 
-			self.lay.pad, self.lay.batch_norm * 'batchnorm')
+		return '{:<23} pad {:<2}  {}'.format(msg, 
+			self.lay.pad, self.lay.batch_norm * '+bnorm')
 
 
 """	
@@ -94,7 +98,7 @@ full, flatten, maxpool, avgpool, leaky, dropout
 class connected(tfop):
 	def forward(self):
 		self.out = tf.nn.xw_plus_b(
-			self.inp.out, 
+			self.inp.out,
 			self.lay.w['weights'], 
 			self.lay.w['biases'], 
 			name = self.sig)
