@@ -1,6 +1,8 @@
 ## Update
 
-TODO: yolov2 with new layers like `batch_norm` or `local`.
+`tiny-yolo` 108MB worked.
+
+TODO: new layers `local`, `route`, `reorg`, `region` a.k.a `yolov2`.
 
 ## Intro
 
