@@ -157,5 +157,6 @@ def postprocess(predictions, img_path, FLAGS, meta):
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
 
-	img_name = os.path.join('results', img_path.split('/')[-1])
+	outfolder = os.path.join(FLAGS.testset, 'out') 
+	img_name = os.path.join(outfolder, img_path.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)

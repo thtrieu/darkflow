@@ -32,7 +32,7 @@ def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
-get_dir([FLAGS.testset, FLAGS.binary, 'ckpt'])
+get_dir([FLAGS.testset, FLAGS.binary, os.path.join(FLAGS.testset,'out'), 'ckpt'])
 
 # fix FLAGS.load to appropriate type
 try: FLAGS.load = int(FLAGS.load)
