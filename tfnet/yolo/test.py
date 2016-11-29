@@ -11,7 +11,7 @@ Namely, they answers the following questions:
 	2. what to do after flowing the net?
 """
 from misc import labels
-from utils.im_transform import im_np_recolor, imcv2_affine_trans
+from utils.im_transform import imcv2_recolor, imcv2_affine_trans
 from utils.box import BoundBox, box_intersection, prob_compare
 import numpy as np
 import cv2
@@ -67,20 +67,14 @@ def preprocess(imPath, allobj = None):
 			obj_1_ =  obj[1]
 			obj[1] = dims[0] - obj[3]
 			obj[3] = dims[0] - obj_1_
+		im = imcv2_recolor(im)
 
 	size = (448, 448)
-	resized = cv2.resize(im, size)
-	im_np = np.array(resized)
-
-	# recoloring as np is fast.
-	if allobj is not None:
-		im_np = im_np_recolor(im_np)
-
-	# return np array input to YOLO
-	im_np = im_np / 255.
-	#im_np = im_np * 2. - 1.
-	im_np = np.expand_dims(im_np, 0)
-	return im_np #, im_ # for unit testing
+	imsz = cv2.resize(im, size)
+	imsz = imsz / 255.
+	imsz = imsz * 2. - 1.
+	if allobj is None: return imsz
+	return imsz #, np.array(im) # for unit testing
 	
 
 def postprocess(predictions, img_path, FLAGS, meta):

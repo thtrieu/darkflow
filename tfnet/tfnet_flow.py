@@ -61,7 +61,8 @@ def tf_predict(self):
 			new_all += [inp]
 			this_inp = os.path.join(inp_path, inp)
 			this_inp = self.framework.preprocess(this_inp)
-			inp_feed.append(this_inp)
+			expanded = np.expand_dims(this_inp, 0)
+			inp_feed.append(expanded)
 		all_inp = new_all
 
 		feed_dict = {self.inp : np.concatenate(inp_feed, 0)}

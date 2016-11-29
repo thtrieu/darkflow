@@ -1,24 +1,23 @@
 import numpy as np		
 import cv2
 
-def im_np_recolor(im):
-	# `im` is a numpy python object
-	# recolor `im` by adding in random
-	# intensity transformations, DO NOT
-	# perform shift/scale or rotate here
-	# ADD YOUR CODE BELOW:
-	alpha = np.random.uniform() + .5
-	beta = np.random.uniform() * 40 - 20
-	im = im * alpha
-	im = im + beta
-	return im
+def imcv2_recolor(im, a = .2, b = 20, c = 1.5):
+	t = [np.random.uniform()]
+	t += [np.random.uniform()]
+	t += [np.random.uniform()]
+	t = np.array(t) * 2. - 1.
+
+	# random amplify each channel
+	im = im * (1 + t * a)
+	# random brightness
+	im += np.random.uniform() * 2 * b - b
+	# random contrast
+	mx = 255. * (1 + a) + b
+	up = np.random.uniform() * c
+	im = np.power(im/mx, 1 + up)
+	return np.array(im * 255., np.uint8)
 
 def imcv2_affine_trans(im):
-	"""
-	transform cv2 image
-	with random translation, scale,
-	illumination, scale
-	"""
 	# Scale and translate
 	h, w, c = im.shape
 	scale = np.random.uniform() / 10. + 1.

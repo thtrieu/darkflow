@@ -22,6 +22,7 @@ import os
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from copy import deepcopy
 from test import preprocess
+from misc import show
 
 def parse(FLAGS, meta):
     """

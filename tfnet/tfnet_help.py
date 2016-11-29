@@ -49,7 +49,6 @@ def shuffle(self):
 
 	print 'Dataset of {} instance(s)'.format(size)
 	if batch > size: 
-		print 'help!'
 		self.FLAGS.batch = batch = size
 	batch_per_epoch = int(size / batch)
 	total = self.FLAGS.epoch * batch_per_epoch
@@ -72,7 +71,7 @@ def shuffle(self):
 					self.FLAGS, self.meta, this)
 				if inp is None: continue
 
-				x_batch += [inp]
+				x_batch += [np.expand_dims(inp, 0)]
 				for key in feedval:
 					if key not in feed_batch: 
 						feed_batch[key] = [feedval[key]]; 

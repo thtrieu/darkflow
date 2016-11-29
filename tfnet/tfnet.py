@@ -58,17 +58,17 @@ class TFNet(object):
 		self.feed = dict() # other placeholders
 
 		# Build the forward pass
-		now = identity(self.inp)
+		state = identity(self.inp)
 		num = len(self.darknet.layers)
 		for i, layer in enumerate(self.darknet.layers):
 			name = '{}-{}'.format(str(i),layer.type)
-			args = [layer, now, name]
+			args = [layer, state, name]
 			if not self.ckpt: args += [self.feed]
-			now = op_create(*args)(verbalise)
-		self.top = now
+			state = op_create(*args)(verbalise)
+		self.top = state
 
-		# Attach the now.out to self
-		self.out = tf.identity(now.out, name='output')
+		# Attach the state.out to self
+		self.out = tf.identity(state.out, name='output')
 
 	def setup_meta_ops(self):
 		cfg = dict({

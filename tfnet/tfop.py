@@ -74,13 +74,11 @@ class convolutional(tfop):
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
 	def batchnorm(self, l, x):
-		return (x-l.w['mean'])/(tf.sqrt(l.w['var'])+1e-6) * l.w['scale']
-
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], offset = None, 
 			variance = l.w['var'], scale = l.w['scale'], 
 			variance_epsilon = 1e-5, name = self.sig + '-bnorm'
-			)
+		)
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
@@ -88,7 +86,7 @@ class convolutional(tfop):
 			self.lay.pad, self.lay.batch_norm * 'batchnorm')
 
 
-"""
+"""	
 Simpler ops:
 full, flatten, maxpool, avgpool, leaky, dropout
 """
