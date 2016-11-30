@@ -61,7 +61,7 @@ class tfop(object):
 			feed[self.lay.h[ph]] = values
 
 	def verbalise(self):
-		form = '{:<4}: {:<40} -> {}' # verbalise template
+		form = '{:<4} {:<43} -> {}' # verbalise template
 		nothing = '----'
 
 		if self.inp.out.name.split(':')[0] == 'input': \
@@ -77,24 +77,25 @@ class local(tfop):
 	def forward(self):
 		pad = [[self.lay.pad, self.lay.pad]] * 2;
 		temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
-		# batch x 9 x 9 x 1024
 
-		k = self.lay.w['kernels'] # 49 x 3 x 3 x 1024 x 256
+		k = self.lay.w['kernels']
+		ksz = self.lay.ksize
 		o = list()
 		for i in range(self.lay.h_out):
 			oi = list()
 			for j in range(self.lay.w_out):
 				kij = k[i * self.lay.w_out + j]
-				tij = temp[:, i : i+3 , j : j+3 ,:]
+				i_, j_ = i + 1 - ksz/2, j + 1 - ksz/2
+				tij = temp[:, i_ : i_ + ksz , j_ : j_ + ksz ,:]
 				oi += [tf.nn.conv2d(tij, kij, 
 					padding = 'VALID', strides = [1]*4)]
 			o += [tf.concat(2, oi)]
-		
+
 		self.out = tf.concat(1, o)
 
 	def speak(self):
 		msg = 'loca{}'.format(_shape(self.lay.w['kernels']))
-		return '{:<23} pad {:<2}'.format(msg, 
+		return '{:<26} pad {:<2}'.format(msg, 
 			self.lay.pad * self.lay.ksize / 2)
 
 class convolutional(tfop):
@@ -119,7 +120,7 @@ class convolutional(tfop):
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
-		return '{:<23} pad {:<2}  {}'.format(msg, 
+		return '{:<26} pad {:<2}  {}'.format(msg, 
 			self.lay.pad, self.lay.batch_norm * '+bnorm')
 
 """	
