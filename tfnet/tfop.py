@@ -111,7 +111,6 @@ class convolutional(tfop):
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
 	def batchnorm(self, l, x):
-
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], offset = None, 
 			variance = l.w['var'], scale = l.w['scale'], 

@@ -27,11 +27,11 @@ activation = linear
 ...
 ```
 
-Imagine design a deep net with such ease! Many thanks to the Darknet author. The ease, however, is not complete though - imagine changing the number of classes and you have to do the engineer work: edit some code, rebuild `darknet`. Fortunately you won't have to do so with `darktf`. Currently, `darktf` is built to sufficiently run YOLO. For other net structures, new code will be added in a plug-and-play manner. Take a look at `tfnet/yolo/` and see how this task should be quite simple.
+Imagine design a deep net with such ease! Many thanks to the Darknet author. The ease, however, is not complete though - imagine changing the number of classes and you have to do the engineer work: edit some code, rebuild `darknet`. Fortunately you won't have to do so with `darkflow`. Currently, `darkflow` is built to sufficiently run YOLO. For other net structures, new code will be added in a plug-and-play manner. Take a look at `tfnet/yolo/` and see how this task should be quite simple.
 
 Regarding bridging Darknet and Tensorflow for YOLO, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
 
-This is understandable since building the loss op of YOLO in `Tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darktf` also allows saving the trained weights to a constant protobuf object that can be used in `Tensorflow` C++ interface.
+This is understandable since building the loss op of YOLO in `Tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darkflow` also allows saving the trained weights to a constant protobuf object that can be used in `Tensorflow` C++ interface.
 
 
 ## How to use it
@@ -48,7 +48,7 @@ person
 pottedplant
 ```
 
-And that's it. `darktf` will parse the annotation if necessary.
+And that's it. `darkflow` will parse the annotation if necessary.
 
 ### Design the net
 
@@ -56,7 +56,7 @@ Skip this if you are working with one of the three original configurations since
 
 In this step you create a configuration `[config_name].cfg` and put it inside `cfg/`. Take a look at some of the available configs there to know the syntax.
 
-Note that these files, besides being descriptions of the net structures, also store technical specifications that is read by Darknet framework (e.g. learning rate, batch size, epoch number). `darktf` therefore, ignore these Darknet specifications.
+Note that these files, besides being descriptions of the net structures, also store technical specifications that is read by Darknet framework (e.g. learning rate, batch size, epoch number). `darkflow` therefore, ignore these Darknet specifications.
 
 ### Flowing the graph
 
@@ -99,7 +99,7 @@ Training is simple as you only have to add option `--train` like below:
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
 
-To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darktf` will load the most recent save. Here are a few examples:
+To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save. Here are a few examples:
 
 ```bash
 # To resume the most recent checkpoint for training
@@ -120,7 +120,7 @@ You can even initialize new nets from `ckpt` files with `--load`:
 
 Now this is the tricky part since there is no official support for loading variables in C++ API. Some suggest adding assigning ops from variable to constants into the graph and save it down as a `.pb` (protobuf) file [_like this_](https://alexjoz.gitbooks.io/code-life/content/chapter7.html). However this will double the necessary size of this file (or even triple if there is training ops), which is very undesirable in, say, building mobile applications. 
 
-There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`. I did not have the time to check its implementation and performance, however doing so would certainly require running on a separate script. `darktf` allows freezing the graph on the fly, during training or testing, without doubling/tripling the necessary size.
+There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`. I did not have the time to check its implementation and performance, however doing so would certainly require running on a separate script. `darkflow` allows freezing the graph on the fly, during training or testing, without doubling/tripling the necessary size.
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
