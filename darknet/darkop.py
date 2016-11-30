@@ -54,6 +54,9 @@ class layer(object):
 class avgpool_layer(layer):
     pass
 
+class crop_layer(layer):
+    pass
+
 class maxpool_layer(layer):
     def setup(self, ksize, stride, pad):
         self.stride = stride
@@ -123,7 +126,8 @@ darkops = {
     'maxpool': maxpool_layer,
     'convolutional': convolutional_layer,
     'avgpool': avgpool_layer,
-    'softmax': softmax_layer
+    'softmax': softmax_layer,
+    'crop': crop_layer
 }
 
 def create_darkop(num, ltype, *args):

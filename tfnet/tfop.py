@@ -138,6 +138,12 @@ class dropout(tfop):
 
 	def speak(self): return 'drop()'
 
+class crop(tfop):
+	def forward(self):
+		self.out =  self.inp.out * 2. - 1.
+		
+	def verbalise(self): pass
+
 class maxpool(tfop):
 	def forward(self):
 		self.out = tf.nn.max_pool(
@@ -174,7 +180,8 @@ op_types = {
 	'flatten': flatten,
 	'avgpool': avgpool,
 	'softmax': softmax,
-	'identity': identity
+	'identity': identity,
+	'crop': crop
 }
 
 def op_create(*args):

@@ -40,7 +40,7 @@ def metaprocess(meta):
 	meta['colors'] = colors
 	return meta
 
-def preprocess(imPath, meta, allobj = None):
+def preprocess(imPath, allobj = None):
 	"""
 	Takes an image, return it as a numpy tensor that is readily
 	to be fed into tfnet. If there is an accompanied annotation (allobj),
@@ -73,7 +73,6 @@ def preprocess(imPath, meta, allobj = None):
 	imsz = cv2.resize(im, size)
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
-	if 'crop' in meta: imsz = imsz * 2. - 1.
 	if allobj is None: return imsz
 	return imsz #, np.array(im) # for unit testing
 	

@@ -4,7 +4,7 @@ import os
 available = [
 	'[convolutional]', '[connected]',
 	'[maxpool]', '[dropout]', '[avgpool]',
-	'[softmax]'
+	'[softmax]', '[crop]'
 ]
 
 def parser(model):
@@ -29,11 +29,10 @@ def parser(model):
 					w = layer['width']
 					c = layer['channels']
 					meta['net'] = layer
-				elif layer['type'] == '[crop]':
-					h = layer['crop_height']
-					w = layer['crop_width']
-					meta['crop'] = layer
-				else: 
+				else:
+					if layer['type'] == '[crop]':
+						h = layer['crop_height']
+						w = layer['crop_width']
 					assert layer['type'] in available, \
 					'Layer {} not implemented'.format(layer['type'])
 					layers += [layer]				
@@ -74,7 +73,9 @@ def cfg_yielder(model, binary):
 	conv = '.conv.' in weightf
 	for i, d in enumerate(layers):
 		
-		if conv and i > last_convo: break
+		if d['type'] == '[crop]':
+			yield ['crop']
+
 		if d['type'] == '[convolutional]':
 
 			n = d.get('filters', 1)
