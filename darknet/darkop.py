@@ -42,7 +42,7 @@ class layer(object):
     # For comparing two layers
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.__dict__ == other.__dict__
+            return self.signature == other.signature
         return False
     def __ne__(self, other):
         return not self.__eq__(other)

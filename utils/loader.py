@@ -29,7 +29,8 @@ class loader(object):
         up_to = min(len(self.src_key), 1)
         for i in range(up_to):
             key_b = self.src_key[i][idx:]
-            if key_b == key: return self.yields(i)
+            if key_b == key: 
+            	return self.yields(i)
         return None
 
     def yields(self, idx):
