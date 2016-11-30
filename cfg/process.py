@@ -1,12 +1,6 @@
 import numpy as np
 import os
 
-available = [
-	'[convolutional]', '[connected]',
-	'[maxpool]', '[dropout]', '[avgpool]',
-	'[softmax]', '[crop]'
-]
-
 def parser(model):
 	"""
 	Read the .cfg file to extract layers into `layers`
@@ -33,8 +27,8 @@ def parser(model):
 					if layer['type'] == '[crop]':
 						h = layer['crop_height']
 						w = layer['crop_width']
-					assert layer['type'] in available, \
-					'Layer {} not implemented'.format(layer['type'])
+					#assert layer['type'] in available, \
+					#'Layer {} not implemented'.format(layer['type'])
 					layers += [layer]				
 			layer = {'type':line}
 		else:
@@ -72,11 +66,27 @@ def cfg_yielder(model, binary):
 	flat = False # flag for 1st dense layer
 	conv = '.conv.' in weightf
 	for i, d in enumerate(layers):
-		
+		#print d['type'], h, w, c, l
+
 		if d['type'] == '[crop]':
 			yield ['crop']
 
-		if d['type'] == '[convolutional]':
+		elif d['type'] == '[local]':
+			n = d.get('filters', 1)
+			size = d.get('size', 1)
+			stride = d.get('stride', 1)
+			pad = d.get('pad', 0)
+			activation = d.get('activation', 'logistic')
+			w_ = (w - 1 - (1 - pad) * (size - 1)) / stride + 1
+			h_ = (h - 1 - (1 - pad) * (size - 1)) / stride + 1
+
+			yield ['local', size, c, n, stride, pad, w_, h_]
+			if activation != 'linear': yield [activation]
+		
+			w, h, c = w_, h_, n
+			l = w * h * c
+
+		elif d['type'] == '[convolutional]':
 
 			n = d.get('filters', 1)
 			size = d.get('size', 1)
@@ -84,21 +94,18 @@ def cfg_yielder(model, binary):
 			pad = d.get('pad', 0)
 			padding = d.get('padding', 0)
 			if pad: padding = size / 2
-
-			w_ = (w + 2 * padding - size)/stride + 1
-			h_ = (h + 2 * padding - size)/stride + 1
-			
-
+			activation = d.get('activation', 'logistic')
 			batch_norm = d.get('batch_normalize', 0) or conv
 			yield ['convolutional', size, c, n, 
 				   stride, padding, batch_norm]
+			if activation != 'linear': yield [activation]
+
+			w_ = (w + 2 * padding - size)/stride + 1
+			h_ = (h + 2 * padding - size)/stride + 1
 			w, h, c = w_, h_, n
 			l = w * h * c
-			if 'activation' in d:
-				if d['activation'] != 'linear':
-					yield [d['activation']]
-			
-		if d['type'] == '[maxpool]':
+
+		elif d['type'] == '[maxpool]':
 			stride = d.get('stride', 1)
 			size = d.get('size', stride)
 			padding = d.get('padding', (size-1)/2)
@@ -110,14 +117,14 @@ def cfg_yielder(model, binary):
 			w, h = w_, h_
 			l = w * h * c
 
-		if d['type'] == '[avgpool]':
+		elif d['type'] == '[avgpool]':
 			flat = True; l = c
 			yield ['avgpool']
 
-		if d['type'] == '[softmax]':
+		elif d['type'] == '[softmax]':
 			yield ['softmax', d['groups']]
 
-		if d['type'] == '[connected]':
+		elif d['type'] == '[connected]':
 			if not flat:
 				yield ['flatten']
 				flat = True
@@ -127,7 +134,8 @@ def cfg_yielder(model, binary):
 				if d['activation'] != 'linear':
 					yield [d['activation']]
 
-		if d['type'] == '[dropout]': 
+		elif d['type'] == '[dropout]': 
 			yield ['dropout', d['probability']]
 
-	#exit()
+		else:
+			exit('Layer {} not implemented'.format(d['type']))

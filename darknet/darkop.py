@@ -69,22 +69,44 @@ class softmax_layer(layer):
 
 class dropout_layer(layer):
     def setup(self, p):
-        self.h['pdrop'] = {
+        self.h['pdrop'] = dict({
             'feed': p, # for training
             'dfault': 1.0, # for testing
             'shape': []
-        }
+        })
+
+class local_layer(layer):
+    def setup(self, ksize, c, n, stride, pad, w_, h_):
+        self.stride = stride
+        self.ksize = ksize
+        self.pad = pad * (ksize / 2)
+        self.h_out = h_
+        self.w_out = w_
+
+        self.dnshape = [h_ * w_, n, c, ksize, ksize]
+        self.wshape = dict({
+            'biases': [h_ * w_ * n],
+            'kernels': [h_ * w_, ksize, ksize, c, n]
+        })
+
+    def finalize(self, _):
+        weights = self.w['kernels']
+        if weights is None: return
+        weights = weights.reshape(self.dnshape)
+        weights = weights.transpose([0,3,4,2,1])
+        self.w['kernels'] = weights
 
 class convolutional_layer(layer):
     def setup(self, ksize, c, n, stride, pad, batch_norm):
         self.batch_norm = bool(batch_norm)
         self.stride = stride
+        self.ksize = ksize
         self.pad = pad
         self.dnshape = [n, c, ksize, ksize] # darknet shape
-        self.wshape = {
+        self.wshape = dict({
             'biases': [n], 
             'kernel': [ksize, ksize, c, n]
-        }
+        })
         if self.batch_norm:
             self.wshape.update({
                 'var'  : [n], 
@@ -127,7 +149,8 @@ darkops = {
     'convolutional': convolutional_layer,
     'avgpool': avgpool_layer,
     'softmax': softmax_layer,
-    'crop': crop_layer
+    'crop': crop_layer,
+    'local': local_layer,
 }
 
 def create_darkop(num, ltype, *args):

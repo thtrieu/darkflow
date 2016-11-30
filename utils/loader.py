@@ -12,7 +12,7 @@ class loader(object):
     interface to work with both .weights and .ckpt files
     in loading / recollecting / resolving mode
     """
-    VAR_LAYER = ['convolutional', 'connected']
+    VAR_LAYER = ['convolutional', 'connected', 'local']
 
     def __init__(self, *args):
         self.src_key = list()
@@ -44,7 +44,8 @@ class weights_loader(loader):
     
     _W_ORDER = dict({ # order of param flattened into .weights file
         'convolutional': ['biases','scale','mean','var','kernel'],
-        'connected': ['biases', 'weights']
+        'connected': ['biases', 'weights'],
+        'local': ['biases', 'kernels']
     })
 
     def load(self, path, src_layers):

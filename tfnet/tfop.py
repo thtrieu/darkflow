@@ -73,6 +73,30 @@ class tfop(object):
 	
 	def speak(self): pass
 
+class local(tfop):
+	def forward(self):
+		pad = [[self.lay.pad, self.lay.pad]] * 2;
+		temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
+		# batch x 9 x 9 x 1024
+
+		k = self.lay.w['kernels'] # 49 x 3 x 3 x 1024 x 256
+		o = list()
+		for i in range(self.lay.h_out):
+			oi = list()
+			for j in range(self.lay.w_out):
+				kij = k[i * self.lay.w_out + j]
+				tij = temp[:, i : i+3 , j : j+3 ,:]
+				oi += [tf.nn.conv2d(tij, kij, 
+					padding = 'VALID', strides = [1]*4)]
+			o += [tf.concat(2, oi)]
+		
+		self.out = tf.concat(1, o)
+
+	def speak(self):
+		msg = 'loca{}'.format(_shape(self.lay.w['kernels']))
+		return '{:<23} pad {:<2}'.format(msg, 
+			self.lay.pad * self.lay.ksize / 2)
+
 class convolutional(tfop):
 	def forward(self):
 		pad = [[self.lay.pad, self.lay.pad]] * 2;
@@ -81,10 +105,12 @@ class convolutional(tfop):
 		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
 	        name = self.sig, strides = [1] + [self.lay.stride] * 2 + [1])
 
-		if self.lay.batch_norm: temp = self.batchnorm(self.lay, temp)
+		if self.lay.batch_norm: 
+			temp = self.batchnorm(self.lay, temp)
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
 	def batchnorm(self, l, x):
+
 		return tf.nn.batch_normalization(
 			x = x, mean = l.w['mean'], offset = None, 
 			variance = l.w['var'], scale = l.w['scale'], 
@@ -95,7 +121,6 @@ class convolutional(tfop):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))
 		return '{:<23} pad {:<2}  {}'.format(msg, 
 			self.lay.pad, self.lay.batch_norm * '+bnorm')
-
 
 """	
 Simpler ops:
@@ -187,7 +212,8 @@ op_types = {
 	'avgpool': avgpool,
 	'softmax': softmax,
 	'identity': identity,
-	'crop': crop
+	'crop': crop,
+	'local': local
 }
 
 def op_create(*args):
