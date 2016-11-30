@@ -41,14 +41,16 @@ class tfop(object):
 		the corresponding tf variable will be initialised 
 		""" 
 		if feed is None: return
+
+		self.action = None
 		for var in self.lay.wshape: # trainable vars
-			self.action = 'load'
+			self.action = 'Load'
 			sig = '{}-{}'.format(self.sig, var) 
 			val = self.lay.w.get(var, None)
 			if val is None: # darknet is partially loaded
 				args = [self.lay.wshape[var], 0., 1e-2]
 				val = tf.truncated_normal(*args)
-				self.action = 'init '
+				self.action = 'Init '
 
 			self.lay.w[var] = tf.Variable(val, name = sig)
 		
@@ -59,9 +61,14 @@ class tfop(object):
 			feed[self.lay.h[ph]] = values
 
 	def verbalise(self):
-		form = '{:<5}{:<40} -> {}' # verbalise template
+		form = '{:<4}: {:<40} -> {}' # verbalise template
+		nothing = '----'
+
 		if self.inp.out.name.split(':')[0] == 'input': \
-		print form.format('', 'Input size', _shape(self.inp.out))
+		print form.format(nothing, 'input size', _shape(self.inp.out))
+		
+		if self.action is None: self.action = nothing
+		if not self.action: return
 		print form.format(self.action, self.speak(), _shape(self.out))
 	
 	def speak(self): pass
@@ -141,8 +148,7 @@ class dropout(tfop):
 class crop(tfop):
 	def forward(self):
 		self.out =  self.inp.out * 2. - 1.
-		
-	def verbalise(self): pass
+		self.action = False
 
 class maxpool(tfop):
 	def forward(self):
