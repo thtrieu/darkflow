@@ -11,12 +11,12 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
     
-voc_models = ['yolo-full', 'yolov1', 'yolo-small', 
-              'yolo-tiny', 'yolo-baby', 'tiny-yolo',
-              'tiny-yolo-voc'] # <- v2
+voc_models = ['yolo-full', 'yolov1', 'yolo-small',  # <- v1
+              'yolo-tiny', 'yolo-baby', 'tiny-yolo', # <- v2
+              'tiny-yolo-voc'] # <- v2 voc
 
 coco_models = ['tiny-coco', 'yolo-coco',  # <- v1
-               'tiny-yolov2', 'yolov2']
+               'tiny-yolov2', 'yolov2'] # <- v2, coco
 
 def labels(meta):
     model = meta['model'].split('/')[-1]
