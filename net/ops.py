@@ -92,22 +92,22 @@ class local(tfop):
 
 		k = self.lay.w['kernels']
 		ksz = self.lay.ksize
-		o = list()
+		half = ksz/2
+		out = list()
 		for i in range(self.lay.h_out):
-			oi = list()
+			row_i = list()
 			for j in range(self.lay.w_out):
 				kij = k[i * self.lay.w_out + j]
-				half = ksz/2
 				i_, j_ = i + 1 - half, j + 1 - half
-				tij = temp[:, i_ : i_ + ksz , j_ : j_ + ksz ,:]
-				oi.append(
+				tij = temp[:, i_ : i_ + ksz, j_ : j_ + ksz,:]
+				row_i.append(
 					tf.nn.conv2d(tij, kij, 
 						padding = 'VALID', 
 						strides = [1] * 4)
 				)
-			o += [tf.concat(2, oi)]
+			out += [tf.concat(2, row_i)]
 
-		self.out = tf.concat(1, o)
+		self.out = tf.concat(1, out)
 
 	def speak(self):
 		msg = 'loca{}'.format(_shape(self.lay.w['kernels']))
