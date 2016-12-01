@@ -76,11 +76,10 @@ Note that these files, besides being descriptions of the net structures, also st
 First, let's take a closer look at one of a very useful option `--load`
 
 ```bash
-# 1. With no --load option, yolo-tiny.weights are loaded
+# 1. Load yolo-tiny.weights
 ./flow --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 
-# 2. With yolo-3c however, since there are no yolo-3c.weights,
-# its parameters will be randomly initialized
+# 2. To completely initialize a model, leave the --load option
 ./flow --model cfg/yolo-3c.cfg
 
 # 3. It is useful to reuse the first identical layers of tiny for 3c
@@ -105,18 +104,18 @@ Training is simple as you only have to add option `--train` like below:
 ./flow --model cfg/yolo-3c.cfg --train --trainer adam
 ```
 
-During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. Only the 20 most recent pairs are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
+During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. Only the 20 most recent point are kept, you can change this number in the `keep` option, if `keep = 0`, no intermediate result is **omitted**.
 
-To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save. Here are a few examples:
+To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save by parsing `ckpt/checkpoint`. Here are a few examples:
 
 ```bash
-# To resume the most recent checkpoint for training
+# Resume the most recent checkpoint for training
 ./flow --train --model cfg/yolo-3c.cfg --load -1
 
-# To run testing with checkpoint at step 1500
+# Test with checkpoint at step 1500
 ./flow --model cfg/yolo-3c.cfg --load 1500
 
-# Fine tuning tiny yolo from the original one
+# Fine tuning yolo-tiny from the original one
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
@@ -130,7 +129,7 @@ You can even initialize new nets from `ckpt` files with `--load`:
 
 Now this is the tricky part since there is no official support for loading variables in C++ API. Some suggest adding assigning ops from variable to constants into the graph and save it down as a `.pb` (protobuf) file [_like this_](https://alexjoz.gitbooks.io/code-life/content/chapter7.html). However this will double the necessary size of this file (or even triple if there is training ops), which is very undesirable in, say, building mobile applications. 
 
-There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`. I did not have the time to check its implementation and performance, however doing so would certainly require running on a separate script. `darkflow` allows freezing the graph on the fly, during training or testing, without doubling/tripling the necessary size.
+There is an official way to do the same thing using [this script](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/tools/freeze_graph.py) provided in `Tensorflow`. I did not have the time to check its implementation and performance, however doing so would certainly require running on a separate script. `darkflow` allows freezing the graph on the fly, either during training or testing, without doubling/tripling the necessary size.
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
