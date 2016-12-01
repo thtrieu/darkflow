@@ -1,6 +1,12 @@
 ## Update
 
-`tiny-yolo` 108MB and `yolov1` 789MB worked .
+YOLOv1 is up and running. These include:
+- `yolo-full` 1.1GB
+- `yolo-small` 376MB
+- `yolo-tiny` 180MB
+- `tiny-yolo` 108MB
+- `tiny-coco` 268MB
+- `yolo-coco` 937MB
 
 TODO: new layers `route`, `reorg`, `region` a.k.a `yolov2`.
 
