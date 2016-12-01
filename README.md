@@ -1,18 +1,19 @@
 ## Update
 
-`tiny-yolo` 108MB worked.
+`tiny-yolo` 108MB and `yolov1` 789MB worked .
 
-TODO: new layers `local`, `route`, `reorg`, `region` a.k.a `yolov2`.
+TODO: new layers `route`, `reorg`, `region` a.k.a `yolov2`.
 
 ## Intro
 
-This repo aims at building a tensorflow version of [darknet framework](https://github.com/pjreddie/darknet), where the famous framework [YOLO](http://pjreddie.com/darknet/yolo/) (real time object detection & classification) is created. In fact, the goal is to build a framework with `Tensorflow` backend that is compatible with Darknet files, including binary `.weights` and configuration `.cfg` - who looks something like this:
+This repo aims at building a `tensorflow` version of [darknet framework](https://github.com/pjreddie/darknet), where [YOLO](http://pjreddie.com/darknet/yolo/) (real time object detection & classification) is created. In fact, `darkflow` has a `tensorflow` backend and is compatible with both `darknet` files including binary `.weights` and configuration `.cfg` - who looks something like this:
 
 
 ```python
 ...
 
 [convolutional]
+batch_normalize = 1
 size = 3
 stride = 1
 pad = 1
@@ -27,11 +28,11 @@ activation = linear
 ...
 ```
 
-Imagine design a deep net with such ease! Many thanks to the Darknet author. The ease, however, is not complete though - imagine changing the number of classes and you have to do the engineer work: edit some code, rebuild `darknet`. Fortunately you won't have to do so with `darkflow`. Currently, `darkflow` is built to sufficiently run YOLO. For other net structures, new code will be added in a plug-and-play manner. Take a look at `tfnet/yolo/` and see how this task should be quite simple.
+With `darkflow`, you can enjoy such ease of designing a deepnet as well as the rich and powerful ecosystem of tools that `tensorflow` has to offer. Currently, `darkflow` is built to sufficiently run YOLO(v1). For other net structures, new code will be added in a plug-and-play manner. Take a look at `tfnet/yolo/` or `tfnet/vanilla` and see how this task should be quite simple.
 
-Regarding bridging Darknet and Tensorflow for YOLO, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only for testing (forward pass). The awaited training part is still not committed.
+Regarding bridging Darknet and Tensorflow for YOLO, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only build the forward pass. The awaited backward part is still not committed (because it needs a loss evaluation).
 
-This is understandable since building the loss op of YOLO in `Tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darkflow` also allows saving the trained weights to a constant protobuf object that can be used in `Tensorflow` C++ interface.
+This is understandable since building the loss op of YOLO in `tensorflow` is not a trivial task, it requires careful computational considerations. But hey, I've got time to do that. Namely, we are now able to create new configurations and train them in GPU/CPU mode. Moreover, YOLO would not be completed if it is not running real-time (preferably on mobile devices), `darkflow` also allows saving the trained net to a constant protobuf object that can be used in `Tensorflow` C++ interface.
 
 
 ## How to use it
@@ -48,7 +49,7 @@ person
 pottedplant
 ```
 
-And that's it. `darkflow` will parse the annotation if necessary.
+And that's it. `darkflow` will take care of the parsing whenever necessary.
 
 ### Design the net
 
@@ -58,9 +59,7 @@ In this step you create a configuration `[config_name].cfg` and put it inside `c
 
 Note that these files, besides being descriptions of the net structures, also store technical specifications that is read by Darknet framework (e.g. learning rate, batch size, epoch number). `darkflow` therefore, ignore these Darknet specifications.
 
-### Flowing the graph
-
-From now on, all operations are performed by file `flow`. 
+### Flowing the graph using `flow`
 
 ```bash
 # Have a look at its options
@@ -72,9 +71,11 @@ First, let's take a closer look at one of a very useful option `--load`
 ```bash
 # 1. With no --load option, yolo-tiny.weights are loaded
 ./flow --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
+
 # 2. With yolo-3c however, since there are no yolo-3c.weights,
 # its parameters will be randomly initialized
 ./flow --model cfg/yolo-3c.cfg
+
 # 3. It is useful to reuse the first identical layers of tiny for 3c
 ./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights
 # this will print out which layers are reused, which are initialized
@@ -85,7 +86,6 @@ More on `--load` later. All of the above `flow` commands essentially perform for
 ```bash
 # Forward all images in test/ using tiny yolo and 100% GPU usage
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
-# The results are stored in results/
 ```
 
 Training is simple as you only have to add option `--train` like below:
@@ -93,6 +93,7 @@ Training is simple as you only have to add option `--train` like below:
 ```bash
 # Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
 ./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights --train --gpu 1.0
+
 # Completely initialize yolo-3c and train it with ADAM optimizer
 ./flow --model cfg/yolo-3c.cfg --train --trainer adam
 ```
@@ -104,8 +105,10 @@ To resume to any checkpoint before performing training/testing, use `--load [che
 ```bash
 # To resume the most recent checkpoint for training
 ./flow --train --model cfg/yolo-3c.cfg --load -1
+
 # To run testing with checkpoint at step 1500
 ./flow --model cfg/yolo-3c.cfg --load 1500
+
 # Fine tuning tiny yolo from the original one
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
