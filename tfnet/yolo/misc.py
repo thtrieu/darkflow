@@ -4,13 +4,21 @@ helpers of train, test
 
 import numpy as np
 import cv2
+import os
 
 labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
-default_models = ['yolo-full', 'yolo-new', 'yolo-small', 
-                  'yolo-tiny', 'yolo-baby', 'tiny-yolo']
+
+labels80 = []
+
+default_models = ['yolo-full', 'yolov1', 'yolo-small', 
+                  'yolo-tiny', 'yolo-baby', 'tiny-yolo',
+                  'tiny-yolo-voc'] # <- v2
+
+coco_models = ['tiny-coco', 'yolo-coco',  # <- v1
+               'tiny-yolov2', 'yolov2']
 
 def labels(meta):
     model = meta['model'].split('/')[-1]
@@ -19,9 +27,12 @@ def labels(meta):
     
     if model in default_models: 
         meta['labels'] = labels20
-    else: 
-        with open('labels.txt','r') as f:
+    else:
+        file = 'labels.txt'
+        if model in coco_models: file = 'coco.names'
+        with open(file, 'r') as f:
             meta['labels'] = [l.strip() for l in f.readlines()]
+
     if len(meta['labels']) == 0: meta['labels'] = labels20
 
 def is_inp(name): 
