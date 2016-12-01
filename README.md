@@ -28,7 +28,7 @@ activation = linear
 ...
 ```
 
-With `darkflow`, you can enjoy such ease of designing a deepnet as well as the rich and powerful ecosystem of tools that `tensorflow` has to offer. Currently, `darkflow` is built to sufficiently run YOLO(v1). For other net structures, new code will be added in a plug-and-play manner. Take a look at `tfnet/yolo/` or `tfnet/vanilla` and see how this task should be quite simple.
+With `darkflow`, you can enjoy such ease of designing a deepnet as well as the rich and powerful ecosystem of tools that `tensorflow` has to offer. Currently, `darkflow` is built to sufficiently run YOLO(v1). For other net structures, new code will be added in a plug-and-play manner. Take a look at `net/yolo/` or `net/vanilla` and see how this task should be quite simple.
 
 Regarding bridging Darknet and Tensorflow for YOLO, there are currently some available repos online such as [_this_](https://github.com/sunshineatnoon/Darknet.keras) and [_this_](https://github.com/gliese581gg/YOLO_tensorflow). Unfortunately, they only provide hard-coded routines that allows translating YOLO's full/small/tiny configurations from Darknet to Tensorflow, and only build the forward pass. The awaited backward part is still not committed (because it needs a loss evaluation).
 

@@ -8,11 +8,11 @@ the current model to a protobuf file (no variable included)
 
 import tensorflow as tf
 import time
-from tfop import op_create, identity
-from tfnet_flow import tf_train, tf_predict
-from tfnet_help import tf_build_train_op, tf_load_from_ckpt, tf_say, to_darknet
+from ops import op_create, identity
+from flow import tf_train, tf_predict
+from help import tf_build_train_op, tf_load_from_ckpt, tf_say, to_darknet
 from framework import create_framework
-from darknet.darknet import Darknet
+from dark.darknet import Darknet
 
 class TFNet(object):
 

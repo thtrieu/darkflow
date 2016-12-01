@@ -4,7 +4,7 @@ Here provides the interfaces to .ckpt and .weights files
 
 import tensorflow as tf
 import os
-import darknet as dn
+import dark
 import numpy as np
 
 class loader(object):
@@ -61,7 +61,7 @@ class weights_loader(loader):
             if walker.eof: new = None
             else: 
                 args = [i] + layer.signature
-                new = dn.darknet.create_darkop(*args)
+                new = dark.darknet.create_darkop(*args)
             self.vals.append(new)
 
             if new is None: continue

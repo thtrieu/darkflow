@@ -30,7 +30,7 @@ def parse(FLAGS, meta):
     If the parsed file is not already there, parse.
     """
     ext = '.parsed'
-    history = os.path.join('tfnet', 'yolo', 'parse-history.txt');
+    history = os.path.join('net', 'yolo', 'parse-history.txt');
     if not os.path.isfile(history):
         file = open(history, 'w')
         file.close()
@@ -51,7 +51,7 @@ def parse(FLAGS, meta):
     print '\n{} parsing {}'.format(meta['model'], ann)
     dumps = pascal_voc_clean_xml(ann, meta['labels'])
 
-    save_to = os.path.join("tfnet", "yolo", meta['name'])
+    save_to = os.path.join('net', 'yolo', meta['name'])
     while True:
         if not os.path.isfile(save_to + ext): break
         save_to = save_to + '_'

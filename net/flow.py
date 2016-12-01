@@ -2,7 +2,7 @@
 tfnet methods that involve flowing the graph
 """
 
-from tfnet_help import shuffle
+from help import shuffle
 import numpy as np
 import os
 import time
