@@ -43,7 +43,9 @@ class weights_loader(loader):
     """one who understands .weights files"""
     
     _W_ORDER = dict({ # order of param flattened into .weights file
-        'convolutional': ['biases','scale','mean','var','kernel'],
+        'convolutional': [
+            'biases','gamma','moving_mean','moving_variance','kernel'
+        ],
         'connected': ['biases', 'weights'],
         'local': ['biases', 'kernels']
     })

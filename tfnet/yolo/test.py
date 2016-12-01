@@ -22,22 +22,26 @@ def metaprocess(meta):
 	Add to meta (a dict) `labels` correspond to current model and
 	`colors` correspond to these labels, for drawing predictions.
 	"""
-	def to_color(indx, base):
+	def _to_color(indx, base):
+		""" return (b, r, g) tuple"""
 		base2 = base * base
 		b = indx / base2
 		r = (indx % base2) / base
 		g = (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
+
 	labels(meta)
 	assert len(meta['labels']) == meta['classes'], (
 		'labels.txt and {} indicate' + ' '
 		'inconsistent class numbers'
 	).format(meta['model'])
+
 	colors = list()
 	base = int(np.ceil(pow(meta['classes'], 1./3)))
 	for x in range(len(meta['labels'])): 
-		colors += [to_color(x, base)]
+		colors += [_to_color(x, base)]
 	meta['colors'] = colors
+
 	return meta
 
 def preprocess(imPath, allobj = None):

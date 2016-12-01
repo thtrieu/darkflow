@@ -72,7 +72,7 @@ class dropout_layer(layer):
         self.h['pdrop'] = dict({
             'feed': p, # for training
             'dfault': 1.0, # for testing
-            'shape': []
+            'shape': ()
         })
 
 class local_layer(layer):
@@ -109,10 +109,15 @@ class convolutional_layer(layer):
         })
         if self.batch_norm:
             self.wshape.update({
-                'var'  : [n], 
-                'scale': [n], 
-                'mean' : [n]
+                'moving_variance'  : [n], 
+                'moving_mean': [n], 
+                'gamma' : [n]
             })
+            self.h['is_training'] = {
+                'feed': True,
+                'dfault': False,
+                'shape': ()
+            }
 
     def finalize(self, _):
         kernel = self.w['kernel']

@@ -57,14 +57,9 @@ def cfg_yielder(model, binary):
 	layers, meta = parser(model); yield meta;
 	h, w, c = meta['inp_size']; l = w * h * c
 
-	last_convo = None; size = None;
-	name = model.split('/')[-1]
-	name = name.split('.')[0]
-	weightf = binary + '{}.weights'.format(name)
-
 	# Start yielding
 	flat = False # flag for 1st dense layer
-	conv = '.conv.' in weightf
+	conv = '.conv.' in model
 	for i, d in enumerate(layers):
 		#print d['type'], h, w, c, l
 

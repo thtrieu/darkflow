@@ -14,7 +14,9 @@ default_models = ['yolo-full', 'yolo-new', 'yolo-small',
 
 def labels(meta):
     model = meta['model'].split('/')[-1]
-    model = model.split('.')[0]
+    model = '.'.join(model.split('.')[:-1])
+    meta['name'] = model
+    
     if model in default_models: 
         meta['labels'] = labels20
     else: 

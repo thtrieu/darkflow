@@ -28,14 +28,15 @@ def tf_load_from_ckpt(self):
 			load_point = load_point.split('-')[-1]
 			self.FLAGS.load = int(load_point)
 	
-	model = self.meta['model'].split('/')[-1]
-	model = '.'.join(model.split('.')[:-1])
-	load_point = os.path.join(self.FLAGS.backup, model)
+	load_point = os.path.join(self.FLAGS.backup, self.meta['name'])
 	load_point = '{}-{}'.format(load_point, self.FLAGS.load)
 	print 'Loading from {}'.format(load_point)
 	try: self.saver.restore(self.sess, load_point)
 	except: load_old_graph(self, load_point)
 
+def tf_say(self, msg):
+	if self.FLAGS.savepb != 'saving': 
+		print msg
 
 def shuffle(self):
 	"""
@@ -91,8 +92,7 @@ def load_old_graph(self, ckpt):
 		args = [name, var.get_shape()]
 		val = ckpt_loader(args)
 		assert val is not None, \
-		'Failed on {}'.format(var.name)
-		# soft assignment 
+		'Cannot find and load {}'.format(var.name)
 		shp = val.shape
 		plh = tf.placeholder(tf.float32, shp)
 		op = tf.assign(var, plh)
@@ -105,13 +105,14 @@ def to_darknet(self):
 	"""
 	darknet_ckpt = self.darknet
 	with self.graph.as_default() as g:
-		for var in tf.trainable_variables():
+		for var in tf.all_variables():
 			name = var.name.split(':')[0]
 			var_name = name.split('-')
 			l_idx = int(var_name[0])
-			w_sig = var_name[-1]
+			w_sig = var_name[1].split('/')[-1]
 			l = darknet_ckpt.layers[l_idx]
 			l.w[w_sig] = var.eval(self.sess)
+			#print l_idx, w_sig, type(l.w[w_sig])
 
 	for layer in darknet_ckpt.layers:
 		for ph in layer.h:

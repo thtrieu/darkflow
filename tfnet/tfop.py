@@ -26,39 +26,51 @@ class tfop(object):
 		self.out = None # class = tf.Tensor
 		self.lay = layer
 		self.sig = name
-		self.action = ''
-		self.wrap(feed)
+
+		self.convert(feed)
 		self.forward()
 
 	def __call__(self, verbalise = True):
 		if verbalise: self.verbalise()
 		return self
 
-	def wrap(self, feed):
+	def convert(self, feed):
 		"""
-		wraps `self.lay` into tf variables & placeholders
-		if layer does not carry value (partial net loaded)
-		the corresponding tf variable will be initialised 
+		convert `self.lay` into variables & placeholders
+		some of the variables 
 		""" 
 		if feed is None: return
 
-		self.action = None
-		for var in self.lay.wshape: # trainable vars
-			self.action = 'Load'
-			sig = '{}-{}'.format(self.sig, var) 
-			val = self.lay.w.get(var, None)
-			if val is None: # darknet is partially loaded
-				args = [self.lay.wshape[var], 0., 1e-2]
-				val = tf.truncated_normal(*args)
-				self.action = 'Init '
+		delegate_vars = ['gamma', 'moving_mean', 'moving_variance']
 
-			self.lay.w[var] = tf.Variable(val, name = sig)
+		self.action = None
+		for var in self.lay.wshape: # variables
+			val = self.lay.w.get(var, None)
+
+			if val is None:
+				args = [self.lay.wshape[var], 0., 1e-2]
+				self.lay.w[var] = tf.truncated_normal(*args)
+				self.action = 'Init'
+			else:
+				self.lay.w[var] = tf.constant_initializer(val)
+				self.action = 'Load'
+
+			if var not in delegate_vars:
+				with tf.variable_scope(self.sig):
+					self.lay.w[var] = tf.get_variable(var,
+						shape = self.lay.wshape[var],
+						dtype = tf.float32,
+						initializer = self.lay.w[var])
 		
 		for ph in self.lay.h: # placeholders
 			sig = '{}-{}'.format(self.sig, ph)
-			values = self.lay.h[ph]; shp = values['shape']
-			self.lay.h[ph] = tf.placeholder(tf.float32, shp, sig)
-			feed[self.lay.h[ph]] = values
+			val = self.lay.h[ph] 
+			shp = val['shape']
+			dft = val['dfault']
+
+			self.lay.h[ph] = tf.placeholder_with_default(
+				val['dfault'], val['shape'], name = sig)
+			feed[self.lay.h[ph]] = val['feed']
 
 	def verbalise(self):
 		form = '{:<4} {:<43} -> {}' # verbalise template
@@ -85,10 +97,14 @@ class local(tfop):
 			oi = list()
 			for j in range(self.lay.w_out):
 				kij = k[i * self.lay.w_out + j]
-				i_, j_ = i + 1 - ksz/2, j + 1 - ksz/2
+				half = ksz/2
+				i_, j_ = i + 1 - half, j + 1 - half
 				tij = temp[:, i_ : i_ + ksz , j_ : j_ + ksz ,:]
-				oi += [tf.nn.conv2d(tij, kij, 
-					padding = 'VALID', strides = [1]*4)]
+				oi.append(
+					tf.nn.conv2d(tij, kij, 
+						padding = 'VALID', 
+						strides = [1] * 4)
+				)
 			o += [tf.concat(2, oi)]
 
 		self.out = tf.concat(1, o)
@@ -110,12 +126,16 @@ class convolutional(tfop):
 			temp = self.batchnorm(self.lay, temp)
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
-	def batchnorm(self, l, x):
-		return tf.nn.batch_normalization(
-			x = x, mean = l.w['mean'], offset = None, 
-			variance = l.w['var'], scale = l.w['scale'], 
-			variance_epsilon = 1e-5, name = self.sig + '-bnorm'
-		)
+	def batchnorm(self, layer, inp):
+		if type(layer.h['is_training']) is bool:
+			temp = (inp - layer.w['moving_mean'])
+			temp /= (np.sqrt(layer.w['moving_variance']) + 1e-5)
+			temp *= layer.w['gamma']
+			return temp
+		else: return slim.batch_norm(inp, 
+			center = False, scale = True, epsilon = 1e-5,
+			initializers = layer.w, scope = self.sig,
+			is_training = layer.h['is_training'])
 
 	def speak(self):
 		msg = 'conv{}'.format(_shape(self.lay.w['kernel']))

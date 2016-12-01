@@ -9,8 +9,7 @@ import time
 
 def tf_train(self):
 	batches = shuffle(self)
-	model = self.meta['model'].split('/')[-1]
-	model = '.'.join(model.split('.')[:-1])
+	model = self.meta['name']
 
 	losses = list(); total = int() # total number of batches
 	for i, packet in enumerate(batches):
@@ -31,7 +30,7 @@ def tf_train(self):
 
 		feed_pair = [(self.placeholders[k], datum[k]) for k in datum]
 		feed_dict = {holder:val for (holder,val) in feed_pair}
-		for k in self.feed: feed_dict[k] = self.feed[k]['feed']
+		for k in self.feed: feed_dict[k] = self.feed[k]
 		feed_dict[self.inp] = x_batch
 
 		_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
@@ -66,7 +65,6 @@ def tf_predict(self):
 		all_inp = new_all
 
 		feed_dict = {self.inp : np.concatenate(inp_feed, 0)}
-		for k in self.feed: feed_dict[k] = self.feed[k]['dfault']
 	
 		print ('Forwarding {} inputs ...'.format(len(inp_feed)))
 		start = time.time()

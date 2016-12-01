@@ -10,7 +10,7 @@ import tensorflow as tf
 import time
 from tfop import op_create, identity
 from tfnet_flow import tf_train, tf_predict
-from tfnet_help import tf_build_train_op, tf_load_from_ckpt
+from tfnet_help import tf_build_train_op, tf_load_from_ckpt, tf_say, to_darknet
 from framework import create_framework
 from darknet.darknet import Darknet
 
@@ -27,29 +27,30 @@ class TFNet(object):
 	})
 
 	# imported methods
+	say = tf_say
 	train = tf_train
 	predict = tf_predict
 	build_train_op = tf_build_train_op
 	load_from_ckpt = tf_load_from_ckpt
 
-	def __init__(self, FLAGS):
-		darknet = Darknet(FLAGS)
+	def __init__(self, FLAGS, darknet = None):
+		if darknet is None:	darknet = Darknet(FLAGS)
 		self.framework = create_framework(darknet.meta['type'])
 		self.meta = self.framework.metaprocess(darknet.meta)
 		self.darknet = darknet
 		self.FLAGS = FLAGS
 
-		print ('\nCompiling net & fill in parameters...')
+		self.say('\nCompiling net & fill in parameters...')
 		start = time.time()
 		self.graph = tf.Graph()
 		with self.graph.as_default() as g:
 			self.build_forward()
 			self.setup_meta_ops()
-		print ('Finished in {}s\n'.format(time.time() - start))
+		self.say('Finished in {}s\n'.format(time.time() - start))
 
 
 	def build_forward(self):
-		self.ckpt = self.FLAGS.savepb is None
+		const = self.FLAGS.savepb == 'saving'
 		verbalise = self.FLAGS.verbalise
 
 		# Placeholder
@@ -63,7 +64,7 @@ class TFNet(object):
 		for i, layer in enumerate(self.darknet.layers):
 			name = '{}-{}'.format(str(i),layer.type)
 			args = [layer, state, name]
-			if not self.ckpt: args += [self.feed]
+			if not const: args += [self.feed]
 			state = op_create(*args)(verbalise)
 		self.top = state
 
@@ -78,19 +79,19 @@ class TFNet(object):
 
 		utility = min(self.FLAGS.gpu, 1.)
 		if utility > 0.0:
-			print 'GPU mode with {} usage'.format(utility)
+			self.say('GPU mode with {} usage'.format(utility))
 			cfg['gpu_options'] = tf.GPUOptions(
 				per_process_gpu_memory_fraction = utility)
 			cfg['allow_soft_placement'] = True
 		else: 
-			print 'Running entirely on CPU'
+			self.say('Running entirely on CPU')
 			cfg['device_count'] = {'GPU': 0}
 
+		if self.FLAGS.savepb == 'saving': return
 		if self.FLAGS.train: self.build_train_op()
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.initialize_all_variables())
 
-		if self.ckpt: return
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
@@ -100,21 +101,16 @@ class TFNet(object):
 		Create a standalone const graph def that 
 		C++	can load and run.
 		"""
-		darknet_ckpt = to_darknet(self)
-		flags_ckpt = self.FLAGS
-		flags_ckpt.savepb = None # signal
-		flags_ckpt.verbalise = False
-
-		# placeholder takes default vals
-		for layer in darknet_ckpt.layers:
-			for ph in layer.h:
-				layer.h[ph] =  layer.h[ph]['dfault']
+		darknet_pb = to_darknet(self)
+		flags_pb = self.FLAGS
+		flags_pb.savepb = 'saving' # signal
+		flags_pb.verbalise = False
 		
 		# rebuild another tfnet. all const.
-		tfnet_ckpt = TFNet(darknet_ckpt, flags_ckpt)		
-		tfnet_ckpt.sess = tf.Session(graph = tfnet_ckpt.graph)
-		# tfnet_ckpt.predict() # uncomment for unit testing
-		name = 'graph-{}.pb'.format(self.meta['model'])
-		print 'Saving const graph def to {}'.format(name)
-		graph_def = tfnet_ckpt.sess.graph_def
+		tfnet_pb = TFNet(flags_pb, darknet_pb)		
+		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
+		tfnet_pb.predict() # uncomment for unit testing
+		name = 'graph-{}.pb'.format(self.meta['name'])
+		self.say('Saving const graph def to {}'.format(name))
+		graph_def = tfnet_pb.sess.graph_def
 		tf.train.write_graph(graph_def,'./',name,False)
