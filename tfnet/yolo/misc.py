@@ -10,12 +10,10 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
-
-labels80 = []
-
-default_models = ['yolo-full', 'yolov1', 'yolo-small', 
-                  'yolo-tiny', 'yolo-baby', 'tiny-yolo',
-                  'tiny-yolo-voc'] # <- v2
+    
+voc_models = ['yolo-full', 'yolov1', 'yolo-small', 
+              'yolo-tiny', 'yolo-baby', 'tiny-yolo',
+              'tiny-yolo-voc'] # <- v2
 
 coco_models = ['tiny-coco', 'yolo-coco',  # <- v1
                'tiny-yolov2', 'yolov2']
@@ -25,11 +23,12 @@ def labels(meta):
     model = '.'.join(model.split('.')[:-1])
     meta['name'] = model
     
-    if model in default_models: 
+    if model in voc_models: 
         meta['labels'] = labels20
     else:
         file = 'labels.txt'
-        if model in coco_models: file = 'coco.names'
+        if model in coco_models: 
+            file = os.path.join('cfg','coco.names')
         with open(file, 'r') as f:
             meta['labels'] = [l.strip() for l in f.readlines()]
 
