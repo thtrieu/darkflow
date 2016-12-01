@@ -2,8 +2,6 @@
 
 from net.build import TFNet
 from tensorflow import flags
-import tensorflow as tf
-import time
 import os
 
 flags.DEFINE_string("test", "./test/", "path to testing directory")
