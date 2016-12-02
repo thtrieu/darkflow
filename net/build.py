@@ -28,7 +28,10 @@ class TFNet(object):
 	load_from_ckpt = help.load_from_ckpt
 
 	def __init__(self, FLAGS, darknet = None):
-		if darknet is None:	darknet = Darknet(FLAGS)
+		self.ntrain = 0
+		if darknet is None:	
+			darknet = Darknet(FLAGS)
+			self.ntrain = len(darknet.layers)
 		self.framework = create_framework(darknet.meta['type'])
 		self.meta = self.framework.metaprocess(darknet.meta)
 		self.num_layer = len(darknet.layers)
@@ -47,9 +50,6 @@ class TFNet(object):
 
 	def build_forward(self):
 		verbalise = self.FLAGS.verbalise
-		ntrain = self.FLAGS.train
-		if ntrain < 0: # train all
-			ntrain = self.num_layer
 
 		# Placeholders
 		inp_size = [None] + self.meta['inp_size']
@@ -58,7 +58,7 @@ class TFNet(object):
 
 		# Build the forward pass
 		state = identity(self.inp)
-		roof = self.num_layer - ntrain
+		roof = self.num_layer - self.ntrain
 		self.say(HEADER, LINE)
 		for i, layer in enumerate(self.darknet.layers):
 			scope = '{}-{}'.format(str(i),layer.type)
@@ -87,12 +87,11 @@ class TFNet(object):
 			self.say('Running entirely on CPU')
 			cfg['device_count'] = {'GPU': 0}
 
-		if self.FLAGS.savepb == 'saving': return
 		if self.FLAGS.train: self.build_train_op()
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.initialize_all_variables())
 
-		if self.FLAGS.train == 0: return
+		if not self.ntrain: return
 		self.saver = tf.train.Saver(tf.all_variables(), 
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
@@ -104,7 +103,6 @@ class TFNet(object):
 		"""
 		darknet_pb = self.to_darknet()
 		flags_pb = self.FLAGS
-		flags_pb.train = 0
 		flags_pb.verbalise = False
 		
 		# rebuild another tfnet. all const.

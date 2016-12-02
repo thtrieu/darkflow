@@ -14,7 +14,7 @@ op_types = {
 	'identity': identity,
 	'crop': crop,
 	'local': local,
-	'modify': modify
+	'select': select
 }
 
 def op_create(*args):

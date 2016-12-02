@@ -1,7 +1,7 @@
 from layer import Layer
 import numpy as np
 
-class modify_layer(Layer):
+class select_layer(Layer):
     def setup(self, inp, old, 
               out, keep, train,
               activation):

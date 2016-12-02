@@ -132,7 +132,7 @@ def cfg_yielder(model, binary):
 		elif d['type'] == '[dropout]': 
 			yield ['dropout', d['probability']]
 
-		elif d['type'] == '[modify]':
+		elif d['type'] == '[select]':
 			if not flat:
 				yield ['flatten']
 				flat = True
@@ -147,7 +147,7 @@ def cfg_yielder(model, binary):
 			for count in range(d['bins']-1):
 				for num in keep[-keep_n:]:
 					keep += [num + classes]
-			yield ['modify', l, d['old_output'],
+			yield ['select', l, d['old_output'],
 				   d['output'], keep, train_from,
 				   activation]
 

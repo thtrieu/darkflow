@@ -1,6 +1,6 @@
 from layer import Layer
-from convolution import convolutional_layer, local_layer
-from connected import modify_layer, connected_layer
+from convolution import *
+from connected import *
 
 class avgpool_layer(Layer):
     pass
@@ -39,7 +39,7 @@ darkops = {
     'softmax': softmax_layer,
     'crop': crop_layer,
     'local': local_layer,
-    'modify': modify_layer
+    'select': select_layer
 }
 
 def create_darkop(num, ltype, *args):

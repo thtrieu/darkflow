@@ -3,7 +3,7 @@ from baseop import BaseOp
 import tensorflow as tf
 
 
-class modify(BaseOp):
+class select(BaseOp):
 	"""a weird connected layer"""
 	def forward(self):
 		self.out = tf.nn.xw_plus_b(
@@ -16,7 +16,7 @@ class modify(BaseOp):
 		layer = self.lay
 		args = [layer.inp, layer.out]
 		args += [layer.activation]
-		msg = 'modify {} x {}  {}'
+		msg = 'select {} x {}  {}'
 		return msg.format(*args)
 
 
@@ -32,7 +32,7 @@ class connected(BaseOp):
 		layer = self.lay
 		args = [layer.inp, layer.out]
 		args += [layer.activation]
-		msg = 'full {}x{}  {}'
+		msg = 'full {} x {}  {}'
 		return msg.format(*args)
 
 
