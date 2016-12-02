@@ -25,9 +25,9 @@ def metaprocess(meta):
 	def _to_color(indx, base):
 		""" return (b, r, g) tuple"""
 		base2 = base * base
-		b = indx / base2
-		r = (indx % base2) / base
-		g = (indx % base2) % base
+		b = 2 - indx / base2
+		r = 2 - (indx % base2) / base
+		g = 2 - (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
 
 	labels(meta)

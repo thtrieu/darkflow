@@ -8,18 +8,18 @@ import tensorflow as tf
 import numpy as np
 import os
 
-old_graph_msg = 'Resolving incompatible graph def from {}'
+old_graph_msg = 'Resolving old graph def {} (no guarantee)'
 
-def tf_build_train_op(self):
+def build_train_op(self):
 	loss_ops = self.framework.loss(self)
 	self.placeholders, self.loss = loss_ops
 
-	print 'Building {} train op'.format(self.meta['model'])
+	self.say('Building {} train op'.format(self.meta['model']))
 	optimizer = self._TRAINER[self.FLAGS.trainer](self.FLAGS.lr)
 	gradients = optimizer.compute_gradients(self.loss)
 	self.train_op = optimizer.apply_gradients(gradients)
 
-def tf_load_from_ckpt(self):
+def load_from_ckpt(self):
 	if self.FLAGS.load < 0: # load lastest ckpt
 		with open(self.FLAGS.backup + 'checkpoint', 'r') as f:
 			last = f.readlines()[-1].strip()
@@ -30,12 +30,16 @@ def tf_load_from_ckpt(self):
 	
 	load_point = os.path.join(self.FLAGS.backup, self.meta['name'])
 	load_point = '{}-{}'.format(load_point, self.FLAGS.load)
-	print 'Loading from {}'.format(load_point)
+	self.say('Loading from {}'.format(load_point))
 	try: self.saver.restore(self.sess, load_point)
 	except: load_old_graph(self, load_point)
 
-def tf_say(self, msg):
-	if self.FLAGS.savepb != 'saving': 
+def say(self, *msgs):
+	if not self.FLAGS.verbalise:
+		return
+	msgs = list(msgs)
+	for msg in msgs:
+		if msg is None: continue
 		print msg
 
 def shuffle(self):
@@ -47,7 +51,7 @@ def shuffle(self):
 	data = self.framework.parse(self.FLAGS, self.meta)
 	size = len(data); batch = self.FLAGS.batch
 
-	print 'Dataset of {} instance(s)'.format(size)
+	self.say('Dataset of {} instance(s)'.format(size))
 	if batch > size: 
 		self.FLAGS.batch = batch = size
 	batch_per_epoch = int(size / batch)
@@ -55,7 +59,7 @@ def shuffle(self):
 	yield total
 
 	for i in range(self.FLAGS.epoch):
-		print 'EPOCH {}'.format(i + 1)
+		self.say('EPOCH {}'.format(i + 1))
 		shuffle_idx = perm(np.arange(size))
 		for b in range(batch_per_epoch): 
 			end_idx = (b+1) * batch
@@ -85,7 +89,7 @@ def shuffle(self):
 
 def load_old_graph(self, ckpt):	
 	ckpt_loader = create_loader(ckpt)
-	print old_graph_msg.format(ckpt)
+	self.say(old_graph_msg.format(ckpt))
 	
 	for var in tf.all_variables():
 		name = var.name.split(':')[0]
@@ -112,7 +116,6 @@ def to_darknet(self):
 			w_sig = var_name[1].split('/')[-1]
 			l = darknet_ckpt.layers[l_idx]
 			l.w[w_sig] = var.eval(self.sess)
-			#print l_idx, w_sig, type(l.w[w_sig])
 
 	for layer in darknet_ckpt.layers:
 		for ph in layer.h:

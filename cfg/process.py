@@ -30,7 +30,7 @@ def parser(model):
 					#assert layer['type'] in available, \
 					#'Layer {} not implemented'.format(layer['type'])
 					layers += [layer]				
-			layer = {'type':line}
+			layer = {'type': line}
 		else:
 			try:
 				i = float(_parse(line))
@@ -61,7 +61,6 @@ def cfg_yielder(model, binary):
 	flat = False # flag for 1st dense layer
 	conv = '.conv.' in model
 	for i, d in enumerate(layers):
-		#print d['type'], h, w, c, l
 
 		if d['type'] == '[crop]':
 			yield ['crop']
@@ -75,7 +74,8 @@ def cfg_yielder(model, binary):
 			w_ = (w - 1 - (1 - pad) * (size - 1)) / stride + 1
 			h_ = (h - 1 - (1 - pad) * (size - 1)) / stride + 1
 
-			yield ['local', size, c, n, stride, pad, w_, h_]
+			yield ['local', size, c, n, stride, 
+					pad, w_, h_, activation]
 			if activation != 'linear': yield [activation]
 		
 			w, h, c = w_, h_, n
@@ -92,7 +92,8 @@ def cfg_yielder(model, binary):
 			activation = d.get('activation', 'logistic')
 			batch_norm = d.get('batch_normalize', 0) or conv
 			yield ['convolutional', size, c, n, 
-				   stride, padding, batch_norm]
+				   stride, padding, batch_norm,
+				   activation]
 			if activation != 'linear': yield [activation]
 
 			w_ = (w + 2 * padding - size)/stride + 1
@@ -123,14 +124,35 @@ def cfg_yielder(model, binary):
 			if not flat:
 				yield ['flatten']
 				flat = True
-			yield ['connected', l, d['output']]
+			activation = d.get('activation', 'logistic')
+			yield ['connected', l, d['output'], activation]
+			if activation != 'linear': yield [activation]
 			l = d['output']
-			if 'activation' in d:
-				if d['activation'] != 'linear':
-					yield [d['activation']]
 
 		elif d['type'] == '[dropout]': 
 			yield ['dropout', d['probability']]
+
+		elif d['type'] == '[modify]':
+			if not flat:
+				yield ['flatten']
+				flat = True
+			activation = d.get('activation', 'logistic')
+
+			d['keep'] = d['keep'].split('/')
+			classes = int(d['keep'][-1])
+			keep = [int(c) for c in d['keep'][0].split(',')]
+			keep_n = len(keep)
+			train_from = classes * d['bins']
+
+			for count in range(d['bins']-1):
+				for num in keep[-keep_n:]:
+					keep += [num + classes]
+			yield ['modify', l, d['old_output'],
+				   d['output'], keep, train_from,
+				   activation]
+
+			if activation != 'linear': yield [activation]
+			l = d['output']
 
 		else:
 			exit('Layer {} not implemented'.format(d['type']))

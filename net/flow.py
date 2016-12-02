@@ -1,32 +1,40 @@
 """
 tfnet methods that involve flowing the graph
 """
-
-from help import shuffle
 import numpy as np
 import os
 import time
+import tensorflow as tf
 
-def tf_train(self):
-	batches = shuffle(self)
+train_stats = (
+	'Training statistics: \n'
+	'\tLearning rate : {}\n'
+	'\tBatch size    : {}\n'
+	'\tEpoch number  : {}\n'
+	'\tBackup every  : {}'
+)
+
+def train(self):
+	with self.graph.as_default():
+		for i in tf.all_variables():
+			print i.name
+	batches = self.shuffle()
 	model = self.meta['name']
 
 	losses = list(); total = int() # total number of batches
 	for i, packet in enumerate(batches):
 		if i == 0: 
-			total = packet; 
-			print 'Training statistics:'
-			print '\tLearning rate : {}'.format(self.FLAGS.lr)
-			print '\tBatch size    : {}'.format(self.FLAGS.batch)
-			print '\tEpoch number  : {}'.format(self.FLAGS.epoch)
-			print '\tBackup every  : {}'.format(self.FLAGS.save)
+			total = packet;
+			args = [self.FLAGS.lr, self.FLAGS.batch]
+			args+= [self.FLAGS.epoch, self.FLAGS.save]
+			self.say(train_stats.format(*args))
 			continue
 
 		x_batch, datum = packet
 
 		if i == 1: \
 		assert set(list(datum)) == set(list(self.placeholders)), \
-		'Mismatch between placeholders and datum for loss evaluation'
+		'Feed and placeholders of loss op mismatched'
 
 		feed_pair = [(self.placeholders[k], datum[k]) for k in datum]
 		feed_dict = {holder:val for (holder,val) in feed_pair}
@@ -43,7 +51,7 @@ def tf_train(self):
 			self.saver.save(self.sess, ckpt)
 
 
-def tf_predict(self):
+def predict(self):
 	inp_path = self.FLAGS.test
 	all_inp_ = os.listdir(inp_path)
 	all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]

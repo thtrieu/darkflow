@@ -1,17 +1,3 @@
-"""
-file: darknet.py
-includes: definition of class Darknet
-this class works with Darknet files: .cfg, .weights
-and produces Darknet objects that are easy for TFNet
-to use for building the corresponding tensorflow net.
-
-this class uses configs/process.py as a parser for .cfg
-files to understand the structure of .weights file. It
-will use these information to load all the weights into
-its attribute .layers - a well structured list, with each
-element is an object of class layer() defined in ./darkop.py
-"""
-
 from cfg.process import cfg_yielder
 from darkop import create_darkop
 from utils import loader
@@ -24,6 +10,7 @@ class Darknet(object):
 
     def __init__(self, FLAGS):
         self.get_weight_src(FLAGS)
+        self.modify = False
 
         print 'Parsing {}'.format(self.src_cfg)
         src_parsed = self.parse_cfg(self.src_cfg, FLAGS)

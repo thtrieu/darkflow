@@ -40,8 +40,9 @@ def parse(FLAGS, meta):
         line = line.strip().split(' ')
         labels = line[1:]
         if labels == meta['labels']:
-            with open(line[0], 'rb') as f:
-                return pickle.load(f)[0]
+            if os.path.isfile(line[0]):
+                with open(line[0], 'rb') as f:
+                    return pickle.load(f)[0]
 
     # actual parsing
     ann = FLAGS.annotation

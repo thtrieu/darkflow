@@ -1,7 +1,3 @@
-"""
-Here provides the interfaces to .ckpt and .weights files
-"""
-
 import tensorflow as tf
 import os
 import dark
@@ -12,7 +8,8 @@ class loader(object):
     interface to work with both .weights and .ckpt files
     in loading / recollecting / resolving mode
     """
-    VAR_LAYER = ['convolutional', 'connected', 'local']
+    VAR_LAYER = ['convolutional', 'connected', 
+                 'local', 'modify']
 
     def __init__(self, *args):
         self.src_key = list()
@@ -21,15 +18,15 @@ class loader(object):
 
     def __call__(self, key):
         for idx in range(len(key)):
-            val = self.find(key[idx:], idx)
+            val = self.find(key, idx)
             if val is not None: return val
         return None
     
     def find(self, key, idx):
-        up_to = min(len(self.src_key), 1)
+        up_to = min(len(self.src_key), 4)
         for i in range(up_to):
-            key_b = self.src_key[i][idx:]
-            if key_b == key: 
+            key_b = self.src_key[i]
+            if key_b[idx:] == key[idx:]:
             	return self.yields(i)
         return None
 
@@ -91,7 +88,7 @@ class checkpoint_loader(loader):
                 saver.restore(sess, ckpt)
                 for var in tf.all_variables():
                     name = var.name.split(':')[0]
-                    packet = [name, var.get_shape()]
+                    packet = [name, var.get_shape().as_list()]
                     self.src_key += [packet]
                     self.vals += [var.eval(sess)]
 
@@ -106,9 +103,7 @@ def create_loader(path, cfg = None):
     return load_type(path, cfg)
 
 class weights_walker(object):
-    """
-    an incremental reader of float32 binary files.
-    """
+    """incremental reader of float32 binary files"""
     def __init__(self, path):
         self.eof = False # end of file
         self.path = path  # current pos
