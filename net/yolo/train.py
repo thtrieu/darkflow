@@ -24,11 +24,12 @@ from copy import deepcopy
 from test import preprocess
 from misc import show
 
-def parse(FLAGS, meta):
+def parse(self):
     """
     Decide whether to parse the annotation or not, 
     If the parsed file is not already there, parse.
     """
+    meta = self.meta
     ext = '.parsed'
     history = os.path.join('net', 'yolo', 'parse-history.txt');
     if not os.path.isfile(history):
@@ -45,7 +46,7 @@ def parse(FLAGS, meta):
                     return pickle.load(f)[0]
 
     # actual parsing
-    ann = FLAGS.annotation
+    ann = self.FLAGS.annotation
     if not os.path.isdir(ann):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
@@ -67,19 +68,20 @@ def parse(FLAGS, meta):
     print 'Result saved to {}'.format(save_to)
     return dumps
 
-def batch(FLAGS, meta, chunk):
+def batch(self, chunk):
     """
     Takes a chunk of parsed annotations
     returns value for placeholders of net's 
     input & loss layer correspond to this chunk
     """
+    meta = self.meta
     S, B = meta['side'], meta['num']
     C, labels = meta['classes'], meta['labels']
 
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = os.path.join(FLAGS.dataset, jpg)
+    path = os.path.join(self.FLAGS.dataset, jpg)
     img = preprocess(path, allobj)
 
     # Calculate regression target
@@ -142,14 +144,14 @@ def batch(FLAGS, meta, chunk):
 
     return inp_feed_val, loss_feed_val
 
-def loss(net):
+def loss(self, net_out):
     """
     Takes net.out and placeholders value
     returned in batch() func above, 
     to build train_op and loss
     """
     # meta
-    m = net.meta
+    m = self.meta
     sprob = m['class_scale']
     sconf = m['object_scale']
     snoob = m['noobject_scale'] 
@@ -186,7 +188,7 @@ def loss(net):
     }
 
     # Extract the coordinate prediction from net.out
-    coords = net.out[:, SS * (C + B):]
+    coords = net_out[:, SS * (C + B):]
     coords = tf.reshape(coords, [-1, SS, B, 4])
     wh = tf.pow(coords[:,:,:,2:4], 2) * S # unit: grid cell
     area_pred = wh[:,:,:,0] * wh[:,:,:,1] # unit: grid cell^2 
@@ -225,7 +227,7 @@ def loss(net):
     wght = tf.concat(1, [proid, conid, cooid])
 
     print 'Building {} loss'.format(m['model'])
-    loss = tf.pow(net.out - true, 2)
+    loss = tf.pow(net_out - true, 2)
     loss = tf.mul(loss, wght)
     loss = tf.reduce_sum(loss, 1)
     loss = .5 * tf.reduce_mean(loss)

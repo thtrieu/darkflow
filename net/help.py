@@ -11,7 +11,7 @@ import os
 old_graph_msg = 'Resolving old graph def {} (no guarantee)'
 
 def build_train_op(self):
-	loss_ops = self.framework.loss(self)
+	loss_ops = self.framework.loss(self.out)
 	self.placeholders, self.loss = loss_ops
 
 	self.say('Building {} train op'.format(self.meta['model']))
@@ -48,7 +48,7 @@ def shuffle(self):
 	object to yield minibatches. minibatches should be preprocessed before
 	yielding to be appropriate placeholders for model's loss evaluation.
 	"""
-	data = self.framework.parse(self.FLAGS, self.meta)
+	data = self.framework.parse()
 	size = len(data); batch = self.FLAGS.batch
 
 	self.say('Dataset of {} instance(s)'.format(size))
@@ -71,8 +71,7 @@ def shuffle(self):
 			for j in range(start_idx, end_idx):
 				real_idx = shuffle_idx[j]
 				this = data[real_idx]
-				inp, feedval = self.framework.batch(
-					self.FLAGS, self.meta, this)
+				inp, feedval = self.framework.batch(this)
 				if inp is None: continue
 
 				x_batch += [np.expand_dims(inp, 0)]

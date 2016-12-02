@@ -1,6 +1,3 @@
-"""
-tfnet methods that involve flowing the graph
-"""
 import numpy as np
 import os
 import time
@@ -58,6 +55,13 @@ def predict(self):
 
 	batch = min(self.FLAGS.batch, len(all_inp_))
 
+	this = self.top
+	request = list()
+	while this.inp is not None:
+		if this.lay.type == 'convolutional':
+			request = [this.out] + request
+		this = this.inp
+
 	for j in range(len(all_inp_)/batch):
 		inp_feed = list(); new_all = list()
 		all_inp = all_inp_[j*batch: (j*batch+batch)]
@@ -73,12 +77,15 @@ def predict(self):
 	
 		print ('Forwarding {} inputs ...'.format(len(inp_feed)))
 		start = time.time()
-		out = self.sess.run([self.out], feed_dict)[0]
+		out = self.sess.run(request + [self.out], feed_dict)
+		for i in out[:-1]:
+			print 'mean {} var {}'.format(np.mean(i), np.var(i))
+		out = out[-1]
 		stop = time.time(); last = stop - start
+
 		print ('Total time = {}s / {} inps = {} ips'.format(
 			last, len(inp_feed), len(inp_feed) / last))
 
 		for i, prediction in enumerate(out):
 			self.framework.postprocess(prediction,
-				os.path.join(inp_path, all_inp[i]),
-				self.FLAGS, self.meta)
+				os.path.join(inp_path, all_inp[i]))

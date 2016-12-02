@@ -1,7 +1,3 @@
-"""
-helpers of train, test
-"""
-
 import numpy as np
 import cv2
 import os
@@ -11,12 +7,12 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
     
-voc_models = ['yolo-full', 'yolov1', 'yolo-small',  # <- v1
-              'yolo-tiny', 'yolo-baby', 'tiny-yolo', # <- v2
-              'tiny-yolo-voc'] # <- v2 voc
+voc_models = ['yolo-full', 'yolo-tiny', 'yolo-small',  # <- v1
+              'yolov1', # <- v1.1 
+              'tiny-yolo-voc'] # <- v2
 
-coco_models = ['tiny-coco', 'yolo-coco',  # <- v1
-               'tiny-yolov2', 'yolov2'] # <- v2, coco
+coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
+               'yolo', 'tiny-yolo'] # <- v2
 
 def labels(meta):
     model = meta['model'].split('/')[-1]
@@ -34,7 +30,7 @@ def labels(meta):
 
     if len(meta['labels']) == 0: meta['labels'] = labels20
 
-def is_inp(name): 
+def is_inp(self, name): 
     return name[-4:] in ['.jpg','.JPG']
 
 def show(im, allobj, S, w, h, cellx, celly):

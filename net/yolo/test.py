@@ -1,50 +1,10 @@
-"""
-file: yolo/drawer.py
-includes: metaprocess(), preprocess() and postprocess()
-together they supports two ends of the testing process:
-		preprocess -> flow the net -> post process
-		where flow the net is taken care of the general framework
-Namely, they answers the following questions:
-	0. what to prepare given `meta`, the net's hyper-parameters?
-		e.g. prepare color for drawing, load labels from labels.txt
-	1. what to do before flowing the net?
-	2. what to do after flowing the net?
-"""
-from misc import labels
 from utils.im_transform import imcv2_recolor, imcv2_affine_trans
 from utils.box import BoundBox, box_intersection, prob_compare
 import numpy as np
 import cv2
 import os
 
-def metaprocess(meta):
-	"""
-	Add to meta (a dict) `labels` correspond to current model and
-	`colors` correspond to these labels, for drawing predictions.
-	"""
-	def _to_color(indx, base):
-		""" return (b, r, g) tuple"""
-		base2 = base * base
-		b = 2 - indx / base2
-		r = 2 - (indx % base2) / base
-		g = 2 - (indx % base2) % base
-		return (b * 127, r * 127, g * 127)
-
-	labels(meta)
-	assert len(meta['labels']) == meta['classes'], (
-		'labels.txt and {} indicate' + ' '
-		'inconsistent class numbers'
-	).format(meta['model'])
-
-	colors = list()
-	base = int(np.ceil(pow(meta['classes'], 1./3)))
-	for x in range(len(meta['labels'])): 
-		colors += [_to_color(x, base)]
-	meta['colors'] = colors
-
-	return meta
-
-def preprocess(imPath, allobj = None):
+def preprocess(self, imPath, allobj = None):
 	"""
 	Takes an image, return it as a numpy tensor that is readily
 	to be fed into tfnet. If there is an accompanied annotation (allobj),
@@ -73,24 +33,20 @@ def preprocess(imPath, allobj = None):
 			obj[3] = dims[0] - obj_1_
 		im = imcv2_recolor(im)
 
-	size = (448, 448)
-	imsz = cv2.resize(im, size)
+	h, w, c = self.meta['inp_size']
+	imsz = cv2.resize(im, (h, w))
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
 	if allobj is None: return imsz
 	return imsz #, np.array(im) # for unit testing
 	
 
-def postprocess(predictions, img_path, FLAGS, meta):
+def postprocess(self, predictions, img_path):
 	"""
-	Takes net output, draw predictions, save to results/
-	prediction is a numpy tensor - net's output
-	img_path is the path to testing folder
-	FLAGS contains threshold for predictions
-	meta supplies labels and colors for drawing
+	Takes net output, draw predictions, save to disk
 	"""
-	# meta
-	threshold = FLAGS.threshold
+	meta, FLAGS = self.meta, self.FLAGS
+	threshold, sqrt = FLAGS.threshold, meta['sqrt'] + 1
 	C, B, S = meta['classes'], meta['num'], meta['side']
 	colors, labels = meta['colors'], meta['labels']
 
@@ -111,9 +67,8 @@ def postprocess(predictions, img_path, FLAGS, meta):
 			new_box.c =  confs[grid, b]
 			new_box.x = (cords[grid, b, 0] + grid %  S) / S
 			new_box.y = (cords[grid, b, 1] + grid // S) / S
-			new_box.w =  cords[grid, b, 2] ** 2
-			new_box.h =  cords[grid, b, 3] ** 2
-			new_box.id = '{}-{}'.format(grid, b)
+			new_box.w =  cords[grid, b, 2] ** sqrt
+			new_box.h =  cords[grid, b, 3] ** sqrt
 			for c in range(C):
 				new_box.probs[c] = new_box.c * probs[grid, c]
 			boxes.append(new_box)

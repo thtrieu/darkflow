@@ -32,10 +32,13 @@ class TFNet(object):
 		if darknet is None:	
 			darknet = Darknet(FLAGS)
 			self.ntrain = len(darknet.layers)
-		self.framework = create_framework(darknet.meta['type'])
-		self.meta = self.framework.metaprocess(darknet.meta)
-		self.num_layer = len(darknet.layers)
+
 		self.darknet = darknet
+		args = [darknet.meta, FLAGS]
+		self.num_layer = len(darknet.layers)
+		self.framework = create_framework(*args)
+		
+		self.meta = darknet.meta
 		self.FLAGS = FLAGS
 
 		self.say('\nBuilding net ...')

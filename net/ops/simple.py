@@ -85,13 +85,16 @@ class crop(BaseOp):
 class maxpool(BaseOp):
 	def forward(self):
 		self.out = tf.nn.max_pool(
-			self.inp.out, padding = 'VALID',
+			self.inp.out, padding = 'SAME',
 	        ksize = [1] + [self.lay.ksize]*2 + [1], 
 	        strides = [1] + [self.lay.stride]*2 + [1],
 	        name = self.scope
 	    )
 	
-	def verbalise(self): pass
+	def speak(self):
+		l = self.lay
+		return 'maxp {}x{} p={} _{}'.format(
+			l.ksize, l.ksize, l.pad, l.stride)
 
 
 class leaky(BaseOp):

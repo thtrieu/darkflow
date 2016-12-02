@@ -37,16 +37,17 @@ def parser(model):
 				if i == int(i): i = int(i)
 				layer[line.split('=')[0]] = i
 			except:
-				if line == str(): continue
-				try: #
+				try:
 					key = _parse(line, 0)
 					val = _parse(line, 1)
 					layer[key] = val
 				except:
+					# empty lines
+					# crazy lines
 					pass
 
 	meta.update(layer) # last layer contains meta info
-	meta['model'] = model
+	meta['model'] = model # path to cfg, not model name
 	meta['inp_size'] = [h, w, c]
 	return layers, meta
 
@@ -156,3 +157,6 @@ def cfg_yielder(model, binary):
 
 		else:
 			exit('Layer {} not implemented'.format(d['type']))
+
+	if not flat: meta['out_size'] = [h, w, c]
+	else: meta['out_size'] = l

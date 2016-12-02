@@ -122,7 +122,7 @@ class weights_walker(object):
         if self.eof: return None
         end_point = self.offset + 4 * size
         assert end_point <= self.size, \
-        'Over read {}'.format(self.path)
+        'Over-read {}'.format(self.path)
 
         float32_1D_array = np.memmap(
             self.path, shape=(), mode='r', 
@@ -131,7 +131,8 @@ class weights_walker(object):
         )
 
         self.offset = end_point
-        if end_point == self.size: self.eof = True
+        if end_point == self.size: 
+            self.eof = True
         return float32_1D_array
 
 def model_name(file_path):
