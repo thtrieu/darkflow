@@ -15,9 +15,6 @@ train_stats = (
 )
 
 def train(self):
-	with self.graph.as_default():
-		for i in tf.all_variables():
-			print i.name
 	batches = self.shuffle()
 	model = self.meta['name']
 
