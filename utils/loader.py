@@ -95,7 +95,7 @@ class checkpoint_loader(loader):
 def create_loader(path, cfg = None):
     if path is None:
         load_type = weights_loader
-    elif 'weights' in path:
+    elif '.weights' in path:
         load_type = weights_loader
     else: 
         load_type = checkpoint_loader

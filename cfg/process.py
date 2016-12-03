@@ -27,8 +27,6 @@ def parser(model):
 					if layer['type'] == '[crop]':
 						h = layer['crop_height']
 						w = layer['crop_width']
-					#assert layer['type'] in available, \
-					#'Layer {} not implemented'.format(layer['type'])
 					layers += [layer]				
 			layer = {'type': line}
 		else:
@@ -42,9 +40,7 @@ def parser(model):
 					val = _parse(line, 1)
 					layer[key] = val
 				except:
-					# empty lines
-					# crazy lines
-					pass
+					'banana ninja yadayada'
 
 	meta.update(layer) # last layer contains meta info
 	if 'anchors' in meta:
@@ -106,9 +102,7 @@ def cfg_yielder(model, binary):
 			stride = d.get('stride', 1)
 			size = d.get('size', stride)
 			padding = d.get('padding', (size-1)/2)
-
 			yield ['maxpool', i, size, stride, padding]
-
 			w_ = (w + 2*padding)/d['stride'] 
 			h_ = (h + 2*padding)/d['stride']
 			w, h = w_, h_
@@ -157,12 +151,12 @@ def cfg_yielder(model, binary):
 			if type(routes) is str:
 				routes = [int(x.strip()) for x in routes.split(',')]
 			else: routes = [routes]
-			routes = [i + x for x in routes if x < 0]
+			routes = [i + x if x < 0 else x for x in routes]
 			for j, x in enumerate(routes):
 				lx = layers[x]; xtype = lx['type']
 				_size = lx['_size'][:3]
 				if not j: w, h, c = _size
-				else: # simply for checking
+				else: 
 					w_, h_, c_ = _size
 					assert w_ == w and h_ == h, \
 					'Routing incompatible conv sizes'

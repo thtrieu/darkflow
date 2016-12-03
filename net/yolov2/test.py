@@ -3,7 +3,7 @@ import math
 import cv2
 import os
 #from scipy.special import expit
-from utils.box import BoundBox, box_intersection, prob_compare
+from utils.box import BoundBox, box_iou, prob_compare
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))
@@ -24,46 +24,35 @@ def postprocess(self, net_out, img_path):
 	threshold = meta['thresh']
 	C, B = meta['classes'], meta['num']
 	anchors = meta['anchors']
-	segment = C + 5
+	net_out = net_out.reshape([H, W, B, -1])
 
 	boxes = list()
 	for row in range(H):
 		for col in range(W):
 			for b in range(B):
-				new_box = BoundBox(C)
-
-				box_pos = b * segment
-				conf_pos = box_pos + 4
-				prob_pos = conf_pos + 1
-
-				new_box.c = expit(net_out[row, col, conf_pos])
-				new_box.x = (col + expit(net_out[row, col, box_pos + 0])) / W
-				new_box.y = (row + expit(net_out[row, col, box_pos + 1])) / H
-				new_box.w = math.exp(net_out[row, col, box_pos + 2]) * anchors[2 * b]
-				new_box.h = math.exp(net_out[row, col, box_pos + 3]) * anchors[2 * b + 1]
-				new_box.w /= W; new_box.h /= H
-
-				probs = net_out[row, col, prob_pos: (prob_pos + C)]
-				new_box.probs = _softmax(probs) * new_box.c
-				boxes.append(new_box)
+				bx = BoundBox(C)
+				bx.x, bx.y, bx.w, bx.h, bx.c = net_out[row, col, b, :5]
+				bx.c = expit(bx.c)
+				bx.x = (col + expit(bx.x)) / W
+				bx.y = (row + expit(bx.y)) / H
+				bx.w = math.exp(bx.w) * anchors[2 * b + 0] / W
+				bx.h = math.exp(bx.h) * anchors[2 * b + 1] / H
+				classes = net_out[row, col, b, 5:]
+				bx.probs = _softmax(classes) * bx.c
+				bx.probs *= bx.probs > threshold
+				boxes.append(bx)
 
 	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)): boxes[i].class_num = c
-		boxes = sorted(boxes, cmp=prob_compare)
+		boxes = sorted(boxes, cmp = prob_compare)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue
 			for j in range(i + 1, len(boxes)):
 				boxj = boxes[j]
-				boxij = box_intersection(boxi, boxj)
-				boxja = boxj.w * boxj.h
-				apart = boxij / boxja
-				if apart >= .5:
-					if boxi.probs[c] > boxj.probs[c]:
+				if box_iou(boxi, boxj) >= .4:
 						boxes[j].probs[c] = 0.
-					else:
-						boxes[i].probs[c] = 0.
 
 
 	colors = meta['colors']
