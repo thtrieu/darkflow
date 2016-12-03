@@ -1,15 +1,13 @@
 ## Update
 
-YOLOv1 is up and running. These include:
-- `yolo-full` 1.1GB
-- `yolo-small` 376MB
-- `yolo-tiny` 180MB
-- `yolov1` 789MB
-- `tiny-yolo` 108MB
-- `tiny-coco` 268MB
-- `yolo-coco` 937MB
+YOLOv1 is up and running:
+- v1.0: `yolo-full` 1.1GB, `yolo-small` 376MB, `yolo-tiny` 180MB
+- v1.1: `yolov1` 789MB, `tiny-yolo` 108MB, `tiny-coco` 268MB, `yolo-coco` 937MB
 
-TODO: new layers `route`, `reorg`, `region` a.k.a `yolov2`.
+YOLOv2 forward pass is up and running:
+- `yolo` 270MB, `tiny-yolo-voc` 63 MB.
+
+TODO: training YOLOv2
 
 ## Intro
 
