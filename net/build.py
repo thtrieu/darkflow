@@ -24,6 +24,7 @@ class TFNet(object):
 	train = flow.train
 	shuffle = help.shuffle
 	predict = flow.predict
+	to_darknet = help.to_darknet
 	build_train_op = help.build_train_op
 	load_from_ckpt = help.load_from_ckpt
 
@@ -111,7 +112,7 @@ class TFNet(object):
 		# rebuild another tfnet. all const.
 		tfnet_pb = TFNet(flags_pb, darknet_pb)		
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
-		#tfnet_pb.predict() # uncomment for unit testing
+		# tfnet_pb.predict() # uncomment for unit testing
 		name = 'graph-{}.pb'.format(self.meta['name'])
 		self.say('Saving const graph def to {}'.format(name))
 		graph_def = tfnet_pb.sess.graph_def

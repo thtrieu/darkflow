@@ -47,6 +47,10 @@ def parser(model):
 					pass
 
 	meta.update(layer) # last layer contains meta info
+	if 'anchors' in meta:
+		splits = meta['anchors'].split(',')
+		anchors = [float(x.strip()) for x in splits]
+		meta['anchors'] = anchors
 	meta['model'] = model # path to cfg, not model name
 	meta['inp_size'] = [h, w, c]
 	return layers, meta

@@ -27,9 +27,4 @@ def constructor(self, meta, FLAGS):
 		colors += [_to_color(x, base)]
 	meta['colors'] = colors
 
-	if 'anchors' in meta:
-		splits = meta['anchors'].split(',')
-		anchors = [float(x.strip()) for x in splits]
-		meta['anchors'] = anchors
-
 	self.meta, self.FLAGS = meta, FLAGS
