@@ -3,16 +3,16 @@ import numpy as np
 
 class Layer(object):
 
-    def __init__(self, num, ltype, *args):
-        self.signature = [ltype] + list(args)
-        self.number = num
-        self.type = ltype
+    def __init__(self, *args):
+        self.signature = list(args)
+        self.type = list(args)[0]
+        self.number = list(args)[1]
 
         self.w = dict() # weights
         self.h = dict() # placeholders
         self.wshape = dict() # weight shape
         self.wsize = dict() # weight size
-        self.setup(*args) # set attr up
+        self.setup(*args[2:]) # set attr up
         self.present()
         for var in self.wshape:
             shp = self.wshape[var]

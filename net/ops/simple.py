@@ -2,6 +2,45 @@ import tensorflow.contrib.slim as slim
 from baseop import BaseOp
 import tensorflow as tf
 
+class reorg(BaseOp):
+	def forward(self):
+		inp = self.inp.out
+		shape = inp.get_shape().as_list()
+		_, h, w, c = shape
+		s = self.lay.stride
+		out = list()
+		for i in range(h/s):
+			row_i = list()
+			for j in range(w/s):
+				si, sj = s * i, s * j
+				boxij = inp[:, si: si+s, sj: sj+s,:]
+				flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
+				row_i += [flatij]
+			out += [tf.concat(2, row_i)]
+		self.out = tf.concat(1, out)
+
+	def speak(self):
+		args = [self.lay.stride] * 2
+		msg = 'local flatten {}x{}'
+		return msg.format(*args)
+
+class route(BaseOp):
+	def forward(self):
+		routes = self.lay.routes
+		routes_out = list()
+		for r in routes:
+			this = self.inp
+			while this.lay.number != r:
+				this = this.inp
+				assert this is not None, \
+				'Routing to non-existence {}'.format(r)
+			routes_out += [this.out]	
+		self.out = tf.concat(3, routes_out)
+
+	def speak(self):
+		msg = 'concat {}'
+		return msg.format(self.lay.routes)
+
 
 class select(BaseOp):
 	"""a weird connected layer"""

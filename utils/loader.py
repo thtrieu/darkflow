@@ -57,7 +57,7 @@ class weights_loader(loader):
             
             if walker.eof: new = None
             else: 
-                args = [i] + layer.signature
+                args = layer.signature
                 new = dark.darknet.create_darkop(*args)
             self.vals.append(new)
 

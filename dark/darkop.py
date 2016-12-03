@@ -26,6 +26,14 @@ class dropout_layer(Layer):
             'shape': ()
         })
 
+class route_layer(Layer):
+    def setup(self, routes):
+        self.routes = routes
+
+class reorg_layer(Layer):
+    def setup(self, stride):
+        self.stride = stride
+
 """
 Darkop Factory
 """
@@ -39,9 +47,11 @@ darkops = {
     'softmax': softmax_layer,
     'crop': crop_layer,
     'local': local_layer,
-    'select': select_layer
+    'select': select_layer,
+    'route': route_layer,
+    'reorg': reorg_layer
 }
 
-def create_darkop(num, ltype, *args):
+def create_darkop(ltype, num, *args):
     op_class = darkops.get(ltype, Layer)
-    return op_class(num, ltype, *args)
+    return op_class(ltype, num, *args)

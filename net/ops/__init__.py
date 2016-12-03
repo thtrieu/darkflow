@@ -14,7 +14,9 @@ op_types = {
 	'identity': identity,
 	'crop': crop,
 	'local': local,
-	'select': select
+	'select': select,
+	'route': route,
+	'reorg': reorg
 }
 
 def op_create(*args):

@@ -63,7 +63,7 @@ class Darknet(object):
         meta = dict(); layers = list()
         for i, info in enumerate(cfg_layers):
             if i == 0: meta = info; continue
-            else: new = create_darkop(i-1, *info)
+            else: new = create_darkop(*info)
             layers.append(new)
         return meta, layers
 
