@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import os
 
-def preprocess(self, imPath, allobj = None):
+def preprocess(self, im, allobj = None):
 	"""
 	Takes an image, return it as a numpy tensor that is readily
 	to be fed into tfnet. If there is an accompanied annotation (allobj),
@@ -13,14 +13,16 @@ def preprocess(self, imPath, allobj = None):
 	using scale, translation, flipping and recolor. The accompanied 
 	parsed annotation (allobj) will also be modified accordingly.
 	"""	
-	def fix(obj, dims, scale, offs):
+	if type(im) is not np.ndarray:
+		im = cv2.imread(im)
+
+	def _fix(obj, dims, scale, offs):
 		for i in range(1, 5):
 			dim = dims[(i + 1) % 2]
 			off = offs[(i + 1) % 2]
 			obj[i] = int(obj[i]*scale-off)
 			obj[i] = max(min(obj[i], dim), 0)
-	
-	im = cv2.imread(imPath)
+
 	if allobj is not None: # in training mode
 		result = imcv2_affine_trans(im)
 		im, dims, trans_param = result

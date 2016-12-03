@@ -24,6 +24,7 @@ flags.DEFINE_integer("keep",20,"Number of most recent training results to save")
 flags.DEFINE_integer("batch", 12, "batch size")
 flags.DEFINE_integer("epoch", 1000, "number of epoch")
 flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
+flags.DEFINE_boolean("demo", False, "demo on webcam")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist
@@ -38,6 +39,10 @@ try: FLAGS.load = int(FLAGS.load)
 except: pass
 
 tfnet = TFNet(FLAGS)
+
+if FLAGS.demo:
+	tfnet.camera()
+	exit()
 
 if FLAGS.train:
 	print 'Enter training ...';	tfnet.train()

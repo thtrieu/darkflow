@@ -13,13 +13,12 @@ def _softmax(x):
     out = e_x / e_x.sum()
     return out
 
-def postprocess(self, net_out, img_path):
+def postprocess(self, net_out, im, save = True):
 	"""
 	Takes net output, draw net_out, save to disk
 	"""
 	# meta
 	meta, FLAGS = self.meta, self.FLAGS
-
 	H, W, C = meta['out_size']
 	threshold = meta['thresh']
 	C, B = meta['classes'], meta['num']
@@ -57,7 +56,9 @@ def postprocess(self, net_out, img_path):
 
 	colors = meta['colors']
 	labels = meta['labels']
-	imgcv = cv2.imread(img_path)
+	if type(im) is not np.ndarray:
+		imgcv = cv2.imread(im)
+	else: imgcv = im
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
@@ -81,6 +82,7 @@ def postprocess(self, net_out, img_path):
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
 
+	if not save: return imgcv
 	outfolder = os.path.join(FLAGS.test, 'out') 
 	img_name = os.path.join(outfolder, img_path.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
