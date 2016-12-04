@@ -4,7 +4,7 @@ import numpy as np
 class Layer(object):
 
     def __init__(self, *args):
-        self.signature = list(args)
+        self._signature = list(args)
         self.type = list(args)[0]
         self.number = list(args)[1]
 
@@ -28,7 +28,7 @@ class Layer(object):
             wdict = self.load_weights(src_loader)
         else: 
             wdict = self.load_ckpt(src_loader)
-        if wdict is not None: 
+        if wdict is not None:
             self.recollect(wdict)
 
     def load_weights(self, src_loader):
@@ -47,11 +47,13 @@ class Layer(object):
             result[var] = val
         return result
 
+    @property
+    def signature(self):
+        return self._signature
+
     # For comparing two layers
     def __eq__(self, other):
-        if type(other) is type(self):
-            return self.signature == other.signature
-        return False
+        return self.signature == other.signature
     def __ne__(self, other):
         return not self.__eq__(other)
 

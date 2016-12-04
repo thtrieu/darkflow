@@ -8,8 +8,8 @@ class loader(object):
     interface to work with both .weights and .ckpt files
     in loading / recollecting / resolving mode
     """
-    VAR_LAYER = ['convolutional', 'connected', 
-                 'local', 'select']
+    VAR_LAYER = ['convolutional', 'connected', 'local', 
+                 'select', 'conv-select']
 
     def __init__(self, *args):
         self.src_key = list()

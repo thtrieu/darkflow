@@ -49,7 +49,8 @@ darkops = {
     'local': local_layer,
     'select': select_layer,
     'route': route_layer,
-    'reorg': reorg_layer
+    'reorg': reorg_layer,
+    'conv-select': conv_select_layer
 }
 
 def create_darkop(ltype, num, *args):

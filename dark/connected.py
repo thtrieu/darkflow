@@ -3,8 +3,8 @@ import numpy as np
 
 class select_layer(Layer):
     def setup(self, inp, old, 
-              out, keep, train,
-              activation):
+              activation,
+              out, keep, train):
         self.old = old
         self.keep = keep
         self.train = train
@@ -15,25 +15,26 @@ class select_layer(Layer):
             'weights': [inp, out]
         }
 
+    @property
+    def signature(self):
+        sig = ['connected']
+        sig += self._signature[1:-3]
+        return sig
+
     def present(self):
-        args = [self.number, 'connected']
-        args += [self.inp, self.old]
-        args += [self.activation]
+        args = self.signature
         self.presenter = connected_layer(*args)
 
     def recollect(self, val):
         w = val['weights']
         b = val['biases']
-        if w is None:
-            self.w = val
-            return
-
+        if w is None: self.w = val; return
         keep_b = np.take(b, self.keep)
         keep_w = np.take(w, self.keep, 1)
         train_b = b[self.train:]
         train_w = w[:, self.train:]
         self.w['biases'] = np.concatenate(
-            (keep_b, train_b))
+            (keep_b, train_b), axis = 0)
         self.w['weights'] = np.concatenate(
             (keep_w, train_w), axis = 1)
 

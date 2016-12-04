@@ -8,7 +8,7 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "train", "tvmonitor"]
     
 voc_models = ['yolo-full', 'yolo-tiny', 'yolo-small',  # <- v1
-              'yolov1', # <- v1.1 
+              'yolov1', 'tiny-yolov1', # <- v1.1 
               'tiny-yolo-voc'] # <- v2
 
 coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1

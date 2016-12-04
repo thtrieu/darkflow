@@ -37,10 +37,8 @@ class convolutional(BaseOp):
 	def forward(self):
 		pad = [[self.lay.pad, self.lay.pad]] * 2;
 		temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
-		
 		temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
 	        name = self.scope, strides = [1] + [self.lay.stride] * 2 + [1])
-
 		if self.lay.batch_norm: 
 			temp = self.batchnorm(self.lay, temp)
 		self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
@@ -62,4 +60,13 @@ class convolutional(BaseOp):
 		args += [l.batch_norm * '+bnorm']
 		args += [l.activation]
 		msg = 'conv {}x{} p={} _{}  {}  {}'.format(*args)
+		return msg
+
+class conv_select(convolutional):
+	def speak(self):
+		l = self.lay
+		args = [l.ksize] * 2 + [l.pad] + [l.stride]
+		args += [l.batch_norm * '+bnorm']
+		args += [l.activation]
+		msg = 'select {}x{} p={} _{}  {}  {}'.format(*args)
 		return msg

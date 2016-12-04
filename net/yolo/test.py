@@ -1,5 +1,5 @@
 from utils.im_transform import imcv2_recolor, imcv2_affine_trans
-from utils.box import BoundBox, box_intersection, prob_compare
+from utils.box import BoundBox, box_iou, prob_compare
 import numpy as np
 import cv2
 import os
@@ -43,7 +43,7 @@ def preprocess(self, im, allobj = None):
 	return imsz #, np.array(im) # for unit testing
 	
 
-def postprocess(self, predictions, img_path):
+def postprocess(self, net_out, im, save = True):
 	"""
 	Takes net output, draw predictions, save to disk
 	"""
@@ -56,44 +56,41 @@ def postprocess(self, predictions, img_path):
 	SS        =  S * S # number of grid cells
 	prob_size = SS * C # class probabilities
 	conf_size = SS * B # confidences for each grid cell
-	probs = predictions[0 : prob_size]
-	confs = predictions[prob_size : (prob_size + conf_size)]
-	cords = predictions[(prob_size + conf_size) : ]
+	net_out = net_out[0]
+	probs = net_out[0 : prob_size]
+	confs = net_out[prob_size : (prob_size + conf_size)]
+	cords = net_out[(prob_size + conf_size) : ]
 	probs = probs.reshape([SS, C])
 	confs = confs.reshape([SS, B])
 	cords = cords.reshape([SS, B, 4])
 
 	for grid in range(SS):
 		for b in range(B):
-			new_box   = BoundBox(C)
-			new_box.c =  confs[grid, b]
-			new_box.x = (cords[grid, b, 0] + grid %  S) / S
-			new_box.y = (cords[grid, b, 1] + grid // S) / S
-			new_box.w =  cords[grid, b, 2] ** sqrt
-			new_box.h =  cords[grid, b, 3] ** sqrt
-			for c in range(C):
-				new_box.probs[c] = new_box.c * probs[grid, c]
-			boxes.append(new_box)
+			bx   = BoundBox(C)
+			bx.c =  confs[grid, b]
+			bx.x = (cords[grid, b, 0] + grid %  S) / S
+			bx.y = (cords[grid, b, 1] + grid // S) / S
+			bx.w =  cords[grid, b, 2] ** sqrt
+			bx.h =  cords[grid, b, 3] ** sqrt
+			bx.probs = probs[grid, :] * bx.c
+			bx.probs *= bx.probs > threshold
+			boxes.append(bx)
 
 	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)): boxes[i].class_num = c
-		boxes = sorted(boxes, cmp=prob_compare)
+		boxes = sorted(boxes, cmp = prob_compare)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue
 			for j in range(i + 1, len(boxes)):
 				boxj = boxes[j]
-				boxij = box_intersection(boxi, boxj)
-				boxja = boxj.w * boxj.h
-				apart = boxij / boxja
-				if apart >= .5:
-					if boxi.probs[c] > boxj.probs[c]:
+				if box_iou(boxi, boxj) >= .4:
 						boxes[j].probs[c] = 0.
-					else:
-						boxes[i].probs[c] = 0.
 
-	imgcv = cv2.imread(img_path)
+	if type(im) is not np.ndarray:
+		imgcv = cv2.imread(im)
+	else: imgcv = im
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
@@ -117,6 +114,7 @@ def postprocess(self, predictions, img_path):
 			cv2.putText(imgcv, mess, (left, top - 12), 
 				0, 1e-3 * h, colors[max_indx],thick/5)
 
+	if not save: return imgcv
 	outfolder = os.path.join(FLAGS.test, 'out') 
-	img_name = os.path.join(outfolder, img_path.split('/')[-1])
+	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)

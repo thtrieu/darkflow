@@ -84,5 +84,5 @@ def postprocess(self, net_out, im, save = True):
 
 	if not save: return imgcv
 	outfolder = os.path.join(FLAGS.test, 'out') 
-	img_name = os.path.join(outfolder, img_path.split('/')[-1])
+	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)

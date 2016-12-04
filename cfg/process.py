@@ -1,3 +1,7 @@
+"""
+WARNING: spaghetti code.
+"""
+
 import numpy as np
 import os
 
@@ -141,10 +145,43 @@ def cfg_yielder(model, binary):
 				for num in keep[-keep_n:]:
 					keep += [num + classes]
 			yield ['select', i, l, d['old_output'],
-				   d['output'], keep, train_from,
-				   activation]
+				   activation, d['output'], 
+				   keep, train_from]
 			if activation != 'linear': yield [activation, i]
 			l = d['output']
+		#-----------------------------------------------------
+		elif d['type'] == '[conv-select]':
+			n = d.get('filters', 1)
+			size = d.get('size', 1)
+			stride = d.get('stride', 1)
+			pad = d.get('pad', 0)
+			padding = d.get('padding', 0)
+			if pad: padding = size / 2
+			activation = d.get('activation', 'logistic')
+			batch_norm = d.get('batch_normalize', 0) or conv
+			d['keep'] = d['keep'].split('/')
+			classes = int(d['keep'][-1])
+			keep = [int(x) for x in d['keep'][0].split(',')]
+
+			segment = classes + 5
+			assert n % segment == 0, \
+			'conv-select: segment failed'
+			bins = n / segment
+			keep_idx = list()
+			for j in range(bins):
+				offset = j * segment
+				for k in range(5):
+					keep_idx += [offset + k]
+				for k in keep:
+					keep_idx += [offset + 5 + k]
+			w_ = (w + 2 * padding - size)/stride + 1
+			h_ = (h + 2 * padding - size)/stride + 1
+			c_ = len(keep_idx)
+			yield ['conv-select', i, size, c, n, 
+				   stride, padding, batch_norm,
+				   activation, keep_idx, c_]
+			w, h, c = w_, h_, c_
+			l = w * h * c			
 		#-----------------------------------------------------
 		elif d['type'] == '[route]': # add new layer here
 			routes = d['layers']

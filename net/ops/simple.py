@@ -41,24 +41,6 @@ class route(BaseOp):
 		msg = 'concat {}'
 		return msg.format(self.lay.routes)
 
-
-class select(BaseOp):
-	"""a weird connected layer"""
-	def forward(self):
-		self.out = tf.nn.xw_plus_b(
-			self.inp.out, 
-			self.lay.w['weights'], 
-			self.lay.w['biases'],
-			name = self.scope)
-
-	def speak(self):
-		layer = self.lay
-		args = [layer.inp, layer.out]
-		args += [layer.activation]
-		msg = 'select {} x {}  {}'
-		return msg.format(*args)
-
-
 class connected(BaseOp):
 	def forward(self):
 		self.out = tf.nn.xw_plus_b(
@@ -72,6 +54,15 @@ class connected(BaseOp):
 		args = [layer.inp, layer.out]
 		args += [layer.activation]
 		msg = 'full {} x {}  {}'
+		return msg.format(*args)
+
+class select(connected):
+	"""a weird connected layer"""
+	def speak(self):
+		layer = self.lay
+		args = [layer.inp, layer.out]
+		args += [layer.activation]
+		msg = 'select {} x {}  {}'
 		return msg.format(*args)
 
 

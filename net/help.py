@@ -4,8 +4,11 @@ tfnet secondary (helper) methods
 
 from numpy.random import permutation as perm
 from utils.loader import create_loader
+from time import time as timer
 import tensorflow as tf
 import numpy as np
+import sys
+import cv2
 import os
 
 old_graph_msg = 'Resolving old graph def {} (no guarantee)'
@@ -101,11 +104,31 @@ def load_old_graph(self, ckpt):
 		op = tf.assign(var, plh)
 		self.sess.run(op, {plh: val})
 
+def camera(self):
+	camera = cv2.VideoCapture(0)
+	self.say('Press q to quit camera demo')
+	elapsed = int()
+	start = timer()
+	while 'banana ninja yadayada':
+		_, frame = camera.read()
+		cv2.imshow('', self.framework.postprocess(
+			self.sess.run(self.out, feed_dict = {
+				self.inp: [self.framework.preprocess(frame)] 
+			}), frame, False))
+		choice = cv2.waitKey(1)
+		elapsed += 1
+		if elapsed % 5 == 0:
+			sys.stdout.write('\r')
+			sys.stdout.write('{0:1.3f} FPS'.format(
+				elapsed / (timer() - start)))
+			sys.stdout.flush()
+		if choice == ord('q'): break
+	sys.stdout.write('\n')
+	camera.release()
+	cv2.destroyAllWindows()
+
 
 def to_darknet(self):
-	"""
-	Translate from TFNet back to darknet
-	"""
 	darknet_ckpt = self.darknet
 	with self.graph.as_default() as g:
 		for var in tf.all_variables():

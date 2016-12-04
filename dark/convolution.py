@@ -1,4 +1,5 @@
 from layer import Layer
+import numpy as np
 
 class local_layer(Layer):
     def setup(self, ksize, c, n, stride, 
@@ -23,6 +24,58 @@ class local_layer(Layer):
         weights = weights.transpose([0,3,4,2,1])
         self.w['kernels'] = weights
 
+class conv_select_layer(Layer):
+    def setup(self, ksize, c, n, stride, 
+              pad, batch_norm, activation,
+              keep_idx, real_n):
+        self.batch_norm = bool(batch_norm)
+        self.activation = activation
+        self.keep_idx = keep_idx
+        self.stride = stride
+        self.ksize = ksize
+        self.pad = pad
+        self.wshape = dict({
+            'biases': [real_n], 
+            'kernel': [ksize, ksize, c, real_n]
+        })
+        if self.batch_norm:
+            self.wshape.update({
+                'moving_variance'  : [real_n], 
+                'moving_mean': [real_n], 
+                'gamma' : [real_n]
+            })
+            self.h['is_training'] = {
+                'shape': (),
+                'feed': True,
+                'dfault': False
+            }
+    
+    def present(self):
+        args = self.signature
+        self.presenter = convolutional_layer(*args)
+
+    def recollect(self, w):
+        if w is None:
+            self.w = w
+            return
+        idx = self.keep_idx
+        k = w['kernel']
+        b = w['biases']
+        self.w['kernel'] = np.take(k, idx, 3) 
+        self.w['biases'] = np.take(b, idx)
+        if self.batch_norm:
+            m = w['moving_mean']
+            v = w['moving_variance']
+            g = w['gamma']
+            self.w['moving_mean'] = np.take(m, idx)
+            self.w['moving_variance'] = np.take(v, idx)
+            self.w['gamma'] = np.take(g, idx)
+
+    @property
+    def signature(self):
+        sig = ['convolutional']
+        sig += self._signature[1:-2]
+        return sig
 
 class convolutional_layer(Layer):
     def setup(self, ksize, c, n, stride, 

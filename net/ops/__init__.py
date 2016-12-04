@@ -1,9 +1,10 @@
 from simple import *
-from convolution import local, convolutional
+from convolution import *
 from baseop import HEADER, LINE
 
 op_types = {
 	'convolutional': convolutional,
+	'conv-select': conv_select,
 	'connected': connected,
 	'maxpool': maxpool,
 	'leaky': leaky,

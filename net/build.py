@@ -6,7 +6,6 @@ from ops import op_create, identity
 from ops import HEADER, LINE
 from framework import create_framework
 from dark.darknet import Darknet
-import cv2
 
 class TFNet(object):
 
@@ -23,6 +22,7 @@ class TFNet(object):
 	# imported methods
 	say = help.say
 	train = flow.train
+	camera = help.camera
 	shuffle = help.shuffle
 	predict = flow.predict
 	to_darknet = help.to_darknet
@@ -52,7 +52,6 @@ class TFNet(object):
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
 
-
 	def build_forward(self):
 		verbalise = self.FLAGS.verbalise
 
@@ -75,21 +74,6 @@ class TFNet(object):
 
 		self.top = state
 		self.out = tf.identity(state.out, name='output')
-
-	def camera(self):
-		camera = cv2.VideoCapture(0)
-		self.say('Press q to quit camera demo')
-		while True:
-			_, frame = camera.read()
-			out = self.sess.run(self.out, feed_dict = {
-				self.inp: [self.framework.preprocess(frame)] 
-			})
-			cv2.imshow('', self.framework.postprocess(out, frame, False))
-			choice = cv2.waitKey(1)
-			if choice == ord('q'): break
-		camera.release()
-		cv2.destroyAllWindows()
-
 
 	def setup_meta_ops(self):
 		cfg = dict({
