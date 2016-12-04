@@ -2,28 +2,6 @@ import tensorflow.contrib.slim as slim
 from baseop import BaseOp
 import tensorflow as tf
 
-class reorg(BaseOp):
-	def forward(self):
-		inp = self.inp.out
-		shape = inp.get_shape().as_list()
-		_, h, w, c = shape
-		s = self.lay.stride
-		out = list()
-		for i in range(h/s):
-			row_i = list()
-			for j in range(w/s):
-				si, sj = s * i, s * j
-				boxij = inp[:, si: si+s, sj: sj+s,:]
-				flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
-				row_i += [flatij]
-			out += [tf.concat(2, row_i)]
-		self.out = tf.concat(1, out)
-
-	def speak(self):
-		args = [self.lay.stride] * 2
-		msg = 'local flatten {}x{}'
-		return msg.format(*args)
-
 class route(BaseOp):
 	def forward(self):
 		routes = self.lay.routes
@@ -73,7 +51,7 @@ class flatten(BaseOp):
 		self.out = slim.flatten(
 			temp, scope = self.scope)
 
-	def speak(self): return 'flatten'
+	def speak(self): return 'flat'
 
 
 class softmax(BaseOp):
@@ -101,7 +79,7 @@ class dropout(BaseOp):
 			name = self.scope
 		)
 
-	def speak(self): return 'drop()'
+	def speak(self): return 'drop'
 
 
 class crop(BaseOp):
@@ -109,7 +87,7 @@ class crop(BaseOp):
 		self.out =  self.inp.out * 2. - 1.
 
 	def speak(self):
-		return 'centralize to (-1, 1)'
+		return 'scale to (-1, 1)'
 
 
 class maxpool(BaseOp):
@@ -123,7 +101,7 @@ class maxpool(BaseOp):
 	
 	def speak(self):
 		l = self.lay
-		return 'maxp {}x{} p={} _{}'.format(
+		return 'maxp {}x{}p{}_{}'.format(
 			l.ksize, l.ksize, l.pad, l.stride)
 
 

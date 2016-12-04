@@ -3,6 +3,29 @@ from baseop import BaseOp
 import tensorflow as tf
 import numpy as np
 
+class reorg(BaseOp):
+	def forward(self):
+		inp = self.inp.out
+		shape = inp.get_shape().as_list()
+		_, h, w, c = shape
+		s = self.lay.stride
+		out = list()
+		for i in range(h/s):
+			row_i = list()
+			for j in range(w/s):
+				si, sj = s * i, s * j
+				boxij = inp[:, si: si+s, sj: sj+s,:]
+				flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
+				row_i += [flatij]
+			out += [tf.concat(2, row_i)]
+		self.out = tf.concat(1, out)
+
+	def speak(self):
+		args = [self.lay.stride] * 2
+		msg = 'local flatten {}x{}'
+		return msg.format(*args)
+
+
 class local(BaseOp):
 	def forward(self):
 		pad = [[self.lay.pad, self.lay.pad]] * 2;
@@ -30,7 +53,7 @@ class local(BaseOp):
 		l = self.lay
 		args = [l.ksize] * 2 + [l.pad] + [l.stride]
 		args += [l.activation]
-		msg = 'local {}x{} p={} _{}  {}'.format(*args)
+		msg = 'loca {}x{}p{}_{}  {}'.format(*args)
 		return msg
 
 class convolutional(BaseOp):
@@ -59,7 +82,7 @@ class convolutional(BaseOp):
 		args = [l.ksize] * 2 + [l.pad] + [l.stride]
 		args += [l.batch_norm * '+bnorm']
 		args += [l.activation]
-		msg = 'conv {}x{} p={} _{}  {}  {}'.format(*args)
+		msg = 'conv {}x{}p{}_{}  {}  {}'.format(*args)
 		return msg
 
 class conv_select(convolutional):
