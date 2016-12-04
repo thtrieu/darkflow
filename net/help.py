@@ -119,7 +119,7 @@ def camera(self):
 		elapsed += 1
 		if elapsed % 5 == 0:
 			sys.stdout.write('\r')
-			sys.stdout.write('{0:1.3f} FPS'.format(
+			sys.stdout.write('{0:3.3f} FPS'.format(
 				elapsed / (timer() - start)))
 			sys.stdout.flush()
 		if choice == ord('q'): break

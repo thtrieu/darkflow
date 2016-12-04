@@ -26,7 +26,11 @@ def labels(meta):
         if model in coco_models: 
             file = os.path.join('cfg','coco.names')
         with open(file, 'r') as f:
-            meta['labels'] = [l.strip() for l in f.readlines()]
+            meta['labels'] = list()
+            labs = [l.strip() for l in f.readlines()]
+            for lab in labs:
+                if lab == '----': break
+                meta['labels'] += [lab]
 
     if len(meta['labels']) == 0: meta['labels'] = labels20
 
