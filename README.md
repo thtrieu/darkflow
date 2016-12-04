@@ -1,5 +1,7 @@
 ## Update
 
+**Demo in webcam is available!**. Use option `--demo` :)
+
 YOLOv1 is up and running:
 - v1.0: `yolo-full` 1.1GB, `yolo-small` 376MB, `yolo-tiny` 180MB
 - v1.1: `yolov1` 789MB, `tiny-yolo` 108MB, `tiny-coco` 268MB, `yolo-coco` 937MB
