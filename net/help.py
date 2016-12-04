@@ -5,6 +5,7 @@ tfnet secondary (helper) methods
 from numpy.random import permutation as perm
 from utils.loader import create_loader
 from time import time as timer
+from time import sleep as delay
 import tensorflow as tf
 import numpy as np
 import sys
@@ -106,15 +107,15 @@ def load_old_graph(self, ckpt):
 
 def camera(self):
 	camera = cv2.VideoCapture(0)
-	self.say('Press q to quit camera demo')
+	self.say('Press [ESC] to quit camera demo')
 	elapsed = int()
 	start = timer()
-	while 'banana ninja yadayada':
+	while 'banana ninja yada yada':
 		_, frame = camera.read()
 		cv2.imshow('', self.framework.postprocess(
 			self.sess.run(self.out, feed_dict = {
 				self.inp: [self.framework.preprocess(frame)] 
-			}), frame, False))
+			})[0], frame, False))
 		choice = cv2.waitKey(1)
 		elapsed += 1
 		if elapsed % 5 == 0:
@@ -122,7 +123,7 @@ def camera(self):
 			sys.stdout.write('{0:3.3f} FPS'.format(
 				elapsed / (timer() - start)))
 			sys.stdout.flush()
-		if choice == ord('q'): break
+		if choice == 27: break
 	sys.stdout.write('\n')
 	camera.release()
 	cv2.destroyAllWindows()
