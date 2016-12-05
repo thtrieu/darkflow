@@ -116,13 +116,13 @@ def camera(self):
 			self.sess.run(self.out, feed_dict = {
 				self.inp: [self.framework.preprocess(frame)] 
 			})[0], frame, False))
-		choice = cv2.waitKey(1)
 		elapsed += 1
 		if elapsed % 5 == 0:
 			sys.stdout.write('\r')
 			sys.stdout.write('{0:3.3f} FPS'.format(
 				elapsed / (timer() - start)))
 			sys.stdout.flush()
+		choice = cv2.waitKey(1)
 		if choice == 27: break
 	sys.stdout.write('\n')
 	camera.release()

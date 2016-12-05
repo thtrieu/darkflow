@@ -72,8 +72,11 @@ def postprocess(self, net_out, im, save = True):
 			bx.y = (cords[grid, b, 1] + grid // S) / S
 			bx.w =  cords[grid, b, 2] ** sqrt
 			bx.h =  cords[grid, b, 3] ** sqrt
-			bx.probs = probs[grid, :] * bx.c
-			bx.probs *= bx.probs > threshold
+			p = probs[grid, :] * bx.c
+			mi = np.argmax(p)
+			mv = p[mi] * (p[mi] > threshold)
+			bx.probs[mi] = mv
+			# bx.probs *= bx.probs > threshold
 			boxes.append(bx)
 
 	# non max suppress boxes
@@ -95,9 +98,8 @@ def postprocess(self, net_out, im, save = True):
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]
-		label = 'object' * int(C < 2)
-		label += labels[max_indx] * int(C > 1)
-		if (max_prob > threshold):
+		if max_prob > threshold:
+			label = self.meta['labels'][max_indx]
 			left  = int ((b.x - b.w/2.) * w)
 			right = int ((b.x + b.w/2.) * w)
 			top   = int ((b.y - b.h/2.) * h)
@@ -109,10 +111,10 @@ def postprocess(self, net_out, im, save = True):
 			thick = int((h+w)/300)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
-				colors[max_indx], thick)
+				self.meta['colors'][max_indx], thick)
 			mess = '{}:{:.3f}'.format(label, max_prob)
 			cv2.putText(imgcv, mess, (left, top - 12), 
-				0, 1e-3 * h, colors[max_indx],thick/5)
+				0, 1e-3 * h, self.meta['colors'][max_indx],thick/5)
 
 	if not save: return imgcv
 	outfolder = os.path.join(FLAGS.test, 'out') 

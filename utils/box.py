@@ -39,3 +39,11 @@ def prob_compare(boxa, boxb):
         return 0
     else:
         return -1
+
+def prob_compare2(boxa, boxb):
+    if (boxa.pi < boxb.pi):
+        return 1
+    elif(boxa.pi == boxb.pi):
+        return 0
+    else:
+        return -1

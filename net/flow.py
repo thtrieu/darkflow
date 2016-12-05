@@ -79,6 +79,11 @@ def predict(self):
 		self.say('Total time = {}s / {} inps = {} ips'.format(
 			last, len(inp_feed), len(inp_feed) / last))
 
+		self.say('Post processing {} inputs ...'.format(len(inp_feed)))
+		start = time.time()
 		for i, prediction in enumerate(out):
 			self.framework.postprocess(prediction,
 				os.path.join(inp_path, all_inp[i]))
+		stop = time.time(); last = stop - start
+		self.say('Total time = {}s / {} inps = {} ips'.format(
+			last, len(inp_feed), len(inp_feed) / last))

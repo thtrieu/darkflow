@@ -3,7 +3,7 @@ import math
 import cv2
 import os
 #from scipy.special import expit
-from utils.box import BoundBox, box_iou, prob_compare
+from utils.box import BoundBox, prob_compare2, box_intersection
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))
@@ -18,8 +18,8 @@ def postprocess(self, net_out, im, save = True):
 	Takes net output, draw net_out, save to disk
 	"""
 	# meta
-	meta, FLAGS = self.meta, self.FLAGS
-	H, W, C = meta['out_size']
+	meta = self.meta
+	H, W, _ = meta['out_size']
 	threshold = meta['thresh']
 	C, B = meta['classes'], meta['num']
 	anchors = meta['anchors']
@@ -36,22 +36,23 @@ def postprocess(self, net_out, im, save = True):
 				bx.y = (row + expit(bx.y)) / H
 				bx.w = math.exp(bx.w) * anchors[2 * b + 0] / W
 				bx.h = math.exp(bx.h) * anchors[2 * b + 1] / H
-				classes = net_out[row, col, b, 5:]
-				bx.probs = _softmax(classes) * bx.c
-				bx.probs *= bx.probs > threshold
+				p = net_out[row, col, b, 5:] * bx.c
+				mi = np.argmax(p)
+				if p[mi] < 1.5: continue
+				bx.ind = mi; bx.pi = p[mi]
 				boxes.append(bx)
 
 	# non max suppress boxes
 	for c in range(C):
-		for i in range(len(boxes)): boxes[i].class_num = c
-		boxes = sorted(boxes, cmp = prob_compare)
+		boxes = sorted(boxes, cmp = prob_compare2)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
-			if boxi.probs[c] == 0: continue
+			if boxi.pi == 0: continue
 			for j in range(i + 1, len(boxes)):
 				boxj = boxes[j]
-				if box_iou(boxi, boxj) >= .4:
-						boxes[j].probs[c] = 0.
+				areaj = boxj.w * boxj.h
+				if box_intersection(boxi, boxj)/areaj >= .4:
+						boxes[j].pi = 0.
 
 
 	colors = meta['colors']
@@ -61,11 +62,8 @@ def postprocess(self, net_out, im, save = True):
 	else: imgcv = im
 	h, w, _ = imgcv.shape
 	for b in boxes:
-		max_indx = np.argmax(b.probs)
-		max_prob = b.probs[max_indx]
-		label = 'object' * int(C < 2)
-		label += labels[max_indx] * int(C > 1)
-		if (max_prob > threshold):
+		if b.pi > 0.:
+			label = labels[b.ind]
 			left  = int ((b.x - b.w/2.) * w)
 			right = int ((b.x + b.w/2.) * w)
 			top   = int ((b.y - b.h/2.) * h)
@@ -77,12 +75,12 @@ def postprocess(self, net_out, im, save = True):
 			thick = int((h+w)/300)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
-				colors[max_indx], thick)
-			mess = '{}:{:.3f}'.format(label, max_prob)
+				colors[b.ind], thick)
+			mess = '{}'.format(label)
 			cv2.putText(imgcv, mess, (left, top - 12), 
-				0, 1e-3 * h, colors[max_indx],thick/5)
+				0, 1e-3 * h, colors[b.ind],thick/5)
 
 	if not save: return imgcv
-	outfolder = os.path.join(FLAGS.test, 'out') 
+	outfolder = os.path.join(self.FLAGS.test, 'out') 
 	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
