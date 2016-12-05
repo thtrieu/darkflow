@@ -25,6 +25,7 @@ flags.DEFINE_integer("batch", 12, "batch size")
 flags.DEFINE_integer("epoch", 1000, "number of epoch")
 flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
 flags.DEFINE_boolean("demo", False, "demo on webcam")
+flags.DEFINE_boolean("profile", False, "profile")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist
@@ -39,6 +40,10 @@ try: FLAGS.load = int(FLAGS.load)
 except: pass
 
 tfnet = TFNet(FLAGS)
+
+if FLAGS.profile:
+	tfnet.framework.profile(tfnet)
+	exit()
 
 if FLAGS.demo:
 	tfnet.camera()

@@ -13,6 +13,7 @@ class YOLO(framework):
 	preprocess = yolo.test.preprocess
 	postprocess = yolo.test.postprocess
 	is_inp = yolo.misc.is_inp
+	profile = yolo.misc.profile
 
 class YOLOv2(framework):
 	constructor = yolo.constructor

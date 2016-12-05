@@ -15,7 +15,7 @@ def train(self):
 	batches = self.shuffle()
 	model = self.meta['name']
 
-	losses = list(); total = int() # total number of batches
+	loss_mva = None; total = int() # total number of batches
 	for i, packet in enumerate(batches):
 		if i == 0: 
 			total = packet;
@@ -37,11 +37,14 @@ def train(self):
 
 		_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
 
-		losses += [loss]; step_now = self.FLAGS.load + i
-		print 'step {} - loss {}'.format(step_now, loss)
+		if loss_mva is None: loss_mva = loss
+		loss_mva = .9 * loss_mva + .1 * loss
+		step_now = self.FLAGS.load + i
+		args = [step_now, loss, loss_mva]
+		self.say('step {} - loss {} - moving ave loss {}'.format(*args))
 		if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
 			ckpt = os.path.join(self.FLAGS.backup, '{}-{}'.format(model, step_now))
-			print 'Checkpoint at step {}'.format(step_now)
+			self.say('Checkpoint at step {}'.format(step_now))
 			self.saver.save(self.sess, ckpt)
 
 
@@ -68,12 +71,12 @@ def predict(self):
 
 		feed_dict = {self.inp : np.concatenate(inp_feed, 0)}
 	
-		print ('Forwarding {} inputs ...'.format(len(inp_feed)))
+		self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
 		start = time.time()
 		out = self.sess.run(self.out, feed_dict)
 		stop = time.time(); last = stop - start
 
-		print ('Total time = {}s / {} inps = {} ips'.format(
+		self.say('Total time = {}s / {} inps = {} ips'.format(
 			last, len(inp_feed), len(inp_feed) / last))
 
 		for i, prediction in enumerate(out):

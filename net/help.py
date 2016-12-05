@@ -128,7 +128,6 @@ def camera(self):
 	camera.release()
 	cv2.destroyAllWindows()
 
-
 def to_darknet(self):
 	darknet_ckpt = self.darknet
 	with self.graph.as_default() as g:
