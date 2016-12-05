@@ -111,8 +111,8 @@ def profile(self, net):
             for i, o in enumerate(out):
                 oi = out[i]
                 ai = mvave[i]
-                mi = np.mean(oi, -1)
-                vi = np.var(oi, -1)
+                mi = np.mean(oi, (0,1,2))
+                vi = np.var(oi, (0,1,2))
                 if ai is None: ai = [mi, vi]
                 elif 'banana ninja yada yada':
                     ai[0] = (1 - _MVA) * ai[0] + _MVA * mi
