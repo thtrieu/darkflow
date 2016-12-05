@@ -72,10 +72,10 @@ def show2(im, allobj):
 _MVA = .05
 
 def profile(self, net):
-    data = self.parse()
+    data = self.parse(exclusive = True)
     size = len(data); batch = self.FLAGS.batch
     all_inp_ = [x[0] for x in data]
-    net.say('will cycle through {} examples {} times'.format(
+    net.say('Will cycle through {} examples {} times'.format(
         len(all_inp_), net.FLAGS.epoch))
 
     fetch = list(); mvave = list(); names = list();
@@ -87,9 +87,6 @@ def profile(self, net):
             names = [this.lay.signature] + names
             mvave = [None] + mvave 
         this = this.inp
-
-    net.say('will monitor the following outs:\n{}'.format(
-        names))
 
     total = int(); allofthem = len(all_inp_) * net.FLAGS.epoch
     batch = min(net.FLAGS.batch, len(all_inp_))

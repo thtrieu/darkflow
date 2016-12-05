@@ -24,7 +24,7 @@ from copy import deepcopy
 from test import preprocess
 from misc import show
 
-def parse(self):
+def parse(self, exclusive = False):
     """
     Decide whether to parse the annotation or not, 
     If the parsed file is not already there, parse.
@@ -51,7 +51,7 @@ def parse(self):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
     print '\n{} parsing {}'.format(meta['model'], ann)
-    dumps = pascal_voc_clean_xml(ann, meta['labels'])
+    dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
 
     save_to = os.path.join('net', 'yolo', meta['name'])
     while True:

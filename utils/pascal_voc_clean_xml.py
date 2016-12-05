@@ -18,8 +18,10 @@ WARNING: this script is messy, it hurts to read :(
 import os
 import sys
 
-def pascal_voc_clean_xml(ANN, pick):
+def pascal_voc_clean_xml(ANN, pick, exclusive = False):
 
+	print 'Parsing for {} {}'.format(
+		pick, 'exclusively' * int(exclusive))
 	def pp(l): # pretty printing 
 		for i in l: print '{}: {}'.format(i,l[i])
 
@@ -57,6 +59,7 @@ def pascal_voc_clean_xml(ANN, pick):
 		all = current = list()
 		name = str()
 		obj = False
+		flag = False
 		for i in range(len(lines)):
 			line = lines[i]
 			if '<filename>' in line:
@@ -75,8 +78,12 @@ def pascal_voc_clean_xml(ANN, pick):
 				obj = True
 			if not obj: continue
 			if '<name>' in line:
-				if current != list() and current[0] in pick:
+				if current != list():
+					if current[0] in pick:
 						all += [current]
+					elif exclusive:
+						flag = True
+						break
 				current = list()
 				name = str(parse(line))
 				if name not in pick: 
@@ -93,6 +100,7 @@ def pascal_voc_clean_xml(ANN, pick):
 			if yn: current[2] = _int(parse(line))
 			if yx: current[4] = _int(parse(line))
 
+		if flag: continue
 		if current != list() and current[0] in pick:
 			all += [current]
 
