@@ -43,16 +43,15 @@ def postprocess(self, net_out, im, save = True):
 				boxes.append(bx)
 
 	# non max suppress boxes
-	for c in range(C):
-		boxes = sorted(boxes, cmp = prob_compare2)
-		for i in range(len(boxes)):
-			boxi = boxes[i]
-			if boxi.pi == 0: continue
-			for j in range(i + 1, len(boxes)):
-				boxj = boxes[j]
-				areaj = boxj.w * boxj.h
-				if box_intersection(boxi, boxj)/areaj >= .4:
-						boxes[j].pi = 0.
+	boxes = sorted(boxes, cmp = prob_compare2)
+	for i in range(len(boxes)):
+		boxi = boxes[i]
+		if boxi.pi == 0: continue
+		for j in range(i + 1, len(boxes)):
+			boxj = boxes[j]
+			areaj = boxj.w * boxj.h
+			if box_intersection(boxi, boxj)/areaj >= .4:
+					boxes[j].pi = 0.
 
 
 	colors = meta['colors']
