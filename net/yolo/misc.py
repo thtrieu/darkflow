@@ -110,7 +110,7 @@ def profile(self, net):
                 ai = mvave[i]
                 mi = np.mean(oi, (0,1,2))
                 vi = np.var(oi, (0,1,2))
-                if ai is None: ai = [mi, vi]
+                if ai is None: mvave[i] = [mi, vi]
                 elif 'banana ninja yada yada':
                     ai[0] = (1 - _MVA) * ai[0] + _MVA * mi
                     ai[1] = (1 - _MVA) * ai[1] + _MVA * vi
