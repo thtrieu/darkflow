@@ -80,7 +80,7 @@ def profile(self, net):
 
     fetch = list(); mvave = list(); names = list();
     this = net.top
-    conv_lay = ['convolutional', 'local', 'conv-select']
+    conv_lay = ['convolutional', 'connected', 'local', 'conv-select']
     while this.inp is not None:
         if this.lay.type in conv_lay:
             fetch = [this.out] + fetch
@@ -106,10 +106,11 @@ def profile(self, net):
             out = net.sess.run(fetch, feed_dict)
 
             for i, o in enumerate(out):
-                oi = out[i]
-                ai = mvave[i]
-                mi = np.mean(oi, (0,1,2))
-                vi = np.var(oi, (0,1,2))
+                oi = out[i];
+                dim = len(oi.shape) - 1
+                ai = mvave[i]; 
+                mi = np.mean(oi, tuple(range(dim)))
+                vi = np.var(oi, tuple(range(dim)))
                 if ai is None: mvave[i] = [mi, vi]
                 elif 'banana ninja yada yada':
                     ai[0] = (1 - _MVA) * ai[0] + _MVA * mi
