@@ -4,6 +4,13 @@ import numpy as np
 import cv2
 import os
 
+def _fix(obj, dims, scale, offs):
+	for i in range(1, 5):
+		dim = dims[(i + 1) % 2]
+		off = offs[(i + 1) % 2]
+		obj[i] = int(obj[i]*scale-off)
+		obj[i] = max(min(obj[i], dim), 0)
+
 def preprocess(self, im, allobj = None):
 	"""
 	Takes an image, return it as a numpy tensor that is readily
@@ -15,13 +22,6 @@ def preprocess(self, im, allobj = None):
 	"""	
 	if type(im) is not np.ndarray:
 		im = cv2.imread(im)
-
-	def _fix(obj, dims, scale, offs):
-		for i in range(1, 5):
-			dim = dims[(i + 1) % 2]
-			off = offs[(i + 1) % 2]
-			obj[i] = int(obj[i]*scale-off)
-			obj[i] = max(min(obj[i], dim), 0)
 
 	if allobj is not None: # in training mode
 		result = imcv2_affine_trans(im)
@@ -40,7 +40,7 @@ def preprocess(self, im, allobj = None):
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
 	if allobj is None: return imsz
-	return imsz #, np.array(im) # for unit testing
+	return imsz#, np.array(im) # for unit testing
 	
 
 def postprocess(self, net_out, im, save = True):
@@ -73,9 +73,10 @@ def postprocess(self, net_out, im, save = True):
 			bx.w =  cords[grid, b, 2] ** sqrt
 			bx.h =  cords[grid, b, 3] ** sqrt
 			p = probs[grid, :] * bx.c
-			mi = np.argmax(p)
-			mv = p[mi] * (p[mi] > threshold)
-			bx.probs[mi] = mv
+			p *= (p > threshold)
+			# mi = np.argmax(p)
+			# mv = p[mi] * (p[mi] > threshold)
+			bx.probs = p
 			# bx.probs *= bx.probs > threshold
 			boxes.append(bx)
 

@@ -68,7 +68,7 @@ class BaseOp(object):
 				initializer = self.lay.w[var])
 
 	def wrap_pholder(self, ph, feed):
-		"""wrap layer.h into variables"""
+		"""wrap layer.h into placeholders"""
 		phtype = type(self.lay.h[ph])
 		if phtype is not dict: return
 		sig = '{}/{}'.format(self.scope, ph)

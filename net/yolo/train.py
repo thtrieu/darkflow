@@ -101,15 +101,13 @@ def batch(self, chunk):
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * S + np.floor(cx))]
 
-    # show(im, allobj, S, w, h, cellx, celly) # unit test
+    #show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([S*S,C])
     confs = np.zeros([S*S,B])
     coord = np.zeros([S*S,B,4])
     proid = np.zeros([S*S,C])
-    conid = np.ones([S*S,B])
-    cooid = np.zeros([S*S,B,4])
     prear = np.zeros([S*S,4])
     for obj in allobj:
         probs[obj[5], :] = [0.] * C
@@ -121,8 +119,6 @@ def batch(self, chunk):
         prear[obj[5],2] = obj[1] + obj[3]**2 * .5 * S # xright
         prear[obj[5],3] = obj[2] + obj[4]**2 * .5 * S # ybot
         confs[obj[5], :] = [1.] * B
-        #conid[obj[5], :] = [1.] * B
-        cooid[obj[5], :, :] = [[1.] * 4] * B
 
     # Finalise the placeholders' values
     upleft   = np.expand_dims(prear[:,0:2], 1)
@@ -137,8 +133,7 @@ def batch(self, chunk):
     inp_feed_val = img
     # value for placeholder at loss layer 
     loss_feed_val = {
-        'probs':probs, 'confs':confs, 'coord':coord, 
-        'proid':proid, 'conid':conid, 'cooid':cooid,
+        'probs':probs, 'confs':confs, 'coord':coord, 'proid':proid,
         'areas':areas, 'upleft':upleft, 'botright':botright
     }
 
@@ -152,10 +147,10 @@ def loss(self, net_out):
     """
     # meta
     m = self.meta
-    sprob = m['class_scale']
-    sconf = m['object_scale']
-    snoob = m['noobject_scale'] 
-    scoor = m['coord_scale']
+    sprob = float(m['class_scale'])
+    sconf = float(m['object_scale'])
+    snoob = float(m['noobject_scale'])
+    scoor = float(m['coord_scale'])
     S, B, C = m['side'], m['num'], m['classes']
     SS = S * S # number of grid cells
 
@@ -174,16 +169,13 @@ def loss(self, net_out):
     _coord = tf.placeholder(tf.float32, size2 + [4])
     # weights term for L2 loss
     _proid = tf.placeholder(tf.float32, size1)
-    _conid = tf.placeholder(tf.float32, size2)
-    _cooid = tf.placeholder(tf.float32, size2 + [4])
     # material for loss calculation
     _areas = tf.placeholder(tf.float32, size2)
     _upleft = tf.placeholder(tf.float32, size2 + [2])
     _botright = tf.placeholder(tf.float32, size2 + [2])
 
     placeholders = {
-        'probs':_probs, 'confs':_confs, 'coord':_coord,
-        'proid':_proid, 'conid':_conid, 'cooid':_cooid,
+        'probs':_probs, 'confs':_confs, 'coord':_coord, 'proid':_proid,
         'areas':_areas, 'upleft':_upleft, 'botright':_botright
     }
 
@@ -204,17 +196,20 @@ def loss(self, net_out):
     intersect = tf.mul(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
     
     # calculate the best IOU, set 0.0 confidence for worse boxes
-    iou = tf.div(intersect, _areas + area_pred - intersect)
+    iou = tf.truediv(intersect, _areas + area_pred - intersect)
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
     confs = tf.mul(best_box, _confs)
 
     # take care of the weight terms
-    weight_con = snoob * (1. - confs) + sconf * confs
-    conid = tf.mul(_conid, weight_con)
+    conid = snoob * (1. - confs) + sconf * confs
     weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
-    cooid = tf.mul(_cooid, scoor * weight_coo)
+    cooid = scoor * weight_coo
     proid = sprob * _proid
+
+    # assert _probs.get_shape() == proid.get_shape()
+    # assert confs.get_shape() == conid.get_shape()
+    # assert _coord.get_shape() == cooid.get_shape()
 
     # flatten 'em all
     probs = slim.flatten(_probs)
@@ -223,6 +218,8 @@ def loss(self, net_out):
     conid = slim.flatten(conid)
     coord = slim.flatten(_coord)
     cooid = slim.flatten(cooid)
+
+    self.fetch += [probs, confs, conid, cooid, proid]
     true = tf.concat(1, [probs, confs, coord])
     wght = tf.concat(1, [proid, conid, cooid])
 

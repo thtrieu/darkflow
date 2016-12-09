@@ -26,5 +26,5 @@ def constructor(self, meta, FLAGS):
 	for x in range(len(meta['labels'])): 
 		colors += [_to_color(x, base)]
 	meta['colors'] = colors
-
+	self.fetch = list()
 	self.meta, self.FLAGS = meta, FLAGS

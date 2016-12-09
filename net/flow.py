@@ -35,8 +35,13 @@ def train(self):
 		for k in self.feed: feed_dict[k] = self.feed[k]
 		feed_dict[self.inp] = x_batch
 
-		_, loss = self.sess.run([self.train_op, self.loss], feed_dict)
-
+		fetches = [self.train_op, self.loss] 
+		fetches += self.framework.fetch
+		fetched = self.sess.run(fetches, feed_dict)
+		loss = fetched[1]
+		# for f in fetched[2:]:
+		# 	print np.sum(f)
+		# assert 0
 		if loss_mva is None: loss_mva = loss
 		loss_mva = .9 * loss_mva + .1 * loss
 		step_now = self.FLAGS.load + i

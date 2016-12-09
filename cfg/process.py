@@ -159,7 +159,7 @@ def cfg_yielder(model, binary):
 			if layers[i-k]['type'] == 'connected':
 				l_ = layers[i-k]['output']
 			else:
-				l_ = layers[i-k]['old'][-1]
+				l_ = layers[i-k].get('old',[l])[-1]
 			yield ['select', i, l_, d['old_output'],
 				   activation, layer, d['output'], 
 				   keep, train_from]

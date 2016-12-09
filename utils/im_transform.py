@@ -1,7 +1,7 @@
 import numpy as np		
 import cv2
 
-def imcv2_recolor(im, a = .2, b = 20, c = 1.5):
+def imcv2_recolor(im, a = .1):
 	t = [np.random.uniform()]
 	t += [np.random.uniform()]
 	t += [np.random.uniform()]
@@ -9,12 +9,9 @@ def imcv2_recolor(im, a = .2, b = 20, c = 1.5):
 
 	# random amplify each channel
 	im = im * (1 + t * a)
-	# random brightness
-	im += np.random.uniform() * 2 * b - b
-	# random contrast
-	mx = 255. * (1 + a) + b
-	up = np.random.uniform() * c
-	im = np.power(im/mx, 1 + up)
+	mx = 255. * (1 + a)
+	up = np.random.uniform() * 2 - 1
+	im = np.power(im/mx, 1. + up * .5)
 	return np.array(im * 255., np.uint8)
 
 def imcv2_affine_trans(im):
