@@ -28,7 +28,7 @@ def preprocess(self, im, allobj = None):
 		im, dims, trans_param = result
 		scale, offs, flip = trans_param
 		for obj in allobj:
-			fix(obj, dims, scale, offs)
+			_fix(obj, dims, scale, offs)
 			if not flip: continue
 			obj_1_ =  obj[1]
 			obj[1] = dims[0] - obj[3]

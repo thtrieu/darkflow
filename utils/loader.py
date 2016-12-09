@@ -9,7 +9,8 @@ class loader(object):
     in loading / recollecting / resolving mode
     """
     VAR_LAYER = ['convolutional', 'connected', 'local', 
-                 'select', 'conv-select']
+                 'select', 'conv-select',
+                 'extract', 'conv-extract']
 
     def __init__(self, *args):
         self.src_key = list()

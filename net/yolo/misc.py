@@ -87,6 +87,7 @@ def profile(self, net):
             names = [this.lay.signature] + names
             mvave = [None] + mvave 
         this = this.inp
+    print names
 
     total = int(); allofthem = len(all_inp_) * net.FLAGS.epoch
     batch = min(net.FLAGS.batch, len(all_inp_))

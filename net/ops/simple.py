@@ -40,9 +40,17 @@ class select(connected):
 		layer = self.lay
 		args = [layer.inp, layer.out]
 		args += [layer.activation]
-		msg = 'select {} x {}  {}'
+		msg = 'sele {} x {}  {}'
 		return msg.format(*args)
 
+class extract(connected):
+	"""a weird connected layer"""
+	def speak(self):
+		layer = self.lay
+		args = [len(layer.inp), len(layer.out)]
+		args += [layer.activation]
+		msg = 'extr {} x {}  {}'
+		return msg.format(*args)
 
 class flatten(BaseOp):
 	def forward(self):

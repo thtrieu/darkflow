@@ -24,6 +24,51 @@ class local_layer(Layer):
         weights = weights.transpose([0,3,4,2,1])
         self.w['kernels'] = weights
 
+class conv_extract_layer(Layer):
+    def setup(self, ksize, c, n, stride, 
+              pad, batch_norm, activation,
+              inp, out):
+        if inp is None: inp = range(c)
+        self.activation = activation
+        self.batch_norm = batch_norm
+        self.stride = stride
+        self.ksize = ksize
+        self.pad = pad
+        self.inp = inp
+        self.out = out
+        self.wshape = dict({
+            'biases': [len(out)], 
+            'kernel': [ksize, ksize, len(inp), len(out)]
+        })
+
+    @property
+    def signature(self):
+        sig = ['convolutional']
+        sig += self._signature[1:-2]
+        return sig
+
+    def present(self):
+        args = self.signature
+        self.presenter = convolutional_layer(*args)
+
+    def recollect(self, w):
+        if w is None:
+            self.w = w
+            return
+        k = w['kernel']
+        b = w['biases']
+        k = np.take(k, self.inp, 2)
+        k = np.take(k, self.out, 3)
+        b = np.take(b, self.out)
+        assert1 = k.shape == tuple(self.wshape['kernel'])
+        assert2 = b.shape == tuple(self.wshape['biases'])
+        assert assert1 and assert2, \
+        'Dimension not matching in {} recollect'.format(
+            self._signature)
+        self.w['kernel'] = k
+        self.w['biases'] = b
+
+
 class conv_select_layer(Layer):
     def setup(self, ksize, c, n, stride, 
               pad, batch_norm, activation,
@@ -49,6 +94,12 @@ class conv_select_layer(Layer):
                 'feed': True,
                 'dfault': False
             }
+
+    @property
+    def signature(self):
+        sig = ['convolutional']
+        sig += self._signature[1:-2]
+        return sig
     
     def present(self):
         args = self.signature
@@ -70,12 +121,6 @@ class conv_select_layer(Layer):
             self.w['moving_mean'] = np.take(m, idx)
             self.w['moving_variance'] = np.take(v, idx)
             self.w['gamma'] = np.take(g, idx)
-
-    @property
-    def signature(self):
-        sig = ['convolutional']
-        sig += self._signature[1:-2]
-        return sig
 
 class convolutional_layer(Layer):
     def setup(self, ksize, c, n, stride, 

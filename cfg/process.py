@@ -3,6 +3,7 @@ WARNING: spaghetti code.
 """
 
 import numpy as np
+import cPickle as pickle
 import os
 
 def parser(model):
@@ -135,6 +136,14 @@ def cfg_yielder(model, binary):
 			if not flat:
 				yield ['flatten', i]
 				flat = True
+			inp = d.get('input', None)
+			if type(inp) is str:
+				file = inp.split(',')[0]
+				layer_num = int(inp.split(',')[1])
+				with open(file, 'rb') as f:
+					profiles = pickle.load(f)[0]
+				layer = profiles[layer_num]
+			else: layer = inp
 			activation = d.get('activation', 'logistic')
 			d['keep'] = d['keep'].split('/')
 			classes = int(d['keep'][-1])
@@ -144,8 +153,15 @@ def cfg_yielder(model, binary):
 			for count in range(d['bins']-1):
 				for num in keep[-keep_n:]:
 					keep += [num + classes]
-			yield ['select', i, l, d['old_output'],
-				   activation, d['output'], 
+			k = 1
+			while layers[i-k]['type'] not in ['[connected]', '[extract]']:
+				k += 1
+			if layers[i-k]['type'] == 'connected':
+				l_ = layers[i-k]['output']
+			else:
+				l_ = layers[i-k]['old'][-1]
+			yield ['select', i, l_, d['old_output'],
+				   activation, layer, d['output'], 
 				   keep, train_from]
 			if activation != 'linear': yield [activation, i]
 			l = d['output']
@@ -181,7 +197,86 @@ def cfg_yielder(model, binary):
 				   stride, padding, batch_norm,
 				   activation, keep_idx, c_]
 			w, h, c = w_, h_, c_
-			l = w * h * c			
+			l = w * h * c
+		#-----------------------------------------------------
+		elif d['type'] == '[conv-extract]':
+			file = d['profile']
+			with open(file, 'rb') as f:
+				profiles = pickle.load(f)[0]
+			inp_layer = None
+			inp = d['input']
+			out = d['output']
+			inp_layer = None
+			if inp >= 0:
+				inp_layer = profiles[inp]
+			if inp_layer is not None:
+				assert len(inp_layer) == c, \
+				'Conv-extract does not match input dimension'
+			out_layer = profiles[out]
+
+			n = d.get('filters', 1)
+			size = d.get('size', 1)
+			stride = d.get('stride', 1)
+			pad = d.get('pad', 0)
+			padding = d.get('padding', 0)
+			if pad: padding = size / 2
+			activation = d.get('activation', 'logistic')
+			batch_norm = d.get('batch_normalize', 0) or conv
+			
+			k = 1
+			find = ['[convolutional]','[conv-extract]']
+			while layers[i-k]['type'] not in find:
+				k += 1
+				if i-k < 0: break
+			if i-k >= 0:
+				previous_layer = layers[i-k]
+				c_ = previous_layer['filters']
+			else:
+				c_ = c
+			
+			yield ['conv-extract', i, size, c_, n, 
+				   stride, padding, batch_norm,
+				   activation, inp_layer, out_layer]
+			if activation != 'linear': yield [activation, i]
+			w_ = (w + 2 * padding - size)/stride + 1
+			h_ = (h + 2 * padding - size)/stride + 1
+			w, h, c = w_, h_, len(out_layer)
+			l = w * h * c
+		#-----------------------------------------------------
+		elif d['type'] == '[extract]':
+			if not flat:
+				yield['flatten', i]
+				flat = True
+			activation = d.get('activation', 'logistic')
+			file = d['profile']
+			with open(file, 'rb') as f:
+				profiles = pickle.load(f)[0]
+			inp_layer = None
+			inp = d['input']
+			out = d['output']
+			if inp >= 0:
+				inp_layer = profiles[inp]
+			out_layer = profiles[out]
+			old = d['old']
+			old = [int(x) for x in old.split(',')]
+			if inp_layer is not None:
+				if len(old) > 2: 
+					h_, w_, c_, n_ = old
+					new_inp = list()
+					for p in range(c_):
+						for q in range(h_):
+							for r in range(w_):
+								if p not in inp_layer:
+									continue
+								new_inp += [r + w*(q + h*p)]
+					inp_layer = new_inp
+					old = [h_ * w_ * c_, n_]
+				assert len(inp_layer) == l, \
+				'Extract does not match input dimension'
+			d['old'] = old
+			yield ['extract', i] + old + [activation] + [inp_layer, out_layer]
+			if activation != 'linear': yield [activation, i]
+			l = len(out_layer)
 		#-----------------------------------------------------
 		elif d['type'] == '[route]': # add new layer here
 			routes = d['layers']

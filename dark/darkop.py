@@ -50,9 +50,12 @@ darkops = {
     'select': select_layer,
     'route': route_layer,
     'reorg': reorg_layer,
-    'conv-select': conv_select_layer
+    'conv-select': conv_select_layer,
+    'conv-extract': conv_extract_layer,
+    'extract': extract_layer
 }
 
 def create_darkop(ltype, num, *args):
     op_class = darkops.get(ltype, Layer)
+    #print ltype, len(args)
     return op_class(ltype, num, *args)

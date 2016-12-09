@@ -106,6 +106,7 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
 
 		if all == list(): continue
 		add = [[jpg, [w, h, all]]]
+		#print add
 		dumps += add
 
 	# gather all stats
