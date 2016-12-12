@@ -21,7 +21,6 @@ class YOLOv2(framework):
 	parse = yolo.train.parse
 	# self.batch
 	# self.loss
-
 	postprocess = yolov2.test.postprocess
 	is_inp = yolo.misc.is_inp
 
