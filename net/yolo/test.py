@@ -74,10 +74,7 @@ def postprocess(self, net_out, im, save = True):
 			bx.h =  cords[grid, b, 3] ** sqrt
 			p = probs[grid, :] * bx.c
 			p *= (p > threshold)
-			# mi = np.argmax(p)
-			# mv = p[mi] * (p[mi] > threshold)
 			bx.probs = p
-			# bx.probs *= bx.probs > threshold
 			boxes.append(bx)
 
 	# non max suppress boxes

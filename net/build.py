@@ -23,7 +23,6 @@ class TFNet(object):
 	say = help.say
 	train = flow.train
 	camera = help.camera
-	shuffle = help.shuffle
 	predict = flow.predict
 	to_darknet = help.to_darknet
 	build_train_op = help.build_train_op

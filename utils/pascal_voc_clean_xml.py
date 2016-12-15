@@ -1,18 +1,5 @@
 """
-file: ./clean.py
-includes: a script to parse Pascal VOC data
-this script produces the binary file parsed.bin, which contains
-a cPickle dump of a list. Each element in the list corresponds
-to an image, the element in turn contains a list of  parsed bounding 
-boxes coordinates and asscociated classes of each object defined
-in labels.txt. If labels.txt is left blank, the default choice of
-all twenty objects are used (see list labels20 below).
-
-The cPickle dump will be used mainly by ./data.py, inside function
-shuffle(). shuffle() will shuffle and cut the dump into batches,
-preprocess them so that they are ready to be fed into net.
-
-WARNING: this script is messy, it hurts to read :(
+parse PASCAL VOC xml annotations
 """
 
 import os
@@ -104,9 +91,7 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
 		if current != list() and current[0] in pick:
 			all += [current]
 
-		if all == list(): continue
 		add = [[jpg, [w, h, all]]]
-		#print add
 		dumps += add
 
 	# gather all stats

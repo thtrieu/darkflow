@@ -24,7 +24,7 @@ flags.DEFINE_integer("keep",20,"Number of most recent training results to save")
 flags.DEFINE_integer("batch", 12, "batch size")
 flags.DEFINE_integer("epoch", 1000, "number of epoch")
 flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
-flags.DEFINE_boolean("demo", False, "demo on webcam")
+flags.DEFINE_string("demo", '', "demo on webcam")
 flags.DEFINE_boolean("profile", False, "profile")
 FLAGS = flags.FLAGS
 
@@ -46,7 +46,7 @@ if FLAGS.profile:
 	exit()
 
 if FLAGS.demo:
-	tfnet.camera()
+	tfnet.camera(FLAGS.demo)
 	exit()
 
 if FLAGS.train:

@@ -1,143 +1,9 @@
-"""
-file: /yolo/train.py
-includes: parse(), batch(), and loss()
-together they support the pipeline: 
-    annotation -> minibatch -> loss evaluation -> training
-namely,
-parse() takes the path to annotation directory, returns the loaded cPickple dump
-             that contains a list of parsed objects, each for an input image in trainset
-batch() receive one such parsed objects, return feed value for net's input & output
-             feed value for net's input will go to the input layer of net
-             feed value for net's output will go to the loss layer of net
-loss() basically build the loss layer of the net, namely,
-            returns the corresponding placeholders for feed values of this loss layer
-            as well as loss & train_op built from these placeholders and net.out
-"""
 import tensorflow.contrib.slim as slim
 import cPickle as pickle
 import tensorflow as tf
+from misc import show
 import numpy as np
 import os
-
-from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
-from copy import deepcopy
-from test import preprocess
-from misc import show
-
-def parse(self, exclusive = False):
-    """
-    Decide whether to parse the annotation or not, 
-    If the parsed file is not already there, parse.
-    """
-    meta = self.meta
-    ext = '.parsed'
-    history = os.path.join('net', 'yolo', 'parse-history.txt');
-    if not os.path.isfile(history):
-        file = open(history, 'w')
-        file.close()
-    with open(history, 'r') as f:
-        lines = f.readlines()
-    for line in lines:
-        line = line.strip().split(' ')
-        labels = line[1:]
-        if labels == meta['labels']:
-            if os.path.isfile(line[0]):
-                with open(line[0], 'rb') as f:
-                    return pickle.load(f)[0]
-
-    # actual parsing
-    ann = self.FLAGS.annotation
-    if not os.path.isdir(ann):
-        msg = 'Annotation directory not found {} .'
-        exit('Error: {}'.format(msg.format(ann)))
-    print '\n{} parsing {}'.format(meta['model'], ann)
-    dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
-
-    save_to = os.path.join('net', 'yolo', meta['name'])
-    while True:
-        if not os.path.isfile(save_to + ext): break
-        save_to = save_to + '_'
-    save_to += ext
-
-    with open(save_to, 'wb') as f:
-        pickle.dump([dumps], f, protocol = -1)
-    with open(history, 'a') as f:
-        f.write('{} '.format(save_to))
-        f.write(' '.join(meta['labels']))
-        f.write('\n')
-    print 'Result saved to {}'.format(save_to)
-    return dumps
-
-def batch(self, chunk):
-    """
-    Takes a chunk of parsed annotations
-    returns value for placeholders of net's 
-    input & loss layer correspond to this chunk
-    """
-    meta = self.meta
-    S, B = meta['side'], meta['num']
-    C, labels = meta['classes'], meta['labels']
-
-    # preprocess
-    jpg = chunk[0]; w, h, allobj_ = chunk[1]
-    allobj = deepcopy(allobj_)
-    path = os.path.join(self.FLAGS.dataset, jpg)
-    img = self.preprocess(path, allobj)
-
-    # Calculate regression target
-    cellx = 1. * w / S
-    celly = 1. * h / S
-    for obj in allobj:
-        centerx = .5*(obj[1]+obj[3]) #xmin, xmax
-        centery = .5*(obj[2]+obj[4]) #ymin, ymax
-        cx = centerx / cellx
-        cy = centery / celly
-        if cx >= S or cy >= S: return None, None
-        obj[3] = float(obj[3]-obj[1]) / w
-        obj[4] = float(obj[4]-obj[2]) / h
-        obj[3] = np.sqrt(obj[3])
-        obj[4] = np.sqrt(obj[4])
-        obj[1] = cx - np.floor(cx) # centerx
-        obj[2] = cy - np.floor(cy) # centery
-        obj += [int(np.floor(cy) * S + np.floor(cx))]
-
-    #show(im, allobj, S, w, h, cellx, celly) # unit test
-
-    # Calculate placeholders' values
-    probs = np.zeros([S*S,C])
-    confs = np.zeros([S*S,B])
-    coord = np.zeros([S*S,B,4])
-    proid = np.zeros([S*S,C])
-    prear = np.zeros([S*S,4])
-    for obj in allobj:
-        probs[obj[5], :] = [0.] * C
-        probs[obj[5], labels.index(obj[0])] = 1.
-        proid[obj[5], :] = [1] * C
-        coord[obj[5], :, :] = [obj[1:5]] * B
-        prear[obj[5],0] = obj[1] - obj[3]**2 * .5 * S # xleft
-        prear[obj[5],1] = obj[2] - obj[4]**2 * .5 * S # yup
-        prear[obj[5],2] = obj[1] + obj[3]**2 * .5 * S # xright
-        prear[obj[5],3] = obj[2] + obj[4]**2 * .5 * S # ybot
-        confs[obj[5], :] = [1.] * B
-
-    # Finalise the placeholders' values
-    upleft   = np.expand_dims(prear[:,0:2], 1)
-    botright = np.expand_dims(prear[:,2:4], 1)
-    wh = botright - upleft; 
-    area = wh[:,:,0] * wh[:,:,1]
-    upleft   = np.concatenate([upleft] * B, 1)
-    botright = np.concatenate([botright] * B, 1)
-    areas = np.concatenate([area] * B, 1)
-
-    # value for placeholder at input layer
-    inp_feed_val = img
-    # value for placeholder at loss layer 
-    loss_feed_val = {
-        'probs':probs, 'confs':confs, 'coord':coord, 'proid':proid,
-        'areas':areas, 'upleft':upleft, 'botright':botright
-    }
-
-    return inp_feed_val, loss_feed_val
 
 def loss(self, net_out):
     """
@@ -169,12 +35,12 @@ def loss(self, net_out):
     _coord = tf.placeholder(tf.float32, size2 + [4])
     # weights term for L2 loss
     _proid = tf.placeholder(tf.float32, size1)
-    # material for loss calculation
+    # material calculating IOU
     _areas = tf.placeholder(tf.float32, size2)
     _upleft = tf.placeholder(tf.float32, size2 + [2])
     _botright = tf.placeholder(tf.float32, size2 + [2])
 
-    placeholders = {
+    self.placeholders = {
         'probs':_probs, 'confs':_confs, 'coord':_coord, 'proid':_proid,
         'areas':_areas, 'upleft':_upleft, 'botright':_botright
     }
@@ -207,10 +73,6 @@ def loss(self, net_out):
     cooid = scoor * weight_coo
     proid = sprob * _proid
 
-    # assert _probs.get_shape() == proid.get_shape()
-    # assert confs.get_shape() == conid.get_shape()
-    # assert _coord.get_shape() == cooid.get_shape()
-
     # flatten 'em all
     probs = slim.flatten(_probs)
     proid = slim.flatten(proid)
@@ -227,6 +89,4 @@ def loss(self, net_out):
     loss = tf.pow(net_out - true, 2)
     loss = tf.mul(loss, wght)
     loss = tf.reduce_sum(loss, 1)
-    loss = .5 * tf.reduce_mean(loss)
-
-    return placeholders, loss
+    self.loss = .5 * tf.reduce_mean(loss)

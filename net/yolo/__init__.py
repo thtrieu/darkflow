@@ -1,10 +1,11 @@
 import train
 import test
+import data
 import misc
 import numpy as np
 
 
-""" YOLO framework __init__ equivalent """
+""" YOLO framework __init__ equivalent"""
 
 def constructor(self, meta, FLAGS):
 

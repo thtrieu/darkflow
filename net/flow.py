@@ -1,7 +1,8 @@
-import numpy as np
 import os
 import time
+import numpy as np
 import tensorflow as tf
+import cPickle as pickle
 
 train_stats = (
 	'Training statistics: \n'
@@ -11,46 +12,57 @@ train_stats = (
 	'\tBackup every  : {}'
 )
 
-def train(self):
-	batches = self.shuffle()
+def _save_ckpt(self, step, loss_profile):
+	file = '{}-{}{}'
 	model = self.meta['name']
 
-	loss_mva = None; total = int() # total number of batches
-	for i, packet in enumerate(batches):
-		if i == 0: 
-			total = packet;
-			args = [self.FLAGS.lr, self.FLAGS.batch]
-			args+= [self.FLAGS.epoch, self.FLAGS.save]
-			self.say(train_stats.format(*args))
-			continue
+	profile = file.format(model, step, '.profile')
+	profile = os.path.join(self.FLAGS.backup, profile)
+	with open(profile, 'wb') as profile_ckpt: 
+		pickle.dump(loss_profile, profile_ckpt)
 
-		x_batch, datum = packet
+	ckpt = file.format(model, step, '')
+	ckpt = os.path.join(self.FLAGS.backup, ckpt)
+	self.say('Checkpoint at step {}'.format(step))
+	self.saver.save(self.sess, ckpt)
 
-		if i == 1: \
-		assert set(list(datum)) == set(list(self.placeholders)), \
-		'Feed and placeholders of loss op mismatched'
 
-		feed_pair = [(self.placeholders[k], datum[k]) for k in datum]
-		feed_dict = {holder:val for (holder,val) in feed_pair}
-		for k in self.feed: feed_dict[k] = self.feed[k]
+def train(self):
+	loss_ph = self.framework.placeholders
+	loss_mva = None; profile = list()
+
+	batches = self.framework.shuffle()
+	loss_op = self.framework.loss
+
+	for i, (x_batch, datum) in enumerate(batches):
+		if not i: self.say(train_stats.format(
+			self.FLAGS.lr, self.FLAGS.batch,
+			self.FLAGS.epoch, self.FLAGS.save
+		))
+
+		feed_dict = {
+			loss_ph[key]: datum[key] 
+				for key in loss_ph }
 		feed_dict[self.inp] = x_batch
+		feed_dict.update(self.feed)
 
-		fetches = [self.train_op, self.loss] 
-		fetches += self.framework.fetch
+		fetches = [self.train_op, loss_op] 
 		fetched = self.sess.run(fetches, feed_dict)
 		loss = fetched[1]
-		# for f in fetched[2:]:
-		# 	print np.sum(f)
-		# assert 0
+
 		if loss_mva is None: loss_mva = loss
 		loss_mva = .9 * loss_mva + .1 * loss
-		step_now = self.FLAGS.load + i
-		args = [step_now, loss, loss_mva]
-		self.say('step {} - loss {} - moving ave loss {}'.format(*args))
-		if i % (self.FLAGS.save/self.FLAGS.batch) == 0 or i == total:
-			ckpt = os.path.join(self.FLAGS.backup, '{}-{}'.format(model, step_now))
-			self.say('Checkpoint at step {}'.format(step_now))
-			self.saver.save(self.sess, ckpt)
+		step_now = self.FLAGS.load + i + 1
+
+		form = 'step {} - loss {} - moving ave loss {}'
+		self.say(form.format(step_now, loss, loss_mva))
+		profile += [(loss, loss_mva)]
+
+		ckpt = (i+1) % (self.FLAGS.save / self.FLAGS.batch)
+		args = [step_now, profile]
+		if not ckpt: _save_ckpt(self, *args)
+
+	if ckpt: _save_ckpt(self, *args)
 
 
 def predict(self):

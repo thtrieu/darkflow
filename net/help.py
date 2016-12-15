@@ -1,13 +1,12 @@
 """
 tfnet secondary (helper) methods
 """
-
-from numpy.random import permutation as perm
 from utils.loader import create_loader
 from time import time as timer
-from time import sleep as delay
 import tensorflow as tf
 import numpy as np
+import skvideo.io
+import skimage.io
 import sys
 import cv2
 import os
@@ -15,12 +14,10 @@ import os
 old_graph_msg = 'Resolving old graph def {} (no guarantee)'
 
 def build_train_op(self):
-	loss_ops = self.framework.loss(self.out)
-	self.placeholders, self.loss = loss_ops
-
+	self.framework.loss(self.out)
 	self.say('Building {} train op'.format(self.meta['model']))
 	optimizer = self._TRAINER[self.FLAGS.trainer](self.FLAGS.lr)
-	gradients = optimizer.compute_gradients(self.loss)
+	gradients = optimizer.compute_gradients(self.framework.loss)
 	self.train_op = optimizer.apply_gradients(gradients)
 
 def load_from_ckpt(self):
@@ -46,50 +43,6 @@ def say(self, *msgs):
 		if msg is None: continue
 		print msg
 
-def shuffle(self):
-	"""
-	Call the specific framework to parse annotations, then use the parsed 
-	object to yield minibatches. minibatches should be preprocessed before
-	yielding to be appropriate placeholders for model's loss evaluation.
-	"""
-	data = self.framework.parse()
-	size = len(data); batch = self.FLAGS.batch
-
-	self.say('Dataset of {} instance(s)'.format(size))
-	if batch > size: 
-		self.FLAGS.batch = batch = size
-	batch_per_epoch = int(size / batch)
-	total = self.FLAGS.epoch * batch_per_epoch
-	yield total
-
-	for i in range(self.FLAGS.epoch):
-		self.say('EPOCH {}'.format(i + 1))
-		shuffle_idx = perm(np.arange(size))
-		for b in range(batch_per_epoch): 
-			end_idx = (b+1) * batch
-			start_idx = b * batch
-			# two yieldee
-			x_batch = list()
-			feed_batch = dict()
-
-			for j in range(start_idx, end_idx):
-				real_idx = shuffle_idx[j]
-				this = data[real_idx]
-				inp, feedval = self.framework.batch(this)
-				if inp is None: continue
-
-				x_batch += [np.expand_dims(inp, 0)]
-				for key in feedval:
-					if key not in feed_batch: 
-						feed_batch[key] = [feedval[key]]; 
-						continue
-					feed_batch[key] = np.concatenate(
-						[feed_batch[key], [feedval[key]]])		
-			
-			x_batch = np.concatenate(x_batch, 0)
-			yield (x_batch, feed_batch)
-
-
 def load_old_graph(self, ckpt):	
 	ckpt_loader = create_loader(ckpt)
 	self.say(old_graph_msg.format(ckpt))
@@ -105,13 +58,20 @@ def load_old_graph(self, ckpt):
 		op = tf.assign(var, plh)
 		self.sess.run(op, {plh: val})
 
-def camera(self):
-	camera = cv2.VideoCapture(0)
-	self.say('Press [ESC] to quit camera demo')
+def camera(self, file):
+	swap = file != 'camera'
+	if not swap: camera = cv2.VideoCapture(0)
+	else: camera = skvideo.io.VideoCapture(file, (100, 100))
+		
+	self.say('Press [ESC] to quit demo')
+	assert camera.isOpened(), \
+	'Cannot capture source'
+
 	elapsed = int()
 	start = timer()
-	while 'banana ninja yada yada':
+	while camera.isOpened():
 		_, frame = camera.read()
+		if swap: frame = np.array(frame[:, :, ::-1])
 		cv2.imshow('', self.framework.postprocess(
 			self.sess.run(self.out, feed_dict = {
 				self.inp: [self.framework.preprocess(frame)] 
@@ -121,9 +81,11 @@ def camera(self):
 			sys.stdout.write('\r')
 			sys.stdout.write('{0:3.3f} FPS'.format(
 				elapsed / (timer() - start)))
+
 			sys.stdout.flush()
 		choice = cv2.waitKey(1)
 		if choice == 27: break
+
 	sys.stdout.write('\n')
 	camera.release()
 	cv2.destroyAllWindows()
