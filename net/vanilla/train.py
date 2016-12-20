@@ -4,12 +4,13 @@ _LOSS_TYPE = ['sse','l2', 'smooth',
 			  'sparse', 'l1', 'softmax',
 			  'svm', 'fisher']
 
-def loss(net):
-	m = net.meta
-	loss_type = net.meta['type']
-	assert loss_type in _LOSS_TYPE
+def loss(self, net_out):
+	m = self.meta
+	loss_type = self.meta['type']
+	assert loss_type in _LOSS_TYPE, \
+	'Loss type {} not implemented'.format(loss_type)
 
-	out = net.out
+	out = net_out
 	out_shape = out.get_shape()
 	out_dtype = out.dtype.base_dtype
 	_truth = tf.placeholders(out_dtype, out_shape)
@@ -37,4 +38,7 @@ def loss(net):
 		loss = tf.reduce_mean(loss)
 
 	elif loss_type == 'svm':
-		nu = tf.Variable(tf.ones([self.train_size, num_classes]))
+		assert 'train_size' in m, \
+		'Must specify'
+		size = m['train_size']
+		self.nu = tf.Variable(tf.ones([train_size, num_classes]))

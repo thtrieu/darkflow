@@ -5,8 +5,8 @@ from utils.loader import create_loader
 from time import time as timer
 import tensorflow as tf
 import numpy as np
-# import skvideo.io
-# import skimage.io
+import skvideo.io
+import skimage.io
 import sys
 import cv2
 import os
@@ -61,7 +61,7 @@ def load_old_graph(self, ckpt):
 def camera(self, file):
 	swap = file != 'camera'
 	if not swap: camera = cv2.VideoCapture(0)
-	# else: camera = skvideo.io.VideoCapture(file, (100, 100))
+	else: camera = skvideo.io.VideoCapture(file, (448, 448))
 		
 	self.say('Press [ESC] to quit demo')
 	assert camera.isOpened(), \
