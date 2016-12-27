@@ -154,9 +154,13 @@ def cfg_yielder(model, binary):
 				for num in keep[-keep_n:]:
 					keep += [num + classes]
 			k = 1
+			print len(layers), i-k
 			while layers[i-k]['type'] not in ['[connected]', '[extract]']:
 				k += 1
-			if layers[i-k]['type'] == 'connected':
+				if i-k < 0:
+					break
+			if i-k < 0: l_ = l
+			elif layers[i-k]['type'] == 'connected':
 				l_ = layers[i-k]['output']
 			else:
 				l_ = layers[i-k].get('old',[l])[-1]

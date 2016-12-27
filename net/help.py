@@ -61,8 +61,10 @@ def load_old_graph(self, ckpt):
 def camera(self, file):
 	swap = file != 'camera'
 	if not swap: camera = cv2.VideoCapture(0)
-	else: camera = skvideo.io.VideoCapture(file, (448, 448))
-		
+	else:
+		camera = skvideo.io.VideoCapture(file, (448, 448))
+		writer = cv2.VideoWriter(
+			'{}-out.avi'.format(file), -1, 20.0, (448,448))
 	self.say('Press [ESC] to quit demo')
 	assert camera.isOpened(), \
 	'Cannot capture source'
@@ -71,17 +73,23 @@ def camera(self, file):
 	start = timer()
 	while camera.isOpened():
 		_, frame = camera.read()
-		if swap: frame = np.array(frame[:, :, ::-1])
-		cv2.imshow('', self.framework.postprocess(
-			self.sess.run(self.out, feed_dict = {
-				self.inp: [self.framework.preprocess(frame)] 
-			})[0], frame, False))
+		preprocessed = self.framework.preprocess(frame)
+		net_out = self.sess.run(self.out, 
+					feed_dict = {self.inp: [preprocessed] 
+				})[0]
+		processed = self.framework.postprocess(
+			net_out, frame, False)
+		if swap:
+			processed = cv2.cvtColor(
+				processed, cv2.COLOR_BGR2RGB)
+			writer.write(frame)
+		#else: 
+		cv2.imshow('', processed)
 		elapsed += 1
 		if elapsed % 5 == 0:
 			sys.stdout.write('\r')
 			sys.stdout.write('{0:3.3f} FPS'.format(
 				elapsed / (timer() - start)))
-
 			sys.stdout.flush()
 		choice = cv2.waitKey(1)
 		if choice == 27: break

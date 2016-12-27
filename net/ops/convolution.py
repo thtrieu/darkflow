@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 
 class reorg(BaseOp):
-	def forward(self):
+	def _forward(self):
 		inp = self.inp.out
 		shape = inp.get_shape().as_list()
 		_, h, w, c = shape
@@ -19,6 +19,12 @@ class reorg(BaseOp):
 				row_i += [flatij]
 			out += [tf.concat(2, row_i)]
 		self.out = tf.concat(1, out)
+
+	def forward(self):
+		inp = self.inp.out
+		s = self.lay.stride
+		self.out = tf.extract_image_patches(
+			inp, [1,s,s,1], [1,s,s,1], [1,1,1,1], 'VALID')
 
 	def speak(self):
 		args = [self.lay.stride] * 2

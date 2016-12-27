@@ -7,7 +7,9 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
     "train", "tvmonitor"]
-    
+
+# 8, 14, 15, 19
+
 voc_models = ['yolo-full', 'yolo-tiny', 'yolo-small',  # <- v1
               'yolov1', 'tiny-yolov1', # <- v1.1 
               'tiny-yolo-voc'] # <- v2
