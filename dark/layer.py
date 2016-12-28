@@ -14,7 +14,6 @@ class Layer(object):
         self.wsize = dict() # weight size
         self.setup(*args[2:]) # set attr up
         self.present()
-        print self._signature
         for var in self.wshape:
             shp = self.wshape[var]
             size = np.prod(shp)

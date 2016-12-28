@@ -39,13 +39,11 @@ def parser(model):
 			try:
 				i = float(_parse(line))
 				if i == int(i): i = int(i)
-				layer[line.split('=')[0]] = i
+				layer[line.split('=')[0].strip()] = i
 			except:
 				try:
 					key = _parse(line, 0)
 					val = _parse(line, 1)
-					if 'thresh' in key: 
-						key = 'thresh'
 					layer[key] = val
 				except:
 					'banana ninja yadayada'
