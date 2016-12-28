@@ -21,6 +21,7 @@ def parser(model):
 	h, w, c = [int()]*3; layer = dict()
 	for line in lines:
 		line = line.strip()
+		line = line.split('#')[0]
 		if '[' in line:
 			if layer != dict(): 
 				if layer['type'] == '[net]': 
@@ -43,6 +44,8 @@ def parser(model):
 				try:
 					key = _parse(line, 0)
 					val = _parse(line, 1)
+					if 'thresh' in key: 
+						key = 'thresh'
 					layer[key] = val
 				except:
 					'banana ninja yadayada'
