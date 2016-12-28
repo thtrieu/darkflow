@@ -92,10 +92,10 @@ class TFNet(object):
 
 		if self.FLAGS.train: self.build_train_op()
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
-		self.sess.run(tf.initialize_all_variables())
+		self.sess.run(tf.global_variables_initializer())
 
 		if not self.ntrain: return
-		self.saver = tf.train.Saver(tf.all_variables(), 
+		self.saver = tf.train.Saver(tf.global_variables(), 
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
 
