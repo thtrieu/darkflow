@@ -1,6 +1,7 @@
 from cfg.process import cfg_yielder
 from darkop import create_darkop
 from utils import loader
+import warnings
 import time
 import os
 
@@ -48,6 +49,9 @@ class Darknet(object):
             name = loader.model_name(FLAGS.load)
             cfg_path = FLAGS.config+name+'.cfg'
             if not os.path.isfile(cfg_path):
+                warnings.warn(
+                    '{} not found, use {} instead'.format(
+                    cfg_path, FLAGS.model))
                 cfg_path = FLAGS.model
             self.src_cfg = cfg_path
             FLAGS.load = int()
