@@ -1,5 +1,7 @@
 ## Update
 
+![img](person.jpg)
+
 **Demo in webcam is available!**. Use option `--demo camera` :)
 
 YOLOv1 is up and running:
