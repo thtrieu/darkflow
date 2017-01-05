@@ -2,7 +2,7 @@ import os
 import time
 import numpy as np
 import tensorflow as tf
-import cPickle as pickle
+import pickle
 
 train_stats = (
 	'Training statistics: \n'
@@ -58,7 +58,7 @@ def train(self):
 		self.say(form.format(step_now, loss, loss_mva))
 		profile += [(loss, loss_mva)]
 
-		ckpt = (i+1) % (self.FLAGS.save / self.FLAGS.batch)
+		ckpt = (i+1) % (self.FLAGS.save // self.FLAGS.batch)
 		args = [step_now, profile]
 		if not ckpt: _save_ckpt(self, *args)
 
@@ -75,7 +75,7 @@ def predict(self):
 
 	batch = min(self.FLAGS.batch, len(all_inp_))
 
-	for j in range(len(all_inp_)/batch):
+	for j in range(len(all_inp_) // batch):
 		inp_feed = list(); new_all = list()
 		all_inp = all_inp_[j*batch: (j*batch+batch)]
 		for inp in all_inp:

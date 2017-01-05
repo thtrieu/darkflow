@@ -1,7 +1,7 @@
 import tensorflow.contrib.slim as slim
-import cPickle as pickle
+import pickle
 import tensorflow as tf
-from misc import show
+from .misc import show
 import numpy as np
 import os
 
@@ -20,11 +20,11 @@ def loss(self, net_out):
     S, B, C = m['side'], m['num'], m['classes']
     SS = S * S # number of grid cells
 
-    print '{} loss hyper-parameters:'.format(m['model'])
-    print '\tside    = {}'.format(m['side'])
-    print '\tbox     = {}'.format(m['num'])
-    print '\tclasses = {}'.format(m['classes'])
-    print '\tscales  = {}'.format([sprob, sconf, snoob, scoor])
+    print('{} loss hyper-parameters:'.format(m['model']))
+    print('\tside    = {}'.format(m['side']))
+    print('\tbox     = {}'.format(m['num']))
+    print('\tclasses = {}'.format(m['classes']))
+    print('\tscales  = {}'.format([sprob, sconf, snoob, scoor]))
 
     size1 = [None, SS, C]
     size2 = [None, SS, B]
@@ -85,7 +85,7 @@ def loss(self, net_out):
     true = tf.concat(1, [probs, confs, coord])
     wght = tf.concat(1, [proid, conid, cooid])
 
-    print 'Building {} loss'.format(m['model'])
+    print('Building {} loss'.format(m['model']))
     loss = tf.pow(net_out - true, 2)
     loss = tf.mul(loss, wght)
     loss = tf.reduce_sum(loss, 1)

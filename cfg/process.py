@@ -3,7 +3,7 @@ WARNING: spaghetti code.
 """
 
 import numpy as np
-import cPickle as pickle
+import pickle
 import os
 
 def parser(model):
@@ -15,10 +15,12 @@ def parser(model):
 		return l.split('=')[i].strip()
 
 	with open(model, 'rb') as f:
-		lines = f.readlines()		
+		lines = f.readlines()
+
+	lines = [line.decode() for line in lines]	
 	
 	meta = dict(); layers = list() # will contains layers' info
-	h, w, c = [int()]*3; layer = dict()
+	h, w, c = [int()] * 3; layer = dict()
 	for line in lines:
 		line = line.strip()
 		line = line.split('#')[0]
@@ -78,8 +80,8 @@ def cfg_yielder(model, binary):
 			stride = d.get('stride', 1)
 			pad = d.get('pad', 0)
 			activation = d.get('activation', 'logistic')
-			w_ = (w - 1 - (1 - pad) * (size - 1)) / stride + 1
-			h_ = (h - 1 - (1 - pad) * (size - 1)) / stride + 1
+			w_ = (w - 1 - (1 - pad) * (size - 1)) // stride + 1
+			h_ = (h - 1 - (1 - pad) * (size - 1)) // stride + 1
 			yield ['local', i, size, c, n, stride, 
 					pad, w_, h_, activation]
 			if activation != 'linear': yield [activation, i]
@@ -92,25 +94,25 @@ def cfg_yielder(model, binary):
 			stride = d.get('stride', 1)
 			pad = d.get('pad', 0)
 			padding = d.get('padding', 0)
-			if pad: padding = size / 2
+			if pad: padding = size // 2
 			activation = d.get('activation', 'logistic')
 			batch_norm = d.get('batch_normalize', 0) or conv
 			yield ['convolutional', i, size, c, n, 
 				   stride, padding, batch_norm,
 				   activation]
 			if activation != 'linear': yield [activation, i]
-			w_ = (w + 2 * padding - size)/stride + 1
-			h_ = (h + 2 * padding - size)/stride + 1
+			w_ = (w + 2 * padding - size) // stride + 1
+			h_ = (h + 2 * padding - size) // stride + 1
 			w, h, c = w_, h_, n
 			l = w * h * c
 		#-----------------------------------------------------
 		elif d['type'] == '[maxpool]':
 			stride = d.get('stride', 1)
 			size = d.get('size', stride)
-			padding = d.get('padding', (size-1)/2)
+			padding = d.get('padding', (size-1) // 2)
 			yield ['maxpool', i, size, stride, padding]
-			w_ = (w + 2*padding)/d['stride'] 
-			h_ = (h + 2*padding)/d['stride']
+			w_ = (w + 2*padding) // d['stride'] 
+			h_ = (h + 2*padding) // d['stride']
 			w, h = w_, h_
 			l = w * h * c
 		#-----------------------------------------------------
@@ -142,7 +144,7 @@ def cfg_yielder(model, binary):
 				file = inp.split(',')[0]
 				layer_num = int(inp.split(',')[1])
 				with open(file, 'rb') as f:
-					profiles = pickle.load(f)[0]
+					profiles = pickle.load(f, encoding = 'latin1')[0]
 				layer = profiles[layer_num]
 			else: layer = inp
 			activation = d.get('activation', 'logistic')
@@ -155,7 +157,6 @@ def cfg_yielder(model, binary):
 				for num in keep[-keep_n:]:
 					keep += [num + classes]
 			k = 1
-			print len(layers), i-k
 			while layers[i-k]['type'] not in ['[connected]', '[extract]']:
 				k += 1
 				if i-k < 0:
@@ -177,7 +178,7 @@ def cfg_yielder(model, binary):
 			stride = d.get('stride', 1)
 			pad = d.get('pad', 0)
 			padding = d.get('padding', 0)
-			if pad: padding = size / 2
+			if pad: padding = size // 2
 			activation = d.get('activation', 'logistic')
 			batch_norm = d.get('batch_normalize', 0) or conv
 			d['keep'] = d['keep'].split('/')
@@ -187,7 +188,7 @@ def cfg_yielder(model, binary):
 			segment = classes + 5
 			assert n % segment == 0, \
 			'conv-select: segment failed'
-			bins = n / segment
+			bins = n // segment
 			keep_idx = list()
 			for j in range(bins):
 				offset = j * segment
@@ -195,8 +196,8 @@ def cfg_yielder(model, binary):
 					keep_idx += [offset + k]
 				for k in keep:
 					keep_idx += [offset + 5 + k]
-			w_ = (w + 2 * padding - size)/stride + 1
-			h_ = (h + 2 * padding - size)/stride + 1
+			w_ = (w + 2 * padding - size) // stride + 1
+			h_ = (h + 2 * padding - size) // stride + 1
 			c_ = len(keep_idx)
 			yield ['conv-select', i, size, c, n, 
 				   stride, padding, batch_norm,
@@ -207,7 +208,7 @@ def cfg_yielder(model, binary):
 		elif d['type'] == '[conv-extract]':
 			file = d['profile']
 			with open(file, 'rb') as f:
-				profiles = pickle.load(f)[0]
+				profiles = pickle.load(f, encoding = 'latin1')[0]
 			inp_layer = None
 			inp = d['input']
 			out = d['output']
@@ -224,7 +225,7 @@ def cfg_yielder(model, binary):
 			stride = d.get('stride', 1)
 			pad = d.get('pad', 0)
 			padding = d.get('padding', 0)
-			if pad: padding = size / 2
+			if pad: padding = size // 2
 			activation = d.get('activation', 'logistic')
 			batch_norm = d.get('batch_normalize', 0) or conv
 			
@@ -243,8 +244,8 @@ def cfg_yielder(model, binary):
 				   stride, padding, batch_norm,
 				   activation, inp_layer, out_layer]
 			if activation != 'linear': yield [activation, i]
-			w_ = (w + 2 * padding - size)/stride + 1
-			h_ = (h + 2 * padding - size)/stride + 1
+			w_ = (w + 2 * padding - size) // stride + 1
+			h_ = (h + 2 * padding - size) // stride + 1
 			w, h, c = w_, h_, len(out_layer)
 			l = w * h * c
 		#-----------------------------------------------------
@@ -255,7 +256,7 @@ def cfg_yielder(model, binary):
 			activation = d.get('activation', 'logistic')
 			file = d['profile']
 			with open(file, 'rb') as f:
-				profiles = pickle.load(f)[0]
+				profiles = pickle.load(f, encoding = 'latin1')[0]
 			inp_layer = None
 			inp = d['input']
 			out = d['output']
@@ -304,7 +305,8 @@ def cfg_yielder(model, binary):
 		elif d['type'] == '[reorg]':
 			stride = d.get('stride', 1)
 			yield ['reorg', i, stride]
-			w /= stride; h /=stride; c *= stride ** 2
+			w = w // stride; h = h // stride; 
+			c = c * (stride ** 2)
 			l = w * h * c
 		#-----------------------------------------------------
 		else:

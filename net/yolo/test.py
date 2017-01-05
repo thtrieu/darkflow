@@ -86,7 +86,7 @@ def postprocess(self, net_out, im, save = True):
 	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)): boxes[i].class_num = c
-		boxes = sorted(boxes, cmp = prob_compare)
+		boxes = sorted(boxes, key = prob_compare)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue
@@ -112,13 +112,15 @@ def postprocess(self, net_out, im, save = True):
 			if right > w - 1: right = w - 1
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
-			thick = int((h+w)/300)
+			thick = int( (h + w) // 150)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
 				self.meta['colors'][max_indx], thick)
-			mess = '{}:{:.3f}'.format(label, max_prob)
-			cv2.putText(imgcv, mess, (left, top - 12), 
-				0, 1e-3 * h, self.meta['colors'][max_indx],thick/5)
+			mess = '{}'.format(label)
+			cv2.putText(
+				imgcv, mess, (left, top - 12), 
+				0, 1e-3 * h, self.meta['colors'][max_indx],
+				thick // 3)
 
 	if not save: return imgcv
 	outfolder = os.path.join(FLAGS.test, 'out') 

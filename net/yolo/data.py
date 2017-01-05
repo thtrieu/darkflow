@@ -1,8 +1,8 @@
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from numpy.random import permutation as perm
-from test import preprocess
+from .test import preprocess
 from copy import deepcopy
-import cPickle as pickle
+import pickle
 import numpy as np
 import os 
 
@@ -25,14 +25,14 @@ def parse(self, exclusive = False):
         if labels == meta['labels']:
             if os.path.isfile(line[0]):
                 with open(line[0], 'rb') as f:
-                    return pickle.load(f)[0]
+                    return pickle.load(f, encoding = 'latin1')[0]
 
     # actual parsing
     ann = self.FLAGS.annotation
     if not os.path.isdir(ann):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
-    print '\n{} parsing {}'.format(meta['model'], ann)
+    print('\n{} parsing {}'.format(meta['model'], ann))
     dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
 
     save_to = os.path.join('net', 'yolo', meta['name'])
@@ -47,7 +47,7 @@ def parse(self, exclusive = False):
         f.write('{} '.format(save_to))
         f.write(' '.join(meta['labels']))
         f.write('\n')
-    print 'Result saved to {}'.format(save_to)
+    print('Result saved to {}'.format(save_to))
     return dumps
 
 
@@ -129,7 +129,7 @@ def shuffle(self):
     data = self.parse()
     size = len(data)
 
-    print 'Dataset of {} instance(s)'.format(size)
+    print('Dataset of {} instance(s)'.format(size))
     if batch > size: self.FLAGS.batch = batch = size
     batch_per_epoch = int(size / batch)
 

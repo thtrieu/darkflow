@@ -1,6 +1,6 @@
-from layer import Layer
-from convolution import *
-from connected import *
+from .layer import Layer
+from .convolution import *
+from .connected import *
 
 class avgpool_layer(Layer):
     pass
@@ -57,5 +57,4 @@ darkops = {
 
 def create_darkop(ltype, num, *args):
     op_class = darkops.get(ltype, Layer)
-    #print ltype, len(args)
     return op_class(ltype, num, *args)

@@ -7,13 +7,13 @@ import sys
 
 def pascal_voc_clean_xml(ANN, pick, exclusive = False):
 
-	print 'Parsing for {} {}'.format(
-		pick, 'exclusively' * int(exclusive))
+	print('Parsing for {} {}'.format(
+			pick, 'exclusively' * int(exclusive)))
 	def pp(l): # pretty printing 
-		for i in l: print '{}: {}'.format(i,l[i])
+		for i in l: print('{}: {}'.format(i,l[i]))
 
 	def parse(line): # exclude the xml tag
-		x = line.split('>')[1].split('<')[0]
+		x = line.decode().split('>')[1].decode().split('<')[0]
 		try: r = int(x)
 		except: r = x
 		return r
@@ -105,10 +105,10 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
 				else:
 					stat[current[0]] =1
 
-	print 
-	print 'Statistics:'
+	print() 
+	print('Statistics:')
 	pp(stat)
-	print 'Dataset size: {}'.format(len(dumps))
+	print('Dataset size: {}'.format(len(dumps)))
 
 	os.chdir(cur_dir)
 	return dumps

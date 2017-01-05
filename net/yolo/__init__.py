@@ -1,7 +1,7 @@
-import train
-import test
-import data
-import misc
+from . import train
+from . import test
+from . import data
+from . import misc
 import numpy as np
 
 

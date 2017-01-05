@@ -1,6 +1,6 @@
-import yolo
-import yolov2
-import vanilla
+from . import yolo
+from . import yolov2
+from . import vanilla
 
 class framework(object):
 	loss = vanilla.train.loss

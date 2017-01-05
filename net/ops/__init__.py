@@ -1,6 +1,6 @@
-from simple import *
-from convolution import *
-from baseop import HEADER, LINE
+from .simple import *
+from .convolution import *
+from .baseop import HEADER, LINE
 
 op_types = {
 	'convolutional': convolutional,

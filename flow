@@ -50,11 +50,11 @@ if FLAGS.demo:
 	exit()
 
 if FLAGS.train:
-	print 'Enter training ...';	tfnet.train()
+	print('Enter training ...'); tfnet.train()
 	if not FLAGS.savepb: exit('Training finished')
 
 if FLAGS.savepb:
-	print 'Rebuild a constant version ...'
+	print('Rebuild a constant version ...')
 	tfnet.savepb(); exit('Done')
 
 tfnet.predict()

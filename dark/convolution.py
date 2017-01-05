@@ -1,4 +1,4 @@
-from layer import Layer
+from .layer import Layer
 import numpy as np
 
 class local_layer(Layer):

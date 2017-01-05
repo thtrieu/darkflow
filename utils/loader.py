@@ -28,7 +28,7 @@ class loader(object):
         for i in range(up_to):
             key_b = self.src_key[i]
             if key_b[idx:] == key[idx:]:
-            	return self.yields(i)
+                return self.yields(i)
         return None
 
     def yields(self, idx):
@@ -74,8 +74,8 @@ class weights_loader(loader):
             assert walker.offset == walker.size, \
             'expect {} bytes, found {}'.format(
                 walker.offset, walker.size)
-            print 'Successfully identified {} bytes'.format(
-                walker.offset)
+            print('Successfully identified {} bytes'.format(
+                walker.offset))
 
 class checkpoint_loader(loader):
     """
@@ -109,15 +109,15 @@ class weights_walker(object):
         self.eof = False # end of file
         self.path = path  # current pos
         if path is None: 
-        	self.eof = True
-        	return
+            self.eof = True
+            return
         else: 
-        	self.size = os.path.getsize(path)# save the path
-	        major, minor, revision, seen = np.memmap(path,
-	            shape = (), mode = 'r', offset = 0,
-	            dtype = '({})i4,'.format(4))
-	        self.transpose = major > 1000 or minor > 1000
-	        self.offset = 16
+            self.size = os.path.getsize(path)# save the path
+            major, minor, revision, seen = np.memmap(path,
+                shape = (), mode = 'r', offset = 0,
+                dtype = '({})i4,'.format(4))
+            self.transpose = major > 1000 or minor > 1000
+            self.offset = 16
 
     def walk(self, size):
         if self.eof: return None
@@ -126,7 +126,7 @@ class weights_walker(object):
         'Over-read {}'.format(self.path)
 
         float32_1D_array = np.memmap(
-            self.path, shape=(), mode='r', 
+            self.path, shape = (), mode = 'r', 
             offset = self.offset,
             dtype='({})float32,'.format(size)
         )
