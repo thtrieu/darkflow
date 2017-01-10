@@ -102,5 +102,6 @@ def predict(self):
 			self.framework.postprocess(prediction,
 				os.path.join(inp_path, all_inp[i]))
 		stop = time.time(); last = stop - start
+
 		self.say('Total time = {}s / {} inps = {} ips'.format(
 			last, len(inp_feed), len(inp_feed) / last))
