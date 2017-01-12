@@ -106,7 +106,7 @@ During training, the script will occasionally save intermediate results into Ten
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
-### Migrating the graph to C++ and Objective-C++
+### Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
