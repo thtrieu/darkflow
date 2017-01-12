@@ -1,6 +1,7 @@
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from numpy.random import permutation as perm
 from .test import preprocess
+# from .misc import show
 from copy import deepcopy
 import pickle
 import numpy as np
@@ -65,7 +66,7 @@ def _batch(self, chunk):
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
     path = os.path.join(self.FLAGS.dataset, jpg)
-    img = self.preprocess(path, allobj)
+    img, im = self.preprocess(path, allobj)
 
     # Calculate regression target
     cellx = 1. * w / S
@@ -84,7 +85,7 @@ def _batch(self, chunk):
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * S + np.floor(cx))]
 
-    #show(im, allobj, S, w, h, cellx, celly) # unit test
+    # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([S*S,C])

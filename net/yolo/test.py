@@ -8,7 +8,7 @@ def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
 		dim = dims[(i + 1) % 2]
 		off = offs[(i + 1) % 2]
-		obj[i] = int(obj[i]*scale-off)
+		obj[i] = int(obj[i] * scale - off)
 		obj[i] = max(min(obj[i], dim), 0)
 
 def preprocess(self, im, allobj = None):

@@ -45,7 +45,7 @@ def is_inp(self, name):
 def show(im, allobj, S, w, h, cellx, celly):
     for obj in allobj:
         a = obj[5] % S
-        b = obj[5] / S
+        b = obj[5] // S
         cx = a + obj[1]
         cy = b + obj[2]
         centerx = cx * cellx
