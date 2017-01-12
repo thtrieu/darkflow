@@ -2,6 +2,9 @@
 
 ## Update
 
+Some one's quick and 
+**Demo on Android is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
+
 **Demo in webcam is available!**. Use option `--demo camera` :)
 
 YOLOv1 is up and running:
