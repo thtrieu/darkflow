@@ -40,7 +40,7 @@ def labels(meta):
         meta['labels'] = labels20
 
 def is_inp(self, name): 
-    return name[-4:] in ['.jpg','.JPG']
+    return name[-4:] in ['.jpg','.JPG', '.jpeg', '.JPEG']
 
 def show(im, allobj, S, w, h, cellx, celly):
     for obj in allobj:
