@@ -19,11 +19,8 @@ coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
 
 coco_names = 'coco.names'
 
-def labels(meta):
-    model = meta['model'].split('/')[-1]
-    model = '.'.join(model.split('.')[:-1])
-    meta['name'] = model
-    
+def labels(meta):    
+    model = meta['name']
     if model in voc_models: 
         meta['labels'] = labels20
     else:
