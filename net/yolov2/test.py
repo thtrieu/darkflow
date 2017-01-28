@@ -6,6 +6,51 @@ import os
 from utils.box import BoundBox, box_iou, prob_compare
 from utils.box import prob_compare2, box_intersection
 
+def _fix(obj, dims, scale, offs):
+	for i in range(1, 5):
+		dim = dims[(i + 1) % 2]
+		off = offs[(i + 1) % 2]
+		obj[i] = int(obj[i] * scale - off)
+		obj[i] = max(min(obj[i], dim), 0)
+
+def preprocess(self, im, allobj = None):
+	"""
+	Takes an image, return it as a numpy tensor that is readily
+	to be fed into tfnet. If there is an accompanied annotation (allobj),
+	meaning this preprocessing is serving the train process, then this
+	image will be transformed with random noise to augment training data, 
+	using scale, translation, flipping and recolor. The accompanied 
+	parsed annotation (allobj) will also be modified accordingly.
+	"""	
+	if type(im) is not np.ndarray:
+		im = cv2.imread(im)
+
+	if allobj is not None: # in training mode
+		result = imcv2_affine_trans(im)
+		im, dims, trans_param = result
+		scale, offs, flip = trans_param
+		for obj in allobj:
+			_fix(obj, dims, scale, offs)
+			if not flip: continue
+			obj_1_ =  obj[1]
+			obj[1] = dims[0] - obj[3]
+			obj[3] = dims[0] - obj_1_
+		im = imcv2_recolor(im)
+
+	h, w, c = self.meta['inp_size']
+	imsz = cv2.resize(im, (h, w))
+	imsz = imsz / 255.
+	imsz = imsz[:,:,::-1]
+	if allobj is None: return imsz
+	return imsz#, np.array(im) # for unit testing
+	
+_thresh = dict({
+	'person': .2,
+	'pottedplant': .1,
+	'chair': .12,
+	'tvmonitor': .13
+})
+
 def expit(x):
 	return 1. / (1. + np.exp(-x))
 
