@@ -82,6 +82,7 @@ class convolutional(BaseOp):
             args = dict({
                 'center' : False, 'scale' : True,
                 'epsilon': 1e-5, 'scope' : self.scope,
+                'updates_collections' : None,
                 'is_training': layer.h['is_training']
                 })
             v = tf.__version__.split('.')[1]
