@@ -1,6 +1,6 @@
 ![img](person.jpg)
 
-# Dependencies
+## Dependencies
 
 Python3, numpy, opencv.
 
