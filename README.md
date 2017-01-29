@@ -2,6 +2,8 @@
 
 ## Update
 
+@[Ryansun](https://github.com/ryansun1900) contributed the **training part of YOLO9000**. The project is now completed :)
+
 Someone's quick and 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
@@ -11,10 +13,8 @@ YOLOv1 is up and running:
 - v1.0: `yolo-full` 1.1GB, `yolo-small` 376MB, `yolo-tiny` 180MB
 - v1.1: `yolov1` 789MB, `tiny-yolo` 108MB, `tiny-coco` 268MB, `yolo-coco` 937MB
 
-YOLO9000 forward pass is up and running:
+YOLO9000 is up and running:
 - `yolo` 270MB, `tiny-yolo-voc` 63 MB.
-
-TODO: training YOLOv2
 
 ### Parsing the annotations
 
