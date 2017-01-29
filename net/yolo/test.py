@@ -112,7 +112,7 @@ def postprocess(self, net_out, im, save = True):
 			if right > w - 1: right = w - 1
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
-			thick = int( (h + w) // 150)
+			thick = int((h + w) // 150)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
 				self.meta['colors'][max_indx], thick)
