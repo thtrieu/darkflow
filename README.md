@@ -1,5 +1,9 @@
 ![img](person.jpg)
 
+# Dependencies
+
+Python3, numpy, opencv.
+
 ## Update
 
 @[Ryansun](https://github.com/ryansun1900) contributed the **training part of YOLO9000**. The project is now completed :)
