@@ -25,15 +25,17 @@ class YOLO(framework):
     loss = yolo.train.loss
     is_inp = yolo.misc.is_inp
     profile = yolo.misc.profile
+    _batch = yolo.data._batch
 
 class YOLOv2(framework):
     constructor = yolo.constructor
     parse = yolo.data.parse
-    # shuffle = yolo.data.shuffle
+    shuffle = yolov2.data.shuffle
     preprocess = yolo.test.preprocess
-    # loss = yolo.train.loss
+    loss = yolov2.train.loss
     is_inp = yolo.misc.is_inp
     postprocess = yolov2.test.postprocess
+    _batch = yolov2.data._batch
 
 """
 framework factory
