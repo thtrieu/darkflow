@@ -1,7 +1,7 @@
 import tensorflow.contrib.slim as slim
 import pickle
 import tensorflow as tf
-from .misc import show
+from ..yolo.misc import show
 import numpy as np
 import os
 import math

@@ -1,58 +1,11 @@
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from numpy.random import permutation as perm
-from .test import preprocess
+from ..yolo.test import preprocess
+from ..yolo.data import shuffle
 from copy import deepcopy
 import pickle
 import numpy as np
-import os 
-
-def expit(x):
-	return 1. / (1. + np.exp(-x))
-
-def parse(self, exclusive = False):
-    """
-    Decide whether to parse the annotation or not, 
-    If the parsed file is not already there, parse.
-    """
-    meta = self.meta
-    ext = '.parsed'
-    history = os.path.join('net', 'yolo', 'parse-history.txt');
-    if not os.path.isfile(history):
-        file = open(history, 'w')
-        file.close()
-    with open(history, 'r') as f:
-        lines = f.readlines()
-    for line in lines:
-        line = line.strip().split(' ')
-        labels = line[1:]
-        if labels == meta['labels']:
-            if os.path.isfile(line[0]):
-                with open(line[0], 'rb') as f:
-                    return pickle.load(f)[0]
-
-    # actual parsing
-    ann = self.FLAGS.annotation
-    if not os.path.isdir(ann):
-        msg = 'Annotation directory not found {} .'
-        exit('Error: {}'.format(msg.format(ann)))
-    print('\n{} parsing {}'.format(meta['model'], ann))
-    dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
-
-    save_to = os.path.join('net', 'yolo', meta['name'])
-    while True:
-        if not os.path.isfile(save_to + ext): break
-        save_to = save_to + '_'
-    save_to += ext
-
-    with open(save_to, 'wb') as f:
-        pickle.dump([dumps], f, protocol = -1)
-    with open(history, 'a') as f:
-        f.write('{} '.format(save_to))
-        f.write(' '.join(meta['labels']))
-        f.write('\n')
-    print('Result saved to {}'.format(save_to))
-    return dumps
-
+import os
 
 def _batch(self, chunk):
     """
@@ -129,40 +82,4 @@ def _batch(self, chunk):
     }
 
     return inp_feed_val, loss_feed_val
-
-def shuffle(self):
-    batch = self.FLAGS.batch
-    data = self.parse()
-    size = len(data)
-
-    print('Dataset of {} instance(s)'.format(size))
-    if batch > size: self.FLAGS.batch = batch = size
-    batch_per_epoch = int(size / batch)
-
-    for i in range(self.FLAGS.epoch):
-        shuffle_idx = perm(np.arange(size))
-        for b in range(batch_per_epoch):
-            # yield these
-            x_batch = list()
-            feed_batch = dict()
-
-            for j in range(b*batch, b*batch+batch):
-                train_instance = data[shuffle_idx[j]]
-                inp, new_feed = _batch(self, train_instance)
-
-                if inp is None: continue
-                x_batch += [np.expand_dims(inp, 0)]
-
-                for key in new_feed:
-                    new = new_feed[key]
-                    old_feed = feed_batch.get(key, 
-                        np.zeros((0,) + new.shape))
-                    feed_batch[key] = np.concatenate([ 
-                        old_feed, [new] 
-                    ])      
-            
-            x_batch = np.concatenate(x_batch, 0)
-            yield x_batch, feed_batch
-        
-        print('Finish {} epoch(es)'.format(i + 1))
 
