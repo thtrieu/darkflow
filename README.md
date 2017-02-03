@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-Python3, numpy, opencv.
+Python3, tensorflow 0.12, numpy, opencv 3.
 
 ## Update
 
