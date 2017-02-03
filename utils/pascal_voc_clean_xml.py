@@ -6,14 +6,14 @@ import os
 import sys
 
 def pascal_voc_clean_xml(ANN, pick, exclusive = False):
-
+	print(sys.version)
 	print('Parsing for {} {}'.format(
 			pick, 'exclusively' * int(exclusive)))
 	def pp(l): # pretty printing 
 		for i in l: print('{}: {}'.format(i,l[i]))
 
 	def parse(line): # exclude the xml tag
-		x = line.decode().split('>')[1].decode().split('<')[0]
+		x = line.split('>')[1].split('<')[0]
 		try: r = int(x)
 		except: r = x
 		return r
