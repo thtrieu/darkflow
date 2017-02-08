@@ -2,9 +2,9 @@
 
 Real-time object detection and classification. Paper: [version 1](https://arxiv.org/pdf/1506.02640.pdf), [version 2](https://arxiv.org/pdf/1612.08242.pdf).
 
-Read more about YOLO and download weight files for version 2 [here](http://pjreddie.com/darknet/yolo/).
+Read more about YOLO (in darknet) and download weight files for version 2 [here](http://pjreddie.com/darknet/yolo/).
 
-*Some weights file* for version 1 [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU)
+*Some* weights files for version 1 [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU)
 
 ![img](person.jpg)
 
