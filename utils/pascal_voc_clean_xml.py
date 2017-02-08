@@ -6,7 +6,6 @@ import os
 import sys
 
 def pascal_voc_clean_xml(ANN, pick, exclusive = False):
-	print(sys.version)
 	print('Parsing for {} {}'.format(
 			pick, 'exclusively' * int(exclusive)))
 	def pp(l): # pretty printing 
