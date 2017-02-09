@@ -116,7 +116,7 @@ During training, the script will occasionally save intermediate results into Ten
 ### Camera demo
 
 ```bash
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.cfg --demo camera
+./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera
 ```
 
 ### Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
