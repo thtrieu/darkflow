@@ -18,6 +18,7 @@ coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
                'yolo', 'tiny-yolo'] # <- v2
 
 coco_names = 'coco.names'
+nine_names = '9k.names'
 
 def labels(meta):    
     model = meta['name']
@@ -26,7 +27,9 @@ def labels(meta):
     else:
         file = 'labels.txt'
         if model in coco_models: 
-            file = os.path.join('cfg',coco_names)
+            file = os.path.join('cfg', coco_names)
+        elif model == 'yolo9000':
+            file = os.path.join('cfg', nine_names)
         with open(file, 'r') as f:
             meta['labels'] = list()
             labs = [l.strip() for l in f.readlines()]
