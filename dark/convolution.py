@@ -4,7 +4,7 @@ import numpy as np
 class local_layer(Layer):
     def setup(self, ksize, c, n, stride, 
               pad, w_, h_, activation):
-        self.pad = pad * (ksize / 2)
+        self.pad = pad * int(ksize / 2)
         self.activation = activation
         self.stride = stride
         self.ksize = ksize

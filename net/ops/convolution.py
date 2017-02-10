@@ -39,7 +39,7 @@ class local(BaseOp):
 
         k = self.lay.w['kernels']
         ksz = self.lay.ksize
-        half = ksz/2
+        half = int(ksz / 2)
         out = list()
         for i in range(self.lay.h_out):
             row_i = list()
