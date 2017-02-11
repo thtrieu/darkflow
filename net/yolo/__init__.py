@@ -17,7 +17,7 @@ def constructor(self, meta, FLAGS):
 		g = 2 - (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
 
-	misc.labels(meta)
+	misc.labels(meta, FLAGS)
 	assert len(meta['labels']) == meta['classes'], (
 		'labels.txt and {} indicate' + ' '
 		'inconsistent class numbers'

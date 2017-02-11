@@ -47,7 +47,7 @@ class Darknet(object):
             '{} not found'.format(FLAGS.load)
             self.src_bin = FLAGS.load
             name = loader.model_name(FLAGS.load)
-            cfg_path = FLAGS.config+name+'.cfg'
+            cfg_path = os.path.join(FLAGS.config, name + '.cfg')
             if not os.path.isfile(cfg_path):
                 warnings.warn(
                     '{} not found, use {} instead'.format(
