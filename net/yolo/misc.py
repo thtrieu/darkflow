@@ -20,16 +20,16 @@ coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
 coco_names = 'coco.names'
 nine_names = '9k.names'
 
-def labels(meta):    
+def labels(meta, FLAGS):    
     model = meta['name']
     if model in voc_models: 
         meta['labels'] = labels20
     else:
         file = 'labels.txt'
-        if model in coco_models: 
-            file = os.path.join('cfg', coco_names)
+        if model in coco_models:
+            file = os.path.join(FLAGS.config, coco_names)
         elif model == 'yolo9000':
-            file = os.path.join('cfg', nine_names)
+            file = os.path.join(FLAGS.config, nine_names)
         with open(file, 'r') as f:
             meta['labels'] = list()
             labs = [l.strip() for l in f.readlines()]
