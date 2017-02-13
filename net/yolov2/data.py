@@ -43,7 +43,7 @@ def _batch(self, chunk):
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * W + np.floor(cx))]
 
-    #show(im, allobj, S, w, h, cellx, celly) # unit test
+    # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([H*W,B,C])

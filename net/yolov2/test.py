@@ -5,13 +5,7 @@ import os
 #from scipy.special import expit
 from utils.box import BoundBox, box_iou, prob_compare
 from utils.box import prob_compare2, box_intersection
-	
-_thresh = dict({
-	'person': .2,
-	'pottedplant': .1,
-	'chair': .12,
-	'tvmonitor': .13
-})
+
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))

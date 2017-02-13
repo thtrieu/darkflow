@@ -42,13 +42,6 @@ def preprocess(self, im, allobj = None):
 	if allobj is None: return imsz
 	return imsz#, np.array(im) # for unit testing
 	
-_thresh = dict({
-	'person': .2,
-	'pottedplant': .1,
-	'chair': .12,
-	'tvmonitor': .13
-})
-
 def postprocess(self, net_out, im, save = True):
 	"""
 	Takes net output, draw predictions, save to disk
