@@ -10,9 +10,9 @@ class reorg(BaseOp):
         _, h, w, c = shape
         s = self.lay.stride
         out = list()
-        for i in range(h/s):
+        for i in range(int(h/s)):
             row_i = list()
-            for j in range(w/s):
+            for j in range(int(w/s)):
                 si, sj = s * i, s * j
                 boxij = inp[:, si: si+s, sj: sj+s,:]
                 flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
