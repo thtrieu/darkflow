@@ -17,8 +17,15 @@ class reorg(BaseOp):
                 boxij = inp[:, si: si+s, sj: sj+s,:]
                 flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
                 row_i += [flatij]
-            out += [tf.concat(2, row_i)]
-        self.out = tf.concat(1, out)
+            if int(tf.__version__.split('.')[0]) < 1:
+                out += [tf.concat(2, row_i)]
+            else:
+                out += [tf.concat(row_i, 2)]
+
+        if int(tf.__version__.split('.')[0]) < 1:
+            self.out = tf.concat(1, out)
+        else:
+            self.out = tf.concat(out, 1)
 
     def forward(self):
         inp = self.inp.out
@@ -51,9 +58,15 @@ class local(BaseOp):
                     tf.nn.conv2d(tij, kij, 
                         padding = 'VALID', 
                         strides = [1] * 4))
-            out += [tf.concat(2, row_i)]
+            if int(tf.__version__.split('.')[0]) < 1:
+                out += [tf.concat(2, row_i)]
+            else:
+                out += [tf.concat(row_i, 2)]
 
-        self.out = tf.concat(1, out)
+        if int(tf.__version__.split('.')[0]) < 1:
+            self.out = tf.concat(1, out)
+        else:
+            self.out = tf.concat(out, 1)
 
     def speak(self):
         l = self.lay
