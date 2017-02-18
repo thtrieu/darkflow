@@ -69,7 +69,7 @@ def loss(self, net_out):
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
-    weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
+    weight_coo = tf.concat(4 * [tf.expand_dims(confs, -1)], 3)
     cooid = scoor * weight_coo
     proid = sprob * _proid
 
@@ -82,8 +82,8 @@ def loss(self, net_out):
     cooid = slim.flatten(cooid)
 
     self.fetch += [probs, confs, conid, cooid, proid]
-    true = tf.concat(1, [probs, confs, coord])
-    wght = tf.concat(1, [proid, conid, cooid])
+    true = tf.concat([probs, confs, coord], 1)
+    wght = tf.concat([proid, conid, cooid], 1)
 
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(net_out - true, 2)

@@ -17,14 +17,8 @@ class reorg(BaseOp):
                 boxij = inp[:, si: si+s, sj: sj+s,:]
                 flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
                 row_i += [flatij]
-            if int(tf.__version__.split('.')[0]) < 1:
-                out += [tf.concat(2, row_i)]
-            else:
                 out += [tf.concat(row_i, 2)]
 
-        if int(tf.__version__.split('.')[0]) < 1:
-            self.out = tf.concat(1, out)
-        else:
             self.out = tf.concat(out, 1)
 
     def forward(self):
@@ -58,14 +52,8 @@ class local(BaseOp):
                     tf.nn.conv2d(tij, kij, 
                         padding = 'VALID', 
                         strides = [1] * 4))
-            if int(tf.__version__.split('.')[0]) < 1:
-                out += [tf.concat(2, row_i)]
-            else:
                 out += [tf.concat(row_i, 2)]
 
-        if int(tf.__version__.split('.')[0]) < 1:
-            self.out = tf.concat(1, out)
-        else:
             self.out = tf.concat(out, 1)
 
     def speak(self):
@@ -100,9 +88,7 @@ class convolutional(BaseOp):
                 })
 
             v = tf.__version__.split('.')
-            if int(v[0]) < 1 and int(v[1]) < 12:
-                key = 'initializers'
-            else: key = 'param_initializers'
+            key = 'param_initializers'
             args.update({key : layer.w})
             return slim.batch_norm(inp, **args)
 
