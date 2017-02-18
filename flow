@@ -58,5 +58,3 @@ if FLAGS.savepb:
 	tfnet.savepb(); exit('Done')
 
 tfnet.predict()
-import gc; 
-gc.collect()
