@@ -58,7 +58,7 @@ def loss(self, net_out):
     coords = tf.reshape(coords, [-1, H*W, B, 4])
     adjusted_coords_xy = expit_tensor(coords[:,:,:,0:2])
     adjusted_coords_wh = tf.sqrt(tf.exp(coords[:,:,:,2:4]) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2]))
-    coords = tf.concat(3, [adjusted_coords_xy, adjusted_coords_wh])
+    coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
     
     adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, 4])
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
@@ -66,7 +66,7 @@ def loss(self, net_out):
     adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, 5:])
     adjusted_prob = tf.reshape(adjusted_prob, [-1, H*W, B, C])
 
-    adjusted_net_out = tf.concat(3, [adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob])
+    adjusted_net_out = tf.concat([adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob], 3)
     
     wh = tf.pow(coords[:,:,:,2:4], 2) *  np.reshape([W, H], [1, 1, 1, 2])
     area_pred = wh[:,:,:,0] * wh[:,:,:,1] 
@@ -89,14 +89,14 @@ def loss(self, net_out):
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
-    weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
+    weight_coo = tf.concat(4 * [tf.expand_dims(confs, -1)], 3)
     cooid = scoor * weight_coo
-    weight_pro = tf.concat(3, C * [tf.expand_dims(confs, -1)]) 
+    weight_pro = tf.concat(C * [tf.expand_dims(confs, -1)], 3)
     proid = sprob * weight_pro 
 
     self.fetch += [_probs, confs, conid, cooid, proid]
-    true = tf.concat(3, [_coord, tf.expand_dims(confs, 3), _probs ])
-    wght = tf.concat(3, [cooid, tf.expand_dims(conid, 3), proid ])
+    true = tf.concat([_coord, tf.expand_dims(confs, 3), _probs ], 3)
+    wght = tf.concat([cooid, tf.expand_dims(conid, 3), proid ], 3)
 
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(adjusted_net_out - true, 2)
