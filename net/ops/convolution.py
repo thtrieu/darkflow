@@ -17,9 +17,9 @@ class reorg(BaseOp):
                 boxij = inp[:, si: si+s, sj: sj+s,:]
                 flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
                 row_i += [flatij]
-                out += [tf.concat(row_i, 2)]
+            out += [tf.concat(row_i, 2)]
 
-            self.out = tf.concat(out, 1)
+        self.out = tf.concat(out, 1)
 
     def forward(self):
         inp = self.inp.out
@@ -52,9 +52,9 @@ class local(BaseOp):
                     tf.nn.conv2d(tij, kij, 
                         padding = 'VALID', 
                         strides = [1] * 4))
-                out += [tf.concat(row_i, 2)]
+            out += [tf.concat(row_i, 2)]
 
-            self.out = tf.concat(out, 1)
+        self.out = tf.concat(out, 1)
 
     def speak(self):
         l = self.lay
