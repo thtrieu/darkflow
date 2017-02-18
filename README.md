@@ -10,7 +10,7 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 ## Dependencies
 
-Python3, tensorflow 0.12, numpy, opencv 3.
+Python3, tensorflow 1.0, numpy, opencv 3.
 
 ## Update
 
