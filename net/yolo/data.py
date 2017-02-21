@@ -1,6 +1,7 @@
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from numpy.random import permutation as perm
 from .test import preprocess
+# from .misc import show
 from copy import deepcopy
 import pickle
 import numpy as np
@@ -84,7 +85,7 @@ def _batch(self, chunk):
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * S + np.floor(cx))]
 
-    #show(im, allobj, S, w, h, cellx, celly) # unit test
+    # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([S*S,C])
@@ -142,7 +143,7 @@ def shuffle(self):
 
             for j in range(b*batch, b*batch+batch):
                 train_instance = data[shuffle_idx[j]]
-                inp, new_feed = _batch(self, train_instance)
+                inp, new_feed = self._batch(train_instance)
 
                 if inp is None: continue
                 x_batch += [np.expand_dims(inp, 0)]

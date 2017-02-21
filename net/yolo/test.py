@@ -8,7 +8,7 @@ def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
 		dim = dims[(i + 1) % 2]
 		off = offs[(i + 1) % 2]
-		obj[i] = int(obj[i]*scale-off)
+		obj[i] = int(obj[i] * scale - off)
 		obj[i] = max(min(obj[i], dim), 0)
 
 def preprocess(self, im, allobj = None):
@@ -42,13 +42,6 @@ def preprocess(self, im, allobj = None):
 	if allobj is None: return imsz
 	return imsz#, np.array(im) # for unit testing
 	
-_thresh = dict({
-	'person': .2,
-	'pottedplant': .1,
-	'chair': .12,
-	'tvmonitor': .13
-})
-
 def postprocess(self, net_out, im, save = True):
 	"""
 	Takes net output, draw predictions, save to disk
@@ -103,7 +96,7 @@ def postprocess(self, net_out, im, save = True):
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]
 		label = self.meta['labels'][max_indx]
-		if max_prob > _thresh.get(label,threshold):
+		if max_prob > threshold:
 			left  = int ((b.x - b.w/2.) * w)
 			right = int ((b.x + b.w/2.) * w)
 			top   = int ((b.y - b.h/2.) * h)
@@ -112,7 +105,7 @@ def postprocess(self, net_out, im, save = True):
 			if right > w - 1: right = w - 1
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
-			thick = int( (h + w) // 150)
+			thick = int((h + w) // 150)
 			cv2.rectangle(imgcv, 
 				(left, top), (right, bot), 
 				self.meta['colors'][max_indx], thick)

@@ -97,7 +97,7 @@ def to_darknet(self):
 
     for layer in darknet_ckpt.layers:
         for ph in layer.h:
-            feed = self.feed[layer.h[ph]]
-            layer.h[ph] = feed
+            # Use default
+            layer.h[ph] = None
 
     return darknet_ckpt
