@@ -26,6 +26,7 @@ flags.DEFINE_integer("epoch", 1000, "number of epoch")
 flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
 flags.DEFINE_string("demo", '', "demo on webcam")
 flags.DEFINE_boolean("profile", False, "profile")
+flags.DEFINE_boolean("json", False, "Outputs bounding box information in json format.")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist
