@@ -86,6 +86,8 @@ All input images from default folder `test/` are flowed through the net and pred
 ```bash
 # Forward all images in test/ using tiny yolo and 100% GPU usage
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
+# Forward all images in test/ using tiny yolo with json output 
+./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
 ```
 
 ### Training new model
