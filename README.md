@@ -86,9 +86,21 @@ All input images from default folder `test/` are flowed through the net and pred
 ```bash
 # Forward all images in test/ using tiny yolo and 100% GPU usage
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
-# Forward all images in test/ using tiny yolo with json output 
+```
+json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `test/out` folder by default. An example json array is shown below.
+```bash
+# Forward all images in test/ using tiny yolo and json output.
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
 ```
+json output:
+```json
+[{"label":"person","topleft":{"x":184,"y":101},"bottomright":{"x":274,"y":382}},
+{"label":"dog","topleft":{"x":71,"y":263},"bottomright":{"x":193,"y":353}},
+{"label":"horse","topleft":{"x":412,"y":109},"bottomright":{"x":592,"y":337}}]
+```
+ - label: self explanatory
+ - topleft: pixel coordinate of top left corner of box.
+ - bottomright: pixel coordinate of bottom right corner of box.
 
 ### Training new model
 
