@@ -100,9 +100,8 @@ def postprocess(self, net_out, im, save = True):
 	img_name = os.path.join(outfolder, im.split('/')[-1])
 	if self.FLAGS.json:
 		textFile = os.path.splitext(img_name)[0] + ".json"
-		f = open(textFile, 'w')
-		f.write(textBuff)
-		f.close()
+		with open(textFile, 'w') as f:
+			f.write(textBuff)
 		return
 
 	if not save: return imgcv
