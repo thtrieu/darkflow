@@ -8,7 +8,7 @@ import os
 def loss(self, net_out):
     """
     Takes net.out and placeholders value
-    returned in batch() func above, 
+    returned in batch() func above,
     to build train_op and loss
     """
     # meta
@@ -49,23 +49,23 @@ def loss(self, net_out):
     coords = net_out[:, SS * (C + B):]
     coords = tf.reshape(coords, [-1, SS, B, 4])
     wh = tf.pow(coords[:,:,:,2:4], 2) * S # unit: grid cell
-    area_pred = wh[:,:,:,0] * wh[:,:,:,1] # unit: grid cell^2 
+    area_pred = wh[:,:,:,0] * wh[:,:,:,1] # unit: grid cell^2
     centers = coords[:,:,:,0:2] # [batch, SS, B, 2]
     floor = centers - (wh * .5) # [batch, SS, B, 2]
     ceil  = centers + (wh * .5) # [batch, SS, B, 2]
 
     # calculate the intersection areas
-    intersect_upleft   = tf.maximum(floor, _upleft) 
+    intersect_upleft   = tf.maximum(floor, _upleft)
     intersect_botright = tf.minimum(ceil , _botright)
     intersect_wh = intersect_botright - intersect_upleft
     intersect_wh = tf.maximum(intersect_wh, 0.0)
-    intersect = tf.mul(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
-    
+    intersect = tf.multiply(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
+
     # calculate the best IOU, set 0.0 confidence for worse boxes
     iou = tf.truediv(intersect, _areas + area_pred - intersect)
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
-    confs = tf.mul(best_box, _confs)
+    confs = tf.multiply(best_box, _confs)
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
@@ -87,6 +87,6 @@ def loss(self, net_out):
 
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(net_out - true, 2)
-    loss = tf.mul(loss, wght)
+    loss = tf.multiply(loss, wght)
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)
