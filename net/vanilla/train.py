@@ -1,4 +1,4 @@
-_LOSS_TYPE = ['sse','l2', 'smooth', 
+_LOSS_TYPE = ['sse','l2', 'smooth',
 			  'sparse', 'l1', 'softmax',
 			  'svm', 'fisher']
 
@@ -24,8 +24,8 @@ def loss(self, net_out):
 	elif loss_type == ['smooth']:
 		small = tf.cast(diff < 1, tf.float32)
 		large = 1. - small
-		l1_loss = tf.nn.l1_loss(tf.mul(diff, large))
-		l2_loss = tf.nn.l2_loss(tf.mul(diff, small))
+		l1_loss = tf.nn.l1_loss(tf.multiply(diff, large))
+		l2_loss = tf.nn.l2_loss(tf.multiply(diff, small))
 		loss = l1_loss + l2_loss
 
 	elif loss_type in ['sparse', 'l1']:
