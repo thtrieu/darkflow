@@ -286,7 +286,7 @@ def cfg_yielder(model, binary):
 		#-----------------------------------------------------
 		elif d['type'] == '[route]': # add new layer here
 			routes = d['layers']
-			if type(routes) is str:
+			if type(routes) is (unicode or str):
 				routes = [int(x.strip()) for x in routes.split(',')]
 			else: routes = [routes]
 			routes = [i + x if x < 0 else x for x in routes]
