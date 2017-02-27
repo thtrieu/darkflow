@@ -63,6 +63,7 @@ def postprocess(self, net_out, im, save = True):
 		imgcv = cv2.imread(im)
 	else: imgcv = im
 	h, w, _ = imgcv.shape
+	textBuff = "["
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]
@@ -78,14 +79,30 @@ def postprocess(self, net_out, im, save = True):
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
 			thick = int((h+w)/300)
-			cv2.rectangle(imgcv, 
-				(left, top), (right, bot), 
-				colors[max_indx], thick)
 			mess = '{}'.format(label)
-			cv2.putText(imgcv, mess, (left, top - 12), 
+			if self.FLAGS.json:
+				line = 	('{"label":"%s",'
+						'"topleft":{"x":%d,"y":%d},'
+						'"bottomright":{"x":%d,"y":%d}},\n') % \
+						(mess, left, top, right, bot)
+				textBuff += line
+				continue
+
+			cv2.rectangle(imgcv,
+				(left, top), (right, bot),
+				colors[max_indx], thick)
+			cv2.putText(imgcv, mess, (left, top - 12),
 				0, 1e-3 * h, colors[max_indx],thick//3)
 
-	if not save: return imgcv
-	outfolder = os.path.join(self.FLAGS.test, 'out') 
+	# Removing trailing comma+newline adding json list terminator.
+	textBuff = textBuff[:-2] + "]"
+	outfolder = os.path.join(self.FLAGS.test, 'out')
 	img_name = os.path.join(outfolder, im.split('/')[-1])
+	if self.FLAGS.json:
+		textFile = os.path.splitext(img_name)[0] + ".json"
+		with open(textFile, 'w') as f:
+			f.write(textBuff)
+		return
+
+	if not save: return imgcv
 	cv2.imwrite(img_name, imgcv)
