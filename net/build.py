@@ -109,6 +109,7 @@ class TFNet(object):
 		flags_pb = self.FLAGS
 		flags_pb.verbalise = False
 		
+		flags_pb.train = False
 		# rebuild another tfnet. all const.
 		tfnet_pb = TFNet(flags_pb, darknet_pb)		
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
