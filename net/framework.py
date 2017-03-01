@@ -14,7 +14,7 @@ class framework(object):
         
         self.constructor(meta, FLAGS)
 
-    def is_inp(self):
+    def is_inp(self, file_name):
         return True
 
 class YOLO(framework):
