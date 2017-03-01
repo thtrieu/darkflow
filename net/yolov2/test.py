@@ -47,7 +47,7 @@ def postprocess(self, net_out, im, save = True):
 	for c in range(C):
 		for i in range(len(boxes)):
 			boxes[i].class_num = c
-		boxes = sorted(boxes, key = prob_compare)
+		boxes = sorted(boxes, key = prob_compare, reverse = True)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue

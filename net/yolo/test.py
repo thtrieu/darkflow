@@ -79,7 +79,7 @@ def postprocess(self, net_out, im, save = True):
 	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)): boxes[i].class_num = c
-		boxes = sorted(boxes, key = prob_compare)
+		boxes = sorted(boxes, key = prob_compare, reverse = True)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue
@@ -106,7 +106,7 @@ def postprocess(self, net_out, im, save = True):
 			if right > w - 1: right = w - 1
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
-			thick = int((h + w) // 150)
+			thick = int((h + w) // 300)
 			mess = '{}'.format(label)
 			if self.FLAGS.json:
 				line = 	('{"label":"%s",'
