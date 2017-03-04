@@ -67,8 +67,7 @@ def postprocess(self, net_out, im, save = True):
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]
-		label = 'object' * int(C < 2)
-		label += labels[max_indx] * int(C>1)
+		label = labels[max_indx]
 		if max_prob > threshold:
 			left  = int ((b.x - b.w/2.) * w)
 			right = int ((b.x + b.w/2.) * w)
