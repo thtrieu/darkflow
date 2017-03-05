@@ -126,8 +126,6 @@ def postprocess(self, net_out, im, save = True):
 
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
-	outfolder = os.path.join(self.FLAGS.test, 'out')
-	img_name = os.path.join(outfolder, im.split('/')[-1])
 	if self.FLAGS.json:
 		textFile = os.path.splitext(img_name)[0] + ".json"
 		with open(textFile, 'w') as f:
@@ -135,4 +133,6 @@ def postprocess(self, net_out, im, save = True):
 		return	
 
 	if not save: return imgcv
+	outfolder = os.path.join(self.FLAGS.test, 'out')
+	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
