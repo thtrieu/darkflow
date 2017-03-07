@@ -94,6 +94,9 @@ def postprocess(self, net_out, im, save = True):
 			cv2.putText(imgcv, mess, (left, top - 12),
 				0, 1e-3 * h, colors[max_indx],thick//3)
 
+	outfolder = os.path.join(self.FLAGS.test, 'out')
+	img_name = os.path.join(outfolder, im.split('/')[-1])
+	
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
 	if self.FLAGS.json:
@@ -103,6 +106,4 @@ def postprocess(self, net_out, im, save = True):
 		return
 
 	if not save: return imgcv
-	outfolder = os.path.join(self.FLAGS.test, 'out')
-	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
