@@ -129,6 +129,21 @@ During training, the script will occasionally save intermediate results into Ten
 
 ### Camera demo
 
+```python
+from net.build import TFNet
+import cv2
+
+options = {"model": "cfg/yolo.cfg", "load": "bin/yolo.weights", "threshold": 0.1}
+
+tfnet = TFNet(options)
+
+imgcv = cv2.imread("./test/test.jpg")
+result = tfnet.return_predict(imgcv)
+print(result)
+```
+
+### Using darkflow from another python application
+
 ```bash
 ./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera
 ```
