@@ -27,6 +27,9 @@ class YOLO(framework):
     is_inp = yolo.misc.is_inp
     profile = yolo.misc.profile
     _batch = yolo.data._batch
+    resize_input = yolo.test.resize_input
+    findboxes = yolo.test.findboxes
+    process_box = yolo.test.process_box
 
 class YOLOv2(framework):
     constructor = yolo.constructor
@@ -37,6 +40,9 @@ class YOLOv2(framework):
     is_inp = yolo.misc.is_inp
     postprocess = yolov2.test.postprocess
     _batch = yolov2.data._batch
+    resize_input = yolo.test.resize_input
+    findboxes = yolov2.test.findboxes
+    process_box = yolo.test.process_box
 
 """
 framework factory

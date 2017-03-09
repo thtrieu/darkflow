@@ -7,6 +7,12 @@ from .ops import HEADER, LINE
 from .framework import create_framework
 from dark.darknet import Darknet
 
+class dotdict(dict):
+	"""dot.notation access to dictionary attributes to replace FLAGS when not needed"""
+	__getattr__ = dict.get
+	__setattr__ = dict.__setitem__
+	__delattr__ = dict.__delitem__
+
 class TFNet(object):
 
 	_TRAINER = dict({
@@ -24,12 +30,18 @@ class TFNet(object):
 	train = flow.train
 	camera = help.camera
 	predict = flow.predict
+	return_predict = flow.return_predict
 	to_darknet = help.to_darknet
 	build_train_op = help.build_train_op
 	load_from_ckpt = help.load_from_ckpt
 
 	def __init__(self, FLAGS, darknet = None):
 		self.ntrain = 0
+		if isinstance(FLAGS, dict):
+			defaultSettings = {"binary": "./bin/", "config": "./cfg/", "batch": 16, "threshold": 0.1, "train": False, "verbalise": False, "gpu": 0.0}
+			defaultSettings.update(FLAGS)
+			FLAGS = dotdict(defaultSettings)
+
 		if darknet is None:	
 			darknet = Darknet(FLAGS)
 			self.ntrain = len(darknet.layers)
