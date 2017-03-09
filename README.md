@@ -134,6 +134,7 @@ During training, the script will occasionally save intermediate results into Ten
 ```
 
 ### Using darkflow from another python application
+Please note that `return_predict(img)` must take an `numpy.ndarray`, your image must be loaded beforehand and passed to return_predict, passing the file path won't work.
 
 ```python
 from net.build import TFNet
