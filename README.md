@@ -136,7 +136,7 @@ During training, the script will occasionally save intermediate results into Ten
 ### Using darkflow from another python application
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to return_predict. Passing the file path won't work.
 
-Result from `return_predict(img)` will be a list of each object detected with a list of each object's characteristics, e.g ``[[]]`
+Result from `return_predict(img)` will be a list of each object detected with a list of each object's values in the format `[[left, right, top, bottom, label, labelIndex, probabilityOfDetection]]` with `left, right, top, bottom` corresponding to the sides of the bounding box in pixel values mapped to the input image.
 
 ```python
 from net.build import TFNet

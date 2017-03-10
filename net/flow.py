@@ -65,6 +65,8 @@ def train(self):
     if ckpt: _save_ckpt(self, *args)
 
 def return_predict(self, im):
+    assert isinstance(im, np.ndarray), \
+				'Image is not a np.ndarray'
     im = self.framework.resize_input(im)
     this_inp = np.expand_dims(im, 0)
     feed_dict = {self.inp : this_inp}
