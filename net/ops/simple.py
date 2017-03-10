@@ -1,6 +1,7 @@
 import tensorflow.contrib.slim as slim
 from .baseop import BaseOp
 import tensorflow as tf
+from distutils.version import StrictVersion
 
 class route(BaseOp):
 	def forward(self):
@@ -12,8 +13,11 @@ class route(BaseOp):
 				this = this.inp
 				assert this is not None, \
 				'Routing to non-existence {}'.format(r)
-			routes_out += [this.out]	
-		self.out = tf.concat(routes_out, 3)
+			routes_out += [this.out]
+		if(StrictVersion(tf.__version__) >= StrictVersion('1.0.0')):
+			self.out = tf.concat(3, routes_out)
+		else:
+			self.out = tf.concat(routes_out, 3) #Eventually remove this code once TensorFlow 1.0.0 is required by default (this is to support older versions)
 
 	def speak(self):
 		msg = 'concat {}'
