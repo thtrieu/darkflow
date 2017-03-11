@@ -13,7 +13,7 @@ def _fix(obj, dims, scale, offs):
 
 def resize_input(self, im):
 	h, w, c = self.meta['inp_size']
-	imsz = cv2.resize(im, (h, w))
+	imsz = cv2.resize(im, (w, h))
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
 	return imsz
@@ -150,6 +150,7 @@ def postprocess(self, net_out, im, save = True):
 
 
 	if not save: return imgcv
+
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
 	outfolder = os.path.join(self.FLAGS.test, 'out')
