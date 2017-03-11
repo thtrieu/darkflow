@@ -94,9 +94,9 @@ json output can be generated with descriptions of the pixel location of each bou
 ```
 JSON output:
 ```json
-[{"label":"person","confidence":0.56,topleft":{"x":184,"y":101},"bottomright":{"x":274,"y":382}},
-{"label":"dog","confidence":0.32,"topleft":{"x":71,"y":263},"bottomright":{"x":193,"y":353}},
-{"label":"horse","confidence":0.76,"topleft":{"x":412,"y":109},"bottomright":{"x":592,"y":337}}]
+[{"label":"person", "confidence": 0.56, "topleft": {"x": 184, "y": 101}, "bottomright": {"x": 274, "y": 382}},
+{"label": "dog", "confidence": 0.32, "topleft": {"x": 71, "y": 263}, "bottomright": {"x": 193, "y": 353}},
+{"label": "horse", "confidence": 0.76, "topleft": {"x": 412, "y": 109}, "bottomright": {"x": 592,"y": 337}}]
 ```
  - label: self explanatory
  - confidence: somewhere between 0 and 1 (how confident yolo is about that detection)
