@@ -89,16 +89,17 @@ All input images from default folder `test/` are flowed through the net and pred
 ```
 json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `test/out` folder by default. An example json array is shown below.
 ```bash
-# Forward all images in test/ using tiny yolo and json output.
+# Forward all images in test/ using tiny yolo and JSON output.
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
 ```
-json output:
+JSON output:
 ```json
-[{"label":"person","topleft":{"x":184,"y":101},"bottomright":{"x":274,"y":382}},
-{"label":"dog","topleft":{"x":71,"y":263},"bottomright":{"x":193,"y":353}},
-{"label":"horse","topleft":{"x":412,"y":109},"bottomright":{"x":592,"y":337}}]
+[{"label":"person","confidence":0.56,topleft":{"x":184,"y":101},"bottomright":{"x":274,"y":382}},
+{"label":"dog","confidence":0.32,"topleft":{"x":71,"y":263},"bottomright":{"x":193,"y":353}},
+{"label":"horse","confidence":0.76,"topleft":{"x":412,"y":109},"bottomright":{"x":592,"y":337}}]
 ```
  - label: self explanatory
+ - confidence: somewhere between 0 and 1 (how confident yolo is about that detection)
  - topleft: pixel coordinate of top left corner of box.
  - bottomright: pixel coordinate of bottom right corner of box.
 
@@ -134,9 +135,9 @@ During training, the script will occasionally save intermediate results into Ten
 ```
 
 ### Using darkflow from another python application
-Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to return_predict. Passing the file path won't work.
+Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
 
-Result from `return_predict(img)` will be a list of each object detected with a list of each object's values in the format `[[left, right, top, bottom, label, labelIndex, probabilityOfDetection]]` with `left, right, top, bottom` corresponding to the sides of the bounding box in pixel values mapped to the input image.
+Result from `return_predict(img)` will be a list of dictionaries representing each detected object's values in the same format as the JSON output listed above.
 
 ```python
 from net.build import TFNet

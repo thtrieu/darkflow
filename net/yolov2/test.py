@@ -75,13 +75,14 @@ def postprocess(self, net_out, im, save = True):
 		boxResults = self.process_box(b, h, w, threshold)
 		if boxResults is None:
 			continue
-		left, right, top, bot, mess, max_indx, _ = boxResults
+		left, right, top, bot, mess, max_indx, confidence = boxResults
 		thick = int((h + w) // 300)
 		if self.FLAGS.json:
 			line = 	('{"label":"%s",'
+					'"confidence":%.2f,'
 					'"topleft":{"x":%d,"y":%d},'
 					'"bottomright":{"x":%d,"y":%d}},\n') % \
-					(mess, left, top, right, bot)
+					(mess, confidence, left, top, right, bot)
 			textBuff += line
 			continue
 
@@ -91,15 +92,15 @@ def postprocess(self, net_out, im, save = True):
 		cv2.putText(imgcv, mess, (left, top - 12),
 			0, 1e-3 * h, colors[max_indx],thick//3)
 
+	if not save: return imgcv
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
+	outfolder = os.path.join(self.FLAGS.test, 'out')
+	img_name = os.path.join(outfolder, im.split('/')[-1])
 	if self.FLAGS.json:
 		textFile = os.path.splitext(img_name)[0] + ".json"
 		with open(textFile, 'w') as f:
 			f.write(textBuff)
 		return
 
-	if not save: return imgcv
-	outfolder = os.path.join(self.FLAGS.test, 'out')
-	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
