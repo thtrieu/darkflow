@@ -66,7 +66,7 @@ def findboxes(self, net_out):
 			bx.probs = p
 			boxes.append(bx)
 
-	
+
 	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)):
@@ -79,8 +79,6 @@ def findboxes(self, net_out):
 				boxj = boxes[j]
 				if box_iou(boxi, boxj) >= .4:
 					boxes[j].probs[c] = 0.
-	return boxes
-	
 	return boxes
 
 def preprocess(self, im, allobj = None):
