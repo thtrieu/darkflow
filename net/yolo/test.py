@@ -44,6 +44,7 @@ def findboxes(self, net_out):
 	SS        =  S * S # number of grid cells
 	prob_size = SS * C # class probabilities
 	conf_size = SS * B # confidences for each grid cell
+
 	#net_out = net_out[0]
 	probs = net_out[0 : prob_size]
 	confs = net_out[prob_size : (prob_size + conf_size)]
@@ -64,6 +65,21 @@ def findboxes(self, net_out):
 			p *= (p > threshold)
 			bx.probs = p
 			boxes.append(bx)
+
+	
+	# non max suppress boxes
+	for c in range(C):
+		for i in range(len(boxes)):
+			boxes[i].class_num = c
+		boxes = sorted(boxes, key=prob_compare, reverse=True)
+		for i in range(len(boxes)):
+			boxi = boxes[i]
+			if boxi.probs[c] == 0: continue
+			for j in range(i + 1, len(boxes)):
+				boxj = boxes[j]
+				if box_iou(boxi, boxj) >= .4:
+					boxes[j].probs[c] = 0.
+	return boxes
 	
 	return boxes
 
@@ -108,6 +124,7 @@ def postprocess(self, net_out, im, save = True):
 	if type(im) is not np.ndarray:
 		imgcv = cv2.imread(im)
 	else: imgcv = im
+
 	h, w, _ = imgcv.shape
 	textBuff = "["
 	for b in boxes:
@@ -117,10 +134,10 @@ def postprocess(self, net_out, im, save = True):
 		left, right, top, bot, mess, max_indx, confidence = boxResults
 		thick = int((h + w) // 300)
 		if self.FLAGS.json:
-			line = 	('{"label":"%s",'
-					'"confidence":%.2f,'
-					'"topleft":{"x":%d,"y":%d},'
-					'"bottomright":{"x":%d,"y":%d}},\n') % \
+			line = 	('{"label": "%s",'
+					'"confidence": %.2f,'
+					'"topleft": {"x": %d, "y": %d},'
+					'"bottomright": {"x": %d,"y": %d}}, \n') % \
 					(mess, confidence, left, top, right, bot)
 			textBuff += line
 			continue
