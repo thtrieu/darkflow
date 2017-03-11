@@ -15,10 +15,7 @@ def _softmax(x):
     out = e_x / e_x.sum()
     return out
 
-def postprocess(self, net_out, im, save = True):
-	"""
-	Takes net output, draw net_out, save to disk
-	"""
+def findboxes(self, net_out):
 	# meta
 	meta = self.meta
 	H, W, _ = meta['out_size']
@@ -47,7 +44,7 @@ def postprocess(self, net_out, im, save = True):
 	for c in range(C):
 		for i in range(len(boxes)):
 			boxes[i].class_num = c
-		boxes = sorted(boxes, key = prob_compare, reverse = True)
+		boxes = sorted(boxes, key=prob_compare, reverse=True)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
 			if boxi.probs[c] == 0: continue
@@ -55,8 +52,17 @@ def postprocess(self, net_out, im, save = True):
 				boxj = boxes[j]
 				if box_iou(boxi, boxj) >= .4:
 					boxes[j].probs[c] = 0.
+	return boxes
 
+def postprocess(self, net_out, im, save = True):
+	"""
+	Takes net output, draw net_out, save to disk
+	"""
+	boxes = self.findboxes(net_out)
 
+	# meta
+	meta = self.meta
+	threshold = meta['thresh']
 	colors = meta['colors']
 	labels = meta['labels']
 	if type(im) is not np.ndarray:
@@ -66,43 +72,35 @@ def postprocess(self, net_out, im, save = True):
 	
 	textBuff = "["
 	for b in boxes:
-		max_indx = np.argmax(b.probs)
-		max_prob = b.probs[max_indx]
-		label = labels[max_indx]
-		if max_prob > threshold:
-			left  = int ((b.x - b.w/2.) * w)
-			right = int ((b.x + b.w/2.) * w)
-			top   = int ((b.y - b.h/2.) * h)
-			bot   = int ((b.y + b.h/2.) * h)
-			if left  < 0    :  left = 0
-			if right > w - 1: right = w - 1
-			if top   < 0    :   top = 0
-			if bot   > h - 1:   bot = h - 1
-			thick = int((h+w)/300)
-			mess = '{}'.format(label)
-			if self.FLAGS.json:
-				line = 	('{"label":"%s",'
-						'"topleft":{"x":%d,"y":%d},'
-						'"bottomright":{"x":%d,"y":%d}},\n') % \
-						(mess, left, top, right, bot)
-				textBuff += line
-				continue
+		boxResults = self.process_box(b, h, w, threshold)
+		if boxResults is None:
+			continue
+		left, right, top, bot, mess, max_indx, confidence = boxResults
+		thick = int((h + w) // 300)
+		if self.FLAGS.json:
+			line = 	('{"label":"%s",'
+					'"confidence":%.2f,'
+					'"topleft":{"x":%d,"y":%d},'
+					'"bottomright":{"x":%d,"y":%d}},\n') % \
+					(mess, confidence, left, top, right, bot)
+			textBuff += line
+			continue
 
-			cv2.rectangle(imgcv,
-				(left, top), (right, bot),
-				colors[max_indx], thick)
-			cv2.putText(imgcv, mess, (left, top - 12),
-				0, 1e-3 * h, colors[max_indx],thick//3)
+		cv2.rectangle(imgcv,
+			(left, top), (right, bot),
+			colors[max_indx], thick)
+		cv2.putText(imgcv, mess, (left, top - 12),
+			0, 1e-3 * h, colors[max_indx],thick//3)
 
+	if not save: return imgcv
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
+	outfolder = os.path.join(self.FLAGS.test, 'out')
+	img_name = os.path.join(outfolder, im.split('/')[-1])
 	if self.FLAGS.json:
 		textFile = os.path.splitext(img_name)[0] + ".json"
 		with open(textFile, 'w') as f:
 			f.write(textBuff)
 		return
 
-	if not save: return imgcv
-	outfolder = os.path.join(self.FLAGS.test, 'out')
-	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
