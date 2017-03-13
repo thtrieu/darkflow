@@ -14,8 +14,12 @@ class route(BaseOp):
 				assert this is not None, \
 				'Routing to non-existence {}'.format(r)
 			routes_out += [this.out]
-		self.out = tf.concat(routes_out, 3)
-
+		# Update tf.concat has been updated. This would fix compatability for both TF Version < 0.12 and up
+		# http://stackoverflow.com/questions/41813665/tensorflow-slim-typeerror-expected-int32-got-list-containing-tensors-of-type
+		if str(tf.__version__) == "0.12.1":
+			self.out = tf.concat(3, routes_out)
+		else:
+			self.out = tf.concat(routes_out, 3)
 	def speak(self):
 		msg = 'concat {}'
 		return msg.format(self.lay.routes)
