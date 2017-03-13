@@ -130,8 +130,17 @@ During training, the script will occasionally save intermediate results into Ten
 
 ### Camera demo
 
+
+For a demo that entirely runs on the CPU:
+
 ```bash
 ./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera
+```
+
+For a demo that runs 100% on the GPU:
+
+```bash
+./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera --gpu 1.0
 ```
 
 ### Using darkflow from another python application
