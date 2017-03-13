@@ -1,0 +1,6 @@
+chair
+person
+----
+pottedplant
+tvmonitor
+train
