@@ -16,12 +16,9 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
-YOLOv1 is up and running:
-- v1.0: `yolo-full` 1.1GB, `yolo-small` 376MB, `yolo-tiny` 180MB
-- v1.1: `yolov1` 789MB, `tiny-yolo` 108MB, `tiny-coco` 268MB, `yolo-coco` 937MB
-
-YOLOv2 is up and running:
-- `yolo` 270MB, `tiny-yolo-voc` 63 MB.
+*Looking for contributions:*
+ - `help wanted` labels in issue track
+ - post-processing using Cython
 
 ### Parsing the annotations
 
