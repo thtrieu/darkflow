@@ -16,7 +16,7 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
-*Looking for contributions:*
+**I am looking for contributions:**
  - `help wanted` labels in issue track
  - post-processing using Cython
 
@@ -36,7 +36,7 @@ And that's it. `darkflow` will take care of the rest.
 
 ### Design the net
 
-Skip this if you are working with one of the three original configurations since they are already there. Otherwise, see the following example:
+Skip this if you are working with one of the original configurations since they are already there. Otherwise, see the following example:
 
 ```python
 ...
@@ -71,10 +71,10 @@ First, let's take a closer look at one of a very useful option `--load`
 ./flow --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 
 # 2. To completely initialize a model, leave the --load option
-./flow --model cfg/yolo-3c.cfg
+./flow --model cfg/yolo-new.cfg
 
-# 3. It is useful to reuse the first identical layers of tiny for 3c
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights
+# 3. It is useful to reuse the first identical layers of tiny for `yolo-new`
+./flow --model cfg/yolo-new.cfg --load bin/yolo-tiny.weights
 # this will print out which layers are reused, which are initialized
 ```
 
@@ -102,24 +102,24 @@ JSON output:
 
 ### Training new model
 
-Training is simple as you only have to add option `--train` like below:
+Training is simple as you only have to add option `--train`. Training set and annotation will be parsed if this is the first time a new configuration is trained. To point to training set and annotations, use option `--dataset` and `--annotation`. A few examples:
 
 ```bash
-# Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights --train --gpu 1.0
+# Initialize yolo-new from yolo-tiny, then train the net on 100% GPU:
+./flow --model cfg/yolo-new.cfg --load bin/yolo-tiny.weights --train --gpu 1.0
 
-# Completely initialize yolo-3c and train it with ADAM optimizer
-./flow --model cfg/yolo-3c.cfg --train --trainer adam
+# Completely initialize yolo-new and train it with ADAM optimizer
+./flow --model cfg/yolo-new.cfg --train --trainer adam
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save by parsing `ckpt/checkpoint`.
 
 ```bash
 # Resume the most recent checkpoint for training
-./flow --train --model cfg/yolo-3c.cfg --load -1
+./flow --train --model cfg/yolo-new.cfg --load -1
 
 # Test with checkpoint at step 1500
-./flow --model cfg/yolo-3c.cfg --load 1500
+./flow --model cfg/yolo-new.cfg --load 1500
 
 # Fine tuning yolo-tiny from the original one
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
@@ -131,13 +131,13 @@ During training, the script will occasionally save intermediate results into Ten
 For a demo that entirely runs on the CPU:
 
 ```bash
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera
 ```
 
 For a demo that runs 100% on the GPU:
 
 ```bash
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera --gpu 1.0
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera --gpu 1.0
 ```
 
 ### Using darkflow from another python application
@@ -162,7 +162,7 @@ print(result)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-./flow --model cfg/yolo-3c.cfg --load -1 --savepb
+./flow --model cfg/yolo-new.cfg --load -1 --savepb
 ```
 
 The name of input tensor and output tensor are respectively `'input'` and `'output'`. For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
