@@ -64,6 +64,7 @@ def camera(self, file):
 
     elapsed = int()
     start = timer()
+    cv2.namedWindow('', 0)
     while camera.isOpened():
         _, frame = camera.read()
         preprocessed = self.framework.preprocess(frame)
