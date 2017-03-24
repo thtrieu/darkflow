@@ -33,7 +33,7 @@ def box_iou(a, b):
     return box_intersection(a, b) / box_union(a, b);
 
 def prob_compare(box):
-    return box.probs[box.class_num]
+    return box.probs[prob_compare.class_num]
 
 def prob_compare2(boxa, boxb):
     if (boxa.pi < boxb.pi):
