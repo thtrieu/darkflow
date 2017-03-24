@@ -42,8 +42,7 @@ def findboxes(self, net_out):
 
 	# non max suppress boxes
 	for c in range(C):
-		for i in range(len(boxes)):
-			boxes[i].class_num = c
+		prob_compare.class_num = c
 		boxes = sorted(boxes, key=prob_compare, reverse=True)
 		for i in range(len(boxes)):
 			boxi = boxes[i]
