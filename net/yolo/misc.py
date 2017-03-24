@@ -21,7 +21,7 @@ coco_names = 'coco.names'
 nine_names = '9k.names'
 
 def labels(meta, FLAGS):    
-    model = meta['name']
+    model = meta['name'].split('/', 1)[-1]
     if model in voc_models: 
         meta['labels'] = labels20
     else:

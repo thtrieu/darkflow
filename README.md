@@ -16,12 +16,9 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
-YOLOv1 is up and running:
-- v1.0: `yolo-full` 1.1GB, `yolo-small` 376MB, `yolo-tiny` 180MB
-- v1.1: `yolov1` 789MB, `tiny-yolo` 108MB, `tiny-coco` 268MB, `yolo-coco` 937MB
-
-YOLOv2 is up and running:
-- `yolo` 270MB, `tiny-yolo-voc` 63 MB.
+**I am looking for contributions:**
+ - `help wanted` labels in issue track
+ - post-processing using Cython
 
 ### Parsing the annotations
 
@@ -39,7 +36,7 @@ And that's it. `darkflow` will take care of the rest.
 
 ### Design the net
 
-Skip this if you are working with one of the three original configurations since they are already there. Otherwise, see the following example:
+Skip this if you are working with one of the original configurations since they are already there. Otherwise, see the following example:
 
 ```python
 ...
@@ -74,10 +71,10 @@ First, let's take a closer look at one of a very useful option `--load`
 ./flow --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 
 # 2. To completely initialize a model, leave the --load option
-./flow --model cfg/yolo-3c.cfg
+./flow --model cfg/yolo-new.cfg
 
-# 3. It is useful to reuse the first identical layers of tiny for 3c
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights
+# 3. It is useful to reuse the first identical layers of tiny for `yolo-new`
+./flow --model cfg/yolo-new.cfg --load bin/yolo-tiny.weights
 # this will print out which layers are reused, which are initialized
 ```
 
@@ -89,39 +86,40 @@ All input images from default folder `test/` are flowed through the net and pred
 ```
 json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `test/out` folder by default. An example json array is shown below.
 ```bash
-# Forward all images in test/ using tiny yolo and json output.
+# Forward all images in test/ using tiny yolo and JSON output.
 ./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
 ```
-json output:
+JSON output:
 ```json
-[{"label":"person","topleft":{"x":184,"y":101},"bottomright":{"x":274,"y":382}},
-{"label":"dog","topleft":{"x":71,"y":263},"bottomright":{"x":193,"y":353}},
-{"label":"horse","topleft":{"x":412,"y":109},"bottomright":{"x":592,"y":337}}]
+[{"label":"person", "confidence": 0.56, "topleft": {"x": 184, "y": 101}, "bottomright": {"x": 274, "y": 382}},
+{"label": "dog", "confidence": 0.32, "topleft": {"x": 71, "y": 263}, "bottomright": {"x": 193, "y": 353}},
+{"label": "horse", "confidence": 0.76, "topleft": {"x": 412, "y": 109}, "bottomright": {"x": 592,"y": 337}}]
 ```
  - label: self explanatory
+ - confidence: somewhere between 0 and 1 (how confident yolo is about that detection)
  - topleft: pixel coordinate of top left corner of box.
  - bottomright: pixel coordinate of bottom right corner of box.
 
 ### Training new model
 
-Training is simple as you only have to add option `--train` like below:
+Training is simple as you only have to add option `--train`. Training set and annotation will be parsed if this is the first time a new configuration is trained. To point to training set and annotations, use option `--dataset` and `--annotation`. A few examples:
 
 ```bash
-# Initialize yolo-3c from yolo-tiny, then train the net on 100% GPU:
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-tiny.weights --train --gpu 1.0
+# Initialize yolo-new from yolo-tiny, then train the net on 100% GPU:
+./flow --model cfg/yolo-new.cfg --load bin/yolo-tiny.weights --train --gpu 1.0
 
-# Completely initialize yolo-3c and train it with ADAM optimizer
-./flow --model cfg/yolo-3c.cfg --train --trainer adam
+# Completely initialize yolo-new and train it with ADAM optimizer
+./flow --model cfg/yolo-new.cfg --train --trainer adam
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save by parsing `ckpt/checkpoint`.
 
 ```bash
 # Resume the most recent checkpoint for training
-./flow --train --model cfg/yolo-3c.cfg --load -1
+./flow --train --model cfg/yolo-new.cfg --load -1
 
 # Test with checkpoint at step 1500
-./flow --model cfg/yolo-3c.cfg --load 1500
+./flow --model cfg/yolo-new.cfg --load 1500
 
 # Fine tuning yolo-tiny from the original one
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
@@ -129,15 +127,42 @@ During training, the script will occasionally save intermediate results into Ten
 
 ### Camera demo
 
+
+For a demo that entirely runs on the CPU:
+
 ```bash
-./flow --model cfg/yolo-3c.cfg --load bin/yolo-3c.weights --demo camera
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera
+```
+
+For a demo that runs 100% on the GPU:
+
+```bash
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera --gpu 1.0
+```
+
+### Using darkflow from another python application
+Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
+
+Result from `return_predict(img)` will be a list of dictionaries representing each detected object's values in the same format as the JSON output listed above.
+
+```python
+from net.build import TFNet
+import cv2
+
+options = {"model": "cfg/yolo.cfg", "load": "bin/yolo.weights", "threshold": 0.1}
+
+tfnet = TFNet(options)
+
+imgcv = cv2.imread("./test/test.jpg")
+result = tfnet.return_predict(imgcv)
+print(result)
 ```
 
 ### Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-./flow --model cfg/yolo-3c.cfg --load -1 --savepb
+./flow --model cfg/yolo-new.cfg --load -1 --savepb
 ```
 
 The name of input tensor and output tensor are respectively `'input'` and `'output'`. For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
