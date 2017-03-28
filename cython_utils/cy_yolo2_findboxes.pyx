@@ -143,6 +143,7 @@ def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
                             for box_loop1 in range(B):
                                 if probs[row1, col1, box_loop1, class_loop] == 0: continue
                                 if box_iou_c(Bbox_Ptr + row*W*B*Box_param_dim + col*B*Box_param_dim + box_loop*Box_param_dim, Bbox_Ptr + row1*W*B*Box_param_dim + col1*B*Box_param_dim + box_loop1*Box_param_dim) >= 0.4:
+                                    if (row == row1 and col == col1 and box_loop == box_loop1): continue
                                     probs[row1, col1, box_loop1, class_loop] = 0
                     #append the survivor 
                     #print "Survivor"
