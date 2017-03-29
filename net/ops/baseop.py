@@ -77,10 +77,9 @@ class BaseOp(object):
         """wrap layer.h into placeholders"""
         phtype = type(self.lay.h[ph])
         if phtype is not dict: return
+
         sig = '{}/{}'.format(self.scope, ph)
-        val = self.lay.h[ph] 
-        shp = val['shape']
-        dft = val['dfault']
+        val = self.lay.h[ph]
 
         self.lay.h[ph] = tf.placeholder_with_default(
             val['dfault'], val['shape'], name = sig)

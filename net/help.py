@@ -86,6 +86,7 @@ def camera(self, file):
 
 def to_darknet(self):
     darknet_ckpt = self.darknet
+
     with self.graph.as_default() as g:
         for var in tf.global_variables():
             name = var.name.split(':')[0]
@@ -97,7 +98,6 @@ def to_darknet(self):
 
     for layer in darknet_ckpt.layers:
         for ph in layer.h:
-            # Use default
             layer.h[ph] = None
 
     return darknet_ckpt
