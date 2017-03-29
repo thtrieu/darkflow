@@ -150,7 +150,7 @@ def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
     for class_loop in range(C):
         for index in range(H*B*W):
             if final_probs[index,class_loop] == 0: continue
-            for index2 in range(H*B*W):
+            for index2 in range(index+1,H*B*W):
                 if final_probs[index2,class_loop] == 0: continue
                 if index==index2 : continue
                 if box_iou_c(final_bbox[index,0],final_bbox[index,1],final_bbox[index,2],final_bbox[index,3],final_bbox[index2,0],final_bbox[index2,1],final_bbox[index2,2],final_bbox[index2,3]) >= 0.4:
