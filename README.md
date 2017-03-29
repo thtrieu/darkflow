@@ -22,6 +22,8 @@ cd ..
 
 ## Update
 
+Demo from video file/ webcam is available. Cython for YOLOv2 fast processing is available too.
+
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
 **I am looking for contributions:**
