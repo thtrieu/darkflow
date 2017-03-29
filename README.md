@@ -12,6 +12,14 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
+Build Cython for fast YOLOv2 processing:
+
+```
+cd ./cython_utils
+python3 setup.py build_ext --inplace
+cd ..
+```
+
 ## Update
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
