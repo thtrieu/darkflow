@@ -57,7 +57,13 @@ def load_old_graph(self, ckpt):
         self.sess.run(op, {plh: val})
 
 def camera(self, file):
-    camera = cv2.VideoCapture(0)
+    if file == 'camera':
+        file = 0
+    else:
+        assert os.path.isfile(file), \
+        'file {} does not exist'.format(file)
+        
+    camera = cv2.VideoCapture(file)
     self.say('Press [ESC] to quit demo')
     assert camera.isOpened(), \
     'Cannot capture source'
@@ -86,6 +92,7 @@ def camera(self, file):
 
 def to_darknet(self):
     darknet_ckpt = self.darknet
+
     with self.graph.as_default() as g:
         for var in tf.global_variables():
             name = var.name.split(':')[0]
@@ -97,7 +104,6 @@ def to_darknet(self):
 
     for layer in darknet_ckpt.layers:
         for ph in layer.h:
-            # Use default
             layer.h[ph] = None
 
     return darknet_ckpt

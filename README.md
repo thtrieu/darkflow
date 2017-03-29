@@ -12,7 +12,17 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
+Build Cython for fast YOLOv2 processing:
+
+```
+cd ./cython_utils
+python3 setup.py build_ext --inplace
+cd ..
+```
+
 ## Update
+
+Demo from video file/ webcam is available. Cython for YOLOv2 fast processing is available too.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
@@ -125,20 +135,22 @@ During training, the script will occasionally save intermediate results into Ten
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
-### Camera demo
+### Camera/video file demo
 
 
 For a demo that entirely runs on the CPU:
 
 ```bash
-./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi
 ```
 
 For a demo that runs 100% on the GPU:
 
 ```bash
-./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera --gpu 1.0
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --gpu 1.0
 ```
+
+To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
 
 ### Using darkflow from another python application
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.

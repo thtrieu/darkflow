@@ -82,6 +82,8 @@ class avgpool(BaseOp):
 
 class dropout(BaseOp):
 	def forward(self):
+		if self.lay.h['pdrop'] is None:
+			self.lay.h['pdrop'] = 1.0
 		self.out = tf.nn.dropout(
 			self.inp.out, 
 			self.lay.h['pdrop'], 
