@@ -72,6 +72,9 @@ def camera(self, file):
     start = timer()
     while camera.isOpened():
         _, frame = camera.read()
+        if (frame is None):
+            print ('\nEnd of Video')
+            break
         preprocessed = self.framework.preprocess(frame)
         feed_dict = {self.inp: [preprocessed]}
         net_out = self.sess.run(self.out,feed_dict)[0]
