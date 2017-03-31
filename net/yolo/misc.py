@@ -23,12 +23,15 @@ nine_names = '9k.names'
 def labels(meta, FLAGS):    
     model = meta['name'].split('/', 1)[-1]
     if model in voc_models: 
+        print("Model has a VOC model name, loading VOC labels.")
         meta['labels'] = labels20
     else:
         file = 'labels.txt'
         if model in coco_models:
+            print("Model has a coco model name, loading coco labels.")
             file = os.path.join(FLAGS.config, coco_names)
         elif model == 'yolo9000':
+            print("Model has name yolo9000, loading yolo9000 labels.")
             file = os.path.join(FLAGS.config, nine_names)
         with open(file, 'r') as f:
             meta['labels'] = list()
