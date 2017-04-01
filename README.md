@@ -141,7 +141,7 @@ During training, the script will occasionally save intermediate results into Ten
 For a demo that entirely runs on the CPU:
 
 ```bash
-./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --saveVideo
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi
 ```
 
 For a demo that runs 100% on the GPU:
@@ -150,7 +150,9 @@ For a demo that runs 100% on the GPU:
 ./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --gpu 1.0
 ```
 
-To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`. Remove `--saveVideo` if you want don't want to record output.
+To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
+
+To save a video with predicted bounding box, add `--saveVideo` option.
 
 ### Using darkflow from another python application
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
