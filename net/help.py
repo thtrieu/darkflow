@@ -56,7 +56,7 @@ def load_old_graph(self, ckpt):
         op = tf.assign(var, plh)
         self.sess.run(op, {plh: val})
 
-def camera(self, file):
+def camera(self, file, SaveVideo):
     if file == 'camera':
         file = 0
     else:
@@ -70,12 +70,24 @@ def camera(self, file):
 
     elapsed = int()
     start = timer()
+    cv2.namedWindow('', 0)
+    if SaveVideo:
+        _, frame = camera.read()
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fps = get_fps(self, frame)
+        height, width, _ = frame.shape
+        videoWriter = cv2.VideoWriter('video.avi', fourcc, fps, (width, height))
     while camera.isOpened():
         _, frame = camera.read()
+        if frame is None:
+            print ('\nEnd of Video')
+            break
         preprocessed = self.framework.preprocess(frame)
         feed_dict = {self.inp: [preprocessed]}
         net_out = self.sess.run(self.out,feed_dict)[0]
         processed = self.framework.postprocess(net_out, frame, False)
+        if SaveVideo:
+            videoWriter.write(processed)
         cv2.imshow('', processed)
         elapsed += 1
         if elapsed % 5 == 0:
@@ -87,8 +99,18 @@ def camera(self, file):
         if choice == 27: break
 
     sys.stdout.write('\n')
+    videoWriter.release()
     camera.release()
     cv2.destroyAllWindows()
+
+def get_fps(self,frame):
+    elapsed = int()
+    start = timer()
+    preprocessed = self.framework.preprocess(frame)
+    feed_dict = {self.inp: [preprocessed]}
+    net_out = self.sess.run(self.out, feed_dict)[0]
+    processed = self.framework.postprocess(net_out, frame, False)
+    return timer() - start
 
 def to_darknet(self):
     darknet_ckpt = self.darknet
