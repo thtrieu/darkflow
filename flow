@@ -27,6 +27,7 @@ flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
 flags.DEFINE_string("demo", '', "demo on webcam")
 flags.DEFINE_boolean("profile", False, "profile")
 flags.DEFINE_boolean("json", False, "Outputs bounding box information in json format.")
+flags.DEFINE_boolean("saveVideo", False, "Records video from input video or camera")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist
@@ -47,7 +48,7 @@ if FLAGS.profile:
 	exit()
 
 if FLAGS.demo:
-	tfnet.camera(FLAGS.demo)
+	tfnet.camera(FLAGS.demo,FLAGS.saveVideo)
 	exit()
 
 if FLAGS.train:
