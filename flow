@@ -48,7 +48,7 @@ if FLAGS.profile:
 	exit()
 
 if FLAGS.demo:
-	tfnet.camera(FLAGS.demo,FLAGS.saveVideo)
+	tfnet.camera(FLAGS.demo, FLAGS.saveVideo)
 	exit()
 
 if FLAGS.train:
