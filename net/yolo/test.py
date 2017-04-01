@@ -3,6 +3,7 @@ from utils.box import BoundBox, box_iou, prob_compare
 import numpy as np
 import cv2
 import os
+from cython_utils.cy_yolo_findboxes import yolo_box_constructor
 
 def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
@@ -37,48 +38,11 @@ def process_box(self, b, h, w, threshold):
 
 def findboxes(self, net_out):
 	meta, FLAGS = self.meta, self.FLAGS
-	threshold, sqrt = FLAGS.threshold, meta['sqrt'] + 1
-	C, B, S = meta['classes'], meta['num'], meta['side']
-
+	threshold = FLAGS.threshold
+	
 	boxes = []
-	SS        =  S * S # number of grid cells
-	prob_size = SS * C # class probabilities
-	conf_size = SS * B # confidences for each grid cell
-
-	#net_out = net_out[0]
-	probs = net_out[0 : prob_size]
-	confs = net_out[prob_size : (prob_size + conf_size)]
-	cords = net_out[(prob_size + conf_size) : ]
-	probs = probs.reshape([SS, C])
-	confs = confs.reshape([SS, B])
-	cords = cords.reshape([SS, B, 4])
-
-	for grid in range(SS):
-		for b in range(B):
-			bx   = BoundBox(C)
-			bx.c =  confs[grid, b]
-			bx.x = (cords[grid, b, 0] + grid %  S) / S
-			bx.y = (cords[grid, b, 1] + grid // S) / S
-			bx.w =  cords[grid, b, 2] ** sqrt
-			bx.h =  cords[grid, b, 3] ** sqrt
-			p = probs[grid, :] * bx.c
-			p *= (p > threshold)
-			bx.probs = p
-			boxes.append(bx)
-
-
-	# non max suppress boxes
-	for c in range(C):
-		for i in range(len(boxes)):
-			boxes[i].class_num = c
-		boxes = sorted(boxes, key=prob_compare, reverse=True)
-		for i in range(len(boxes)):
-			boxi = boxes[i]
-			if boxi.probs[c] == 0: continue
-			for j in range(i + 1, len(boxes)):
-				boxj = boxes[j]
-				if box_iou(boxi, boxj) >= .4:
-					boxes[j].probs[c] = 0.
+	boxes = yolo_box_constructor(meta, net_out, threshold)
+	
 	return boxes
 
 def preprocess(self, im, allobj = None):

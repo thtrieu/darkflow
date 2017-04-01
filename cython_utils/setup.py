@@ -4,8 +4,8 @@ from Cython.Build import cythonize
 import numpy
 import os
 
-if os.name=='nt' :
-
+if os.name =='nt' :
+  
     ext_modules=[
         Extension("nms",
                 sources=["nms.pyx"],
@@ -15,7 +15,7 @@ if os.name=='nt' :
     ]
 
     ext_modules_yolo2=[
-        Extension("cy_findboxes",
+        Extension("cy_yolo2_findboxes",
                   sources=["cy_yolo2_findboxes.pyx"],
                   #libraries=["m"] # Unix-like specific
                   include_dirs=[numpy.get_include()]
@@ -23,7 +23,7 @@ if os.name=='nt' :
     ]
 
     ext_modules_yolo=[
-        Extension("cy_findboxes_yolo",
+        Extension("cy_yolo_findboxes",
                   sources=["cy_yolo_findboxes.pyx"],
                   #libraries=["m"] # Unix-like specific
                   include_dirs=[numpy.get_include()]
@@ -40,14 +40,14 @@ else :
     ]
 
     ext_modules_yolo2=[
-        Extension("cy_findboxes",
+        Extension("cy_yolo2_findboxes",
                   sources=["cy_yolo2_findboxes.pyx"],
                   libraries=["m"] # Unix-like specific
         )
     ]
 
     ext_modules_yolo=[
-        Extension("cy_findboxes_yolo",
+        Extension("cy_yolo_findboxes",
                   sources=["cy_yolo_findboxes.pyx"],
                   libraries=["m"] # Unix-like specific
         )
