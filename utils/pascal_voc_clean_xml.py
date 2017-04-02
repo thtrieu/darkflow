@@ -4,110 +4,76 @@ parse PASCAL VOC xml annotations
 
 import os
 import sys
+import xml.etree.ElementTree as ET
+import glob
+
+
+def _pp(l): # pretty printing 
+    for i in l: print('{}: {}'.format(i,l[i]))
 
 def pascal_voc_clean_xml(ANN, pick, exclusive = False):
-	print('Parsing for {} {}'.format(
-			pick, 'exclusively' * int(exclusive)))
-	def pp(l): # pretty printing 
-		for i in l: print('{}: {}'.format(i,l[i]))
+    print('Parsing for {} {}'.format(
+            pick, 'exclusively' * int(exclusive)))
 
-	def parse(line): # exclude the xml tag
-		x = line.split('>')[1].split('<')[0]
-		try: r = int(x)
-		except: r = x
-		return r
+    dumps = list()
+    cur_dir = os.getcwd()
+    os.chdir(ANN)
+    annotations = os.listdir('.')
+    annotations = glob.glob(str(annotations)+'*.xml')
+    size = len(annotations)
 
-	def _int(literal): # for literals supposed to be int 
-		return int(float(literal))
+    for i, file in enumerate(annotations):
+        # progress bar      
+        sys.stdout.write('\r')
+        percentage = 1. * (i+1) / size
+        progress = int(percentage * 20)
+        bar_arg = [progress*'=', ' '*(19-progress), percentage*100]
+        bar_arg += [file]
+        sys.stdout.write('[{}>{}]{:.0f}%  {}'.format(*bar_arg))
+        sys.stdout.flush()
+        
+        # actual parsing 
+        in_file = open(file)
+        tree=ET.parse(in_file)
+        root = tree.getroot()
+        jpg = str(root.find('filename').text)
+        imsize = root.find('size')
+        w = int(imsize.find('width').text)
+        h = int(imsize.find('height').text)
+        all = list()
 
-	dumps = list()
-	cur_dir = os.getcwd()
-	os.chdir(ANN)
-	annotations = os.listdir('.')
-	annotations = [file for file in annotations if '.xml' in file]
-	size = len(os.listdir('.'))
+        for obj in root.iter('object'):
+                current = list()
+                name = obj.find('name').text
+                if name not in pick:
+                        continue
 
-	for i, file in enumerate(annotations):
+                xmlbox = obj.find('bndbox')
+                xn = int(float(xmlbox.find('xmin').text))
+                xx = int(float(xmlbox.find('xmax').text))
+                yn = int(float(xmlbox.find('ymin').text))
+                yx = int(float(xmlbox.find('ymax').text))
+                current = [name,xn,yn,xx,yx]
+                all += [current]
 
-		# progress bar		
-		sys.stdout.write('\r')
-		percentage = 1. * (i+1) / size
-		progress = int(percentage * 20)
-		bar_arg = [progress*'=', ' '*(19-progress), percentage*100]
-		bar_arg += [file]
-		sys.stdout.write('[{}>{}]{:.0f}%  {}'.format(*bar_arg))
-		sys.stdout.flush()
-		
-		# actual parsing 
-		with open(file, 'r') as f:
-			lines = f.readlines()
-		w = h = int()
-		all = current = list()
-		name = str()
-		obj = False
-		flag = False
-		for i in range(len(lines)):
-			line = lines[i]
-			if '<filename>' in line:
-				jpg = str(parse(line))
-			if '<width>' in line:
-				w = _int(parse(line))
-			if '<height>' in line:
-				h = _int(parse(line))
-			if '<object>' in line:
-				obj = True
-			if '</object>' in line:
-				obj = False
-			if '<part>' in line:
-				obj = False
-			if '</part>' in line:
-				obj = True
-			if not obj: continue
-			if '<name>' in line:
-				if current != list():
-					if current[0] in pick:
-						all += [current]
-					elif exclusive:
-						flag = True
-						break
-				current = list()
-				name = str(parse(line))
-				if name not in pick: 
-					obj = False
-					continue
-				current = [name,None,None,None,None]
-			if len(current) != 5: continue
-			xn = '<xmin>' in line
-			xx = '<xmax>' in line
-			yn = '<ymin>' in line
-			yx = '<ymax>' in line
-			if xn: current[1] = _int(parse(line))
-			if xx: current[3] = _int(parse(line))
-			if yn: current[2] = _int(parse(line))
-			if yx: current[4] = _int(parse(line))
+        add = [[jpg, [w, h, all]]]
+        dumps += add
+        in_file.close()
 
-		if flag: continue
-		if current != list() and current[0] in pick:
-			all += [current]
+    # gather all stats
+    stat = dict()
+    for dump in dumps:
+        all = dump[1][2]
+        for current in all:
+            if current[0] in pick:
+                if current[0] in stat:
+                    stat[current[0]]+=1
+                else:
+                    stat[current[0]] =1
 
-		add = [[jpg, [w, h, all]]]
-		dumps += add
+    print('\nStatistics:')
+    _pp(stat)
+    print('Dataset size: {}'.format(len(dumps)))
 
-	# gather all stats
-	stat = dict()
-	for dump in dumps:
-		all = dump[1][2]
-		for current in all:
-			if current[0] in pick:
-				if current[0] in stat:
-					stat[current[0]]+=1
-				else:
-					stat[current[0]] =1
-
-	print() 
-	print('Statistics:')
-	pp(stat)
-	print('Dataset size: {}'.format(len(dumps)))
-
-	os.chdir(cur_dir)
-	return dumps
+    os.chdir(cur_dir)
+    return dumps
