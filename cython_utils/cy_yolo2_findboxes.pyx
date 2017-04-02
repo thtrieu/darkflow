@@ -4,56 +4,7 @@ cimport cython
 ctypedef np.float_t DTYPE_t
 from libc.math cimport exp
 from utils.box import BoundBox
-
-
-
-#OVERLAP
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function
-@cython.cdivision(True)
-cdef float overlap_c(float x1, float w1 , float x2 , float w2):
-    cdef:
-        float l1,l2,left,right
-    l1 = x1 - w1 /2.
-    l2 = x2 - w2 /2.
-    left = max(l1,l2)
-    r1 = x1 + w1 /2.
-    r2 = x2 + w2 /2.
-    right = min(r1, r2)
-    return right - left;
-
-#BOX INTERSECTION
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function
-@cython.cdivision(True)
-cdef float box_intersection_c(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh):
-    cdef:
-        float w,h,area
-    w = overlap_c(ax, aw, bx, bw)
-    h = overlap_c(ay, ah, by, bh)
-    if w < 0 or h < 0: return 0
-    area = w * h
-    return area
-
-#BOX UNION
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function
-@cython.cdivision(True)
-cdef float box_union_c(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh):
-    cdef:
-        float i,u
-    i = box_intersection_c(ax, ay, aw, ah, bx, by, bw, bh)
-    u = aw * ah + bw * bh -i
-    return u
-
-
-#BOX IOU
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function
-@cython.cdivision(True)
-cdef float box_iou_c(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh):
-    return box_intersection_c(ax, ay, aw, ah, bx, by, bw, bh) / box_union_c(ax, ay, aw, ah, bx, by, bw, bh);
-
+from nms cimport NMS
 
 #expit
 @cython.boundscheck(False) # turn off bounds-checking for entire function
@@ -143,27 +94,4 @@ def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
     
     
     #NMS                    
-    cdef:
-        float[:,::1] final_bbox = np.ascontiguousarray(Bbox_pred).reshape(H*B*W,5)
-        float[:,::1] final_probs = np.ascontiguousarray(probs).reshape(H*W*B,C)
-        
-    for class_loop in range(C):
-        for index in range(H*B*W):
-            if final_probs[index,class_loop] == 0: continue
-            for index2 in range(index+1,H*B*W):
-                if final_probs[index2,class_loop] == 0: continue
-                if index==index2 : continue
-                if box_iou_c(final_bbox[index,0],final_bbox[index,1],final_bbox[index,2],final_bbox[index,3],final_bbox[index2,0],final_bbox[index2,1],final_bbox[index2,2],final_bbox[index2,3]) >= 0.4:
-                    if final_probs[index2,class_loop] > final_probs[index, class_loop] :
-                        final_probs[index, class_loop] =0
-                        break
-                    final_probs[index2,class_loop]=0
-            bb=BoundBox(C)
-            bb.x = final_bbox[index, 0]
-            bb.y = final_bbox[index, 1]
-            bb.w = final_bbox[index, 2]
-            bb.h = final_bbox[index, 3]
-            bb.c = final_bbox[index, 4]
-            bb.probs = np.asarray(final_probs[index,:])
-            boxes.append(bb)
-    return boxes
+    return NMS(np.ascontiguousarray(probs).reshape(H*W*B,C), np.ascontiguousarray(Bbox_pred).reshape(H*B*W,5))
