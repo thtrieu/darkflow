@@ -99,7 +99,8 @@ def camera(self, file, SaveVideo):
         if choice == 27: break
 
     sys.stdout.write('\n')
-    videoWriter.release()
+    if SaveVideo:
+        videoWriter.release()
     camera.release()
     cv2.destroyAllWindows()
 
