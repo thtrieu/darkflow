@@ -12,7 +12,7 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
-Build Cython for fast YOLOv2 processing:
+Build Cython for fast processing:
 
 ```
 cd ./cython_utils
@@ -22,13 +22,12 @@ cd ..
 
 ## Update
 
-Demo from video file/ webcam is available. Cython for YOLOv2 fast processing is available too.
+Demo from video file/ webcam is available, also with saving results to an output file. Cython for fast processing is available too.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
 **I am looking for contributions:**
  - `help wanted` labels in issue track
- - post-processing using Cython
 
 ### Parsing the annotations
 
