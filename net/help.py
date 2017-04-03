@@ -56,6 +56,15 @@ def load_old_graph(self, ckpt):
         op = tf.assign(var, plh)
         self.sess.run(op, {plh: val})
 
+def get_fps(self,frame):
+    elapsed = int()
+    start = timer()
+    preprocessed = self.framework.preprocess(frame)
+    feed_dict = {self.inp: [preprocessed]}
+    net_out = self.sess.run(self.out, feed_dict)[0]
+    processed = self.framework.postprocess(net_out, frame, False)
+    return timer() - start
+
 def camera(self, file, SaveVideo):
     if file == 'camera':
         file = 0
