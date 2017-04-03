@@ -70,16 +70,18 @@ def camera(self, file, SaveVideo):
 
     elapsed = int()
     start = timer()
+    
     cv2.namedWindow('', 0)
     _, frame = camera.read()
     height, width, _ = frame.shape
     cv2.resizeWindow('', width, height)
+    
     if SaveVideo:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         if file == 0:
-         fps = 1 / get_fps(self, frame)
-         if fps < 1:
-                fps = 1
+          fps = 1 / get_fps(self, frame)
+          if fps < 1:
+            fps = 1
         else:
             fps = round(camera.get(cv2.CAP_PROP_FPS))
         videoWriter = cv2.VideoWriter('video.avi', fourcc, fps, (width, height))
@@ -110,15 +112,6 @@ def camera(self, file, SaveVideo):
         videoWriter.release()
     camera.release()
     cv2.destroyAllWindows()
-
-def get_fps(self,frame):
-    elapsed = int()
-    start = timer()
-    preprocessed = self.framework.preprocess(frame)
-    feed_dict = {self.inp: [preprocessed]}
-    net_out = self.sess.run(self.out, feed_dict)[0]
-    processed = self.framework.postprocess(net_out, frame, False)
-    return timer() - start
 
 def to_darknet(self):
     darknet_ckpt = self.darknet

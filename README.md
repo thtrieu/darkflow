@@ -2,17 +2,18 @@
 
 Real-time object detection and classification. Paper: [version 1](https://arxiv.org/pdf/1506.02640.pdf), [version 2](https://arxiv.org/pdf/1612.08242.pdf).
 
-Read more about YOLO (in darknet) and download weight files for version 2 [here](http://pjreddie.com/darknet/yolo/).
+Read more about YOLO (in darknet) and download weight files for version 2 [here](http://pjreddie.com/darknet/yolo/). *Some* weights files for version 1 [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU)
 
-*Some* weights files for version 1 [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU)
 
-![img](person.jpg)
+Click on this image to see demo:
+
+[![img](preview.png)](demo.gif)
 
 ## Dependencies
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
-Build Cython for fast YOLOv2 processing:
+Build Cython for fast processing:
 
 ```
 cd ./cython_utils
@@ -22,13 +23,12 @@ cd ..
 
 ## Update
 
-Demo from video file/ webcam is available. Cython for YOLOv2 fast processing is available too.
+Demo from video file/ webcam is available, also with saving results to an output file. Cython for fast processing is available too.
 
 **Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
 **I am looking for contributions:**
  - `help wanted` labels in issue track
- - post-processing using Cython
 
 ### Parsing the annotations
 
@@ -141,7 +141,7 @@ During training, the script will occasionally save intermediate results into Ten
 For a demo that entirely runs on the CPU:
 
 ```bash
-./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --saveVideo
+./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi
 ```
 
 For a demo that runs 100% on the GPU:
@@ -150,7 +150,9 @@ For a demo that runs 100% on the GPU:
 ./flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --gpu 1.0
 ```
 
-To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`. Remove `--saveVideo` if you want don't want to record output.
+To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
+
+To save a video with predicted bounding box, add `--saveVideo` option.
 
 ### Using darkflow from another python application
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
