@@ -7,7 +7,7 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 Click on this image to see demo:
 
-[![img](preview.png)](demo.gif)
+[![img](preview.png)](http://i.imgur.com/EyZZKAA.gif)
 
 ## Dependencies
 
