@@ -56,7 +56,7 @@ def load_old_graph(self, ckpt):
         op = tf.assign(var, plh)
         self.sess.run(op, {plh: val})
 
-def get_fps(self,frame):
+def _get_fps(self, frame):
     elapsed = int()
     start = timer()
     preprocessed = self.framework.preprocess(frame)
@@ -88,7 +88,7 @@ def camera(self, file, SaveVideo):
     if SaveVideo:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         if file == 0:
-          fps = 1 / get_fps(self, frame)
+          fps = 1 / self._get_fps(frame)
           if fps < 1:
             fps = 1
         else:
