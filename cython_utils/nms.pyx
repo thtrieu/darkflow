@@ -59,7 +59,7 @@ cdef float box_iou_c(float ax, float ay, float aw, float ah, float bx, float by,
 #NMS
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-@cython.cdivision(True)]
+@cython.cdivision(True)
 cdef NMS(float[:, ::1] final_probs , float[:, ::1] final_bbox):
     cdef list boxes = list()
     cdef:
