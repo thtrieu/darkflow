@@ -77,11 +77,11 @@ def camera(self, file, SaveVideo):
     if SaveVideo:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         if file == 0:
-         fps = 1/get_fps(self, frame)
+         fps = 1 / get_fps(self, frame)
          if fps < 1:
                 fps = 1
         else:
-            fps = camera.get(cv2.CAP_PROP_FPS)
+            fps = round(camera.get(cv2.CAP_PROP_FPS))
         videoWriter = cv2.VideoWriter('video.avi', fourcc, fps, (width, height))
 
     while camera.isOpened():
