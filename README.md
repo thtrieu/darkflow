@@ -6,7 +6,9 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 *Some* weights files for version 1 [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU)
 
+<center>
 [![img](preview.png)](demo.gif)
+</center>
 
 ## Dependencies
 
