@@ -71,12 +71,19 @@ def camera(self, file, SaveVideo):
     elapsed = int()
     start = timer()
     cv2.namedWindow('', 0)
+    _, frame = camera.read()
+    height, width, _ = frame.shape
+    cv2.resizeWindow('', width, height)
     if SaveVideo:
-        _, frame = camera.read()
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        fps = get_fps(self, frame)
-        height, width, _ = frame.shape
+        if file == 0:
+         fps = 1/get_fps(self, frame)
+         if fps <1:
+                fps =1
+        else:
+            fps = camera.get(cv2.CAP_PROP_FPS)
         videoWriter = cv2.VideoWriter('video.avi', fourcc, fps, (width, height))
+
     while camera.isOpened():
         _, frame = camera.read()
         if frame is None:
@@ -99,7 +106,8 @@ def camera(self, file, SaveVideo):
         if choice == 27: break
 
     sys.stdout.write('\n')
-    videoWriter.release()
+    if SaveVideo:
+        videoWriter.release()
     camera.release()
     cv2.destroyAllWindows()
 
