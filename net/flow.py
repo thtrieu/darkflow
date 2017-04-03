@@ -80,7 +80,16 @@ def return_predict(self, im):
         tmpBox = self.framework.process_box(box, h, w, threshold)
         if tmpBox is None:
             continue
-        boxesInfo.append({"label":tmpBox[4],"confidence":tmpBox[6],"topleft":{"x":tmpBox[0],"y":tmpBox[2]},"bottomright":{"x":tmpBox[1],"y":tmpBox[3]}})
+        boxesInfo.append({
+            "label": tmpBox[4],
+            "confidence": tmpBox[6],
+            "topleft": {
+                "x": tmpBox[0],
+                "y": tmpBox[2]},
+            "bottomright": {
+                "x": tmpBox[1],
+                "y": tmpBox[3]}
+        })
     return boxesInfo
 
 import math
