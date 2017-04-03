@@ -83,43 +83,52 @@ def return_predict(self, im):
         boxesInfo.append({"label":tmpBox[4],"confidence":tmpBox[6],"topleft":{"x":tmpBox[0],"y":tmpBox[2]},"bottomright":{"x":tmpBox[1],"y":tmpBox[3]}})
     return boxesInfo
 
+import math
+
 def predict(self):
     inp_path = self.FLAGS.test
-    all_inp_ = os.listdir(inp_path)
-    all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
-    if not all_inp_:
+    all_inps = os.listdir(inp_path)
+    all_inps = [i for i in all_inps if self.framework.is_inp(i)]
+    if not all_inps:
         msg = 'Failed to find any test files in {} .'
         exit('Error: {}'.format(msg.format(inp_path)))
 
-    batch = min(self.FLAGS.batch, len(all_inp_))
+    batch = min(self.FLAGS.batch, len(all_inps))
 
-    for j in range(len(all_inp_) // batch):
+    # predict in batches
+    n_batch = math.ceil(len(all_inps) / batch)
+    for j in range(n_batch):
+        from_idx = j * batch
+        to_idx = min(from_idx + batch, len(all_inps))
+
+        # collect images input in the batch
         inp_feed = list(); new_all = list()
-        all_inp = all_inp_[j*batch: (j*batch+batch)]
-        for inp in all_inp:
+        this_batch = all_inps[from_idx:to_idx]
+        for inp in this_batch:
             new_all += [inp]
             this_inp = os.path.join(inp_path, inp)
             this_inp = self.framework.preprocess(this_inp)
             expanded = np.expand_dims(this_inp, 0)
             inp_feed.append(expanded)
-        all_inp = new_all
+        this_batch = new_all
 
-        feed_dict = {self.inp : np.concatenate(inp_feed, 0)}
-    
+        # Feed to the net
+        feed_dict = {self.inp : np.concatenate(inp_feed, 0)}    
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
         start = time.time()
         out = self.sess.run(self.out, feed_dict)
         stop = time.time(); last = stop - start
-
         self.say('Total time = {}s / {} inps = {} ips'.format(
             last, len(inp_feed), len(inp_feed) / last))
 
+        # Post processing
         self.say('Post processing {} inputs ...'.format(len(inp_feed)))
         start = time.time()
         for i, prediction in enumerate(out):
             self.framework.postprocess(prediction,
-                os.path.join(inp_path, all_inp[i]))
+                os.path.join(inp_path, this_batch[i]))
         stop = time.time(); last = stop - start
 
+        # Timing
         self.say('Total time = {}s / {} inps = {} ips'.format(
             last, len(inp_feed), len(inp_feed) / last))
