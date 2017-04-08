@@ -46,13 +46,15 @@ def train(self):
         feed_dict[self.inp] = x_batch
         feed_dict.update(self.feed)
 
-        fetches = [self.train_op, loss_op] 
+        fetches = [self.train_op, loss_op, self.summary_op] 
         fetched = self.sess.run(fetches, feed_dict)
         loss = fetched[1]
 
         if loss_mva is None: loss_mva = loss
         loss_mva = .9 * loss_mva + .1 * loss
         step_now = self.FLAGS.load + i + 1
+
+        self.writer.add_summary(fetched[2], step_now)
 
         form = 'step {} - loss {} - moving ave loss {}'
         self.say(form.format(step_now, loss, loss_mva))
@@ -105,7 +107,7 @@ def predict(self):
     batch = min(self.FLAGS.batch, len(all_inps))
 
     # predict in batches
-    n_batch = math.ceil(len(all_inps) / batch)
+    n_batch = int(math.ceil(len(all_inps) / batch))
     for j in range(n_batch):
         from_idx = j * batch
         to_idx = min(from_idx + batch, len(all_inps))
