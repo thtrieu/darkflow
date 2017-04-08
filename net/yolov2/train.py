@@ -104,3 +104,4 @@ def loss(self, net_out):
     loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)
+    tf.summary.scalar('{} loss'.format(m['model']), self.loss)
