@@ -106,7 +106,7 @@ class TFNet(object):
 		if self.FLAGS.train: self.build_train_op()
 
 		self.summary_op = tf.summary.merge_all()
-		self.writer = tf.summary.FileWriter('./summary/train')
+		self.writer = tf.summary.FileWriter(self.FLAGS.summary + 'train')
 		
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
