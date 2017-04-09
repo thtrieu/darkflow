@@ -9,6 +9,7 @@ flags.DEFINE_string("binary", "./bin/", "path to .weights directory")
 flags.DEFINE_string("config", "./cfg/", "path to .cfg directory")
 flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
 flags.DEFINE_string("backup", "./ckpt/", "path to backup folder")
+flags.DEFINE_string("summary", "./summary/", "path to TensorBoard summaries directory")
 flags.DEFINE_string("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
 flags.DEFINE_float("threshold", 0.1, "detection threshold")
 flags.DEFINE_string("model", "", "configuration of choice")
@@ -35,7 +36,7 @@ def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
-get_dir([FLAGS.test, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.test,'out')])
+get_dir([FLAGS.test, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.test,'out'), FLAGS.summary])
 
 # fix FLAGS.load to appropriate type
 try: FLAGS.load = int(FLAGS.load)

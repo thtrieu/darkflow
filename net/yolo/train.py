@@ -84,9 +84,9 @@ def loss(self, net_out):
     self.fetch += [probs, confs, conid, cooid, proid]
     true = tf.concat([probs, confs, coord], 1)
     wght = tf.concat([proid, conid, cooid], 1)
-
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(net_out - true, 2)
     loss = tf.multiply(loss, wght)
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)
+    tf.summary.scalar('{} loss'.format(m['model']), self.loss)
