@@ -116,7 +116,7 @@ class TFNet(object):
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
 
-		#self.writer.add_graph(self.sess.graph)
+		self.writer.add_graph(self.sess.graph)
 
 	def savepb(self):
 		"""
