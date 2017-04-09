@@ -71,7 +71,7 @@ class BaseOp(object):
             self.lay.w[var] = tf.get_variable(var,
                 shape = self.lay.wshape[var],
                 dtype = tf.float32,
-                initializer = self.lay.w[var])
+                initializer = tf.contrib.layers.xavier_initializer())
 
     def wrap_pholder(self, ph, feed):
         """wrap layer.h into placeholders"""
