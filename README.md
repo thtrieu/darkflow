@@ -17,7 +17,7 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 There are three ways to get started with darkflow.
 
-1. Just built the Cython extensions in place.
+1. Just build the Cython extensions in place.
     ```
     python3 setup.py build_ext --inplace
     ```
