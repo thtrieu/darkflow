@@ -13,12 +13,24 @@ Click on this image to see demo from yolov2:
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
-Build Cython for fast processing:
+### Getting started
+
+There are three ways to get started with darkflow.
+
+1. Just built the Cython extensions in place.
 
 ```
-cd ./cython_utils
 python3 setup.py build_ext --inplace
-cd ..
+```
+
+2. Let pip install darkflow in dev mode (globally accessible but changes to the code immediately take effect)
+```
+pip install -e .
+```
+
+3. Install with pip globally
+```
+pip install .
 ```
 
 ## Update
