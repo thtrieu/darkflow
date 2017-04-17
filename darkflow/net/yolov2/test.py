@@ -5,8 +5,8 @@ import os
 #from scipy.special import expit
 #from utils.box import BoundBox, box_iou, prob_compare
 #from utils.box import prob_compare2, box_intersection
-from utils.box import BoundBox
-from cython_utils.cy_yolo2_findboxes import box_constructor
+from darkflow.utils.box import BoundBox
+from darkflow.cython_utils.cy_yolo2_findboxes import box_constructor
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))
