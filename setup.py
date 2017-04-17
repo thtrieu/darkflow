@@ -11,26 +11,34 @@ VERSION = VERSION.__version__
 if os.name =='nt' :
     ext_modules=[
         Extension("darkflow.cython_utils.nms",
-                sources=["darkflow/cython_utils/nms.pyx"],
-                #libraries=["m"] # Unix-like specific
-                    include_dirs=[numpy.get_include()]
+            sources=["darkflow/cython_utils/nms.pyx"],
+            #libraries=["m"] # Unix-like specific
+            include_dirs=[numpy.get_include()]
         ),        
         Extension("darkflow.cython_utils.cy_yolo2_findboxes",
-                  sources=["darkflow/cython_utils/cy_yolo2_findboxes.pyx"],
-                  #libraries=["m"] # Unix-like specific
-                  include_dirs=[numpy.get_include()]
+            sources=["darkflow/cython_utils/cy_yolo2_findboxes.pyx"],
+            #libraries=["m"] # Unix-like specific
+            include_dirs=[numpy.get_include()]
         ),
         Extension("darkflow.cython_utils.cy_yolo_findboxes",
-                  sources=["darkflow/cython_utils/cy_yolo_findboxes.pyx"],
-                  #libraries=["m"] # Unix-like specific
-                  include_dirs=[numpy.get_include()]
+            sources=["darkflow/cython_utils/cy_yolo_findboxes.pyx"],
+            #libraries=["m"] # Unix-like specific
+            include_dirs=[numpy.get_include()]
         )
     ]
 
 else :
     ext_modules=[
-        Extension("darkflow.cython_utils.*",
-            sources=["darkflow\cython_utils\*.pyx"],
+        Extension("darkflow.cython_utils.nms",
+            sources=["darkflow/cython_utils/nms.pyx"],
+            libraries=["m"] # Unix-like specific
+        ),        
+        Extension("darkflow.cython_utils.cy_yolo2_findboxes",
+            sources=["darkflow/cython_utils/cy_yolo2_findboxes.pyx"],
+            libraries=["m"] # Unix-like specific
+        ),
+        Extension("darkflow.cython_utils.cy_yolo_findboxes",
+            sources=["darkflow/cython_utils/cy_yolo_findboxes.pyx"],
             libraries=["m"] # Unix-like specific
         )
     ]
