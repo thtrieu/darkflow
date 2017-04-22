@@ -34,11 +34,9 @@ There are three ways to get started with darkflow.
 
 ## Update
 
-Demo from video file/ webcam is available, also with saving results to an output file. Cython for fast processing is available too.
+**Android demo on Tensorflow's** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
-**Android demo is available on Tensorflow's official github!** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
-
-**I am looking for contributions:**
+**I am looking for help:**
  - `help wanted` labels in issue track
 
 ### Parsing the annotations
