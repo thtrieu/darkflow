@@ -5,7 +5,7 @@ from . import flow
 from .ops import op_create, identity
 from .ops import HEADER, LINE
 from .framework import create_framework
-from dark.darknet import Darknet
+from darkflow.dark.darknet import Darknet
 
 class dotdict(dict):
 	"""dot.notation access to dictionary attributes to replace FLAGS when not needed"""

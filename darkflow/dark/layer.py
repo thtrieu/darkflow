@@ -1,4 +1,4 @@
-from utils import loader
+from darkflow.utils import loader
 import numpy as np
 
 class Layer(object):

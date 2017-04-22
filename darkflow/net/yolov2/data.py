@@ -1,4 +1,4 @@
-from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
+from darkflow.utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from numpy.random import permutation as perm
 from ..yolo.test import preprocess
 from ..yolo.data import shuffle

@@ -1,6 +1,6 @@
 import tensorflow as tf
 import os
-import dark
+import darkflow.dark as dark
 import numpy as np
 from os import sep
 

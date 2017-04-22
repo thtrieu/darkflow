@@ -1,6 +1,6 @@
-from cfg.process import cfg_yielder
+from darkflow.utils.process import cfg_yielder
 from .darkop import create_darkop
-from utils import loader
+from darkflow.utils import loader
 import warnings
 import time
 import os
