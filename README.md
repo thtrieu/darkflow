@@ -169,14 +169,14 @@ Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image 
 Result from `return_predict(img)` will be a list of dictionaries representing each detected object's values in the same format as the JSON output listed above.
 
 ```python
-from net.build import TFNet
+from darkflow.net.build import TFNet
 import cv2
 
 options = {"model": "cfg/yolo.cfg", "load": "bin/yolo.weights", "threshold": 0.1}
 
 tfnet = TFNet(options)
 
-imgcv = cv2.imread("./test/test.jpg")
+imgcv = cv2.imread("./test/dog.jpg")
 result = tfnet.return_predict(imgcv)
 print(result)
 ```
