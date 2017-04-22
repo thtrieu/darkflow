@@ -39,7 +39,7 @@ There are three ways to get started with darkflow.
 **I am looking for help:**
  - `help wanted` labels in issue track
 
-### Parsing the annotations
+## Parsing the annotations
 
 Skip this if you are not training or fine-tuning anything (you simply want to forward flow a trained net)
 
@@ -53,7 +53,7 @@ pottedplant
 
 And that's it. `darkflow` will take care of the rest.
 
-### Design the net
+## Design the net
 
 Skip this if you are working with one of the original configurations since they are already there. Otherwise, see the following example:
 
@@ -76,7 +76,7 @@ activation = linear
 ...
 ```
 
-### Flowing the graph using `flow`
+## Flowing the graph using `flow`
 
 ```bash
 # Have a look at its options
@@ -119,7 +119,7 @@ JSON output:
  - topleft: pixel coordinate of top left corner of box.
  - bottomright: pixel coordinate of bottom right corner of box.
 
-### Training new model
+## Training new model
 
 Training is simple as you only have to add option `--train`. Training set and annotation will be parsed if this is the first time a new configuration is trained. To point to training set and annotations, use option `--dataset` and `--annotation`. A few examples:
 
@@ -144,8 +144,7 @@ During training, the script will occasionally save intermediate results into Ten
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
-### Camera/video file demo
-
+## Camera/video file demo
 
 For a demo that entirely runs on the CPU:
 
@@ -163,7 +162,8 @@ To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
 
 To save a video with predicted bounding box, add `--saveVideo` option.
 
-### Using darkflow from another python application
+## Using darkflow from another python application
+
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
 
 Result from `return_predict(img)` will be a list of dictionaries representing each detected object's values in the same format as the JSON output listed above.
@@ -181,7 +181,7 @@ result = tfnet.return_predict(imgcv)
 print(result)
 ```
 
-### Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
+## Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
