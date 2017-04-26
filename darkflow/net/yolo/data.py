@@ -14,7 +14,7 @@ def parse(self, exclusive = False):
     """
     meta = self.meta
     ext = '.parsed'
-    history = os.path.join('net', 'yolo', 'parse-history.txt');
+    history = os.path.join('darkflow', 'net', 'yolo', 'parse-history.txt');
     if not os.path.isfile(history):
         file = open(history, 'w')
         file.close()
@@ -36,7 +36,7 @@ def parse(self, exclusive = False):
     print('\n{} parsing {}'.format(meta['model'], ann))
     dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
 
-    save_to = os.path.join('net', 'yolo', meta['name'])
+    save_to = os.path.join('darkflow', 'net', 'yolo', meta['name'])
     while True:
         if not os.path.isfile(save_to + ext): break
         save_to = save_to + '_'
