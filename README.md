@@ -182,7 +182,7 @@ print(result)
 ```
 
 
-### Save the built graph to a protobuf file (`.pb`)
+## Save the built graph to a protobuf file (`.pb`)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
