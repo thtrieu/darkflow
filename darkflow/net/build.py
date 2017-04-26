@@ -6,6 +6,8 @@ from .ops import op_create, identity
 from .ops import HEADER, LINE
 from .framework import create_framework
 from darkflow.dark.darknet import Darknet
+import json
+import os
 
 class dotdict(dict):
 	"""dot.notation access to dictionary attributes to replace FLAGS when not needed"""
@@ -42,6 +44,14 @@ class TFNet(object):
 			defaultSettings.update(FLAGS)
 			FLAGS = dotdict(defaultSettings)
 
+		self.FLAGS = FLAGS
+		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
+			self.say('\nLoading from .pb and .meta')
+			self.graph = tf.Graph()
+			with self.graph.as_default() as graph:
+				self.build_from_pb()
+			return
+
 		if darknet is None:	
 			darknet = Darknet(FLAGS)
 			self.ntrain = len(darknet.layers)
@@ -53,7 +63,6 @@ class TFNet(object):
 		self.framework = create_framework(*args)
 		
 		self.meta = darknet.meta
-		self.FLAGS = FLAGS
 
 		self.say('\nBuilding net ...')
 		start = time.time()
@@ -63,7 +72,27 @@ class TFNet(object):
 			self.setup_meta_ops()
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
+	
+	def build_from_pb(self):
+		with tf.gfile.GFile("./graph-cfg/yolo.pb", "rb") as f:
+			graph_def = tf.GraphDef()
+			graph_def.ParseFromString(f.read())
+		
+		tf.import_graph_def(
+			graph_def,
+			name=""
+		)
+		with open('./graph-cfg/yolo.meta', 'r') as fp:
+			self.meta = json.load(fp)
+		self.framework = create_framework(self.meta, self.FLAGS)
 
+		# Placeholders
+		self.inp = tf.get_default_graph().get_tensor_by_name('input:0')
+		self.feed = dict() # other placeholders
+		self.out = tf.get_default_graph().get_tensor_by_name('output:0')
+		
+		self.setup_meta_ops()
+	
 	def build_forward(self):
 		verbalise = self.FLAGS.verbalise
 
@@ -135,6 +164,10 @@ class TFNet(object):
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
 		# tfnet_pb.predict() # uncomment for unit testing
 		name = 'graph-{}.pb'.format(self.meta['name'])
+		os.makedirs(os.path.dirname(name), exist_ok=True)
+		#Save dump of everything in meta
+		with open('graph-{}.meta'.format(self.meta['name']), 'w') as fp:
+			json.dump(self.meta, fp)
 		self.say('Saving const graph def to {}'.format(name))
 		graph_def = tfnet_pb.sess.graph_def
-		tf.train.write_graph(graph_def,'./',name,False)
+		tf.train.write_graph(graph_def,'./', name, False)
