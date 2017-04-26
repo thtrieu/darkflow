@@ -74,7 +74,7 @@ class TFNet(object):
 			time.time() - start))
 	
 	def build_from_pb(self):
-		with tf.gfile.GFile("./graph-cfg/yolo.pb", "rb") as f:
+		with tf.gfile.GFile(self.FLAGS.pbLoad, "rb") as f:
 			graph_def = tf.GraphDef()
 			graph_def.ParseFromString(f.read())
 		
@@ -82,7 +82,7 @@ class TFNet(object):
 			graph_def,
 			name=""
 		)
-		with open('./graph-cfg/yolo.meta', 'r') as fp:
+		with open(self.FLAGS.metaLoad, 'r') as fp:
 			self.meta = json.load(fp)
 		self.framework = create_framework(self.meta, self.FLAGS)
 
