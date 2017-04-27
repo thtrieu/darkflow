@@ -145,7 +145,7 @@ During training, the script will occasionally save intermediate results into Ten
 ```
 
 Example of training on Pascal VOC 2007:
-```
+```bash
 # Download the Pascal VOC dataset:
 curl -O https://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar
 tar xf VOCtest_06-Nov-2007.tar
