@@ -146,14 +146,14 @@ During training, the script will occasionally save intermediate results into Ten
 
 Example of training on Pascal VOC 2007:
 ```
-#Download the Pascal VOC dataset:
+# Download the Pascal VOC dataset:
 curl -O https://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar
 tar xf VOCtest_06-Nov-2007.tar
 
-#an example of the Pascal VOC annotation format:
+# An example of the Pascal VOC annotation format:
 vim VOCdevkit/VOC2007/Annotations/000001.xml
 
-#train the net on the Pascal dataset:
+# Train the net on the Pascal dataset:
 ./flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages" --annotation "~/VOCdevkit/VOC2007/Annotations"
 ```
 
