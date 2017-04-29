@@ -74,7 +74,7 @@ class TFNet(object):
 			time.time() - start))
 	
 	def build_from_pb(self):
-		with tf.gfile.GFile(self.FLAGS.pbLoad, "rb") as f:
+		with tf.gfile.FastGFile(self.FLAGS.pbLoad, "rb") as f:
 			graph_def = tf.GraphDef()
 			graph_def.ParseFromString(f.read())
 		
