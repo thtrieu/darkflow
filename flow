@@ -11,7 +11,7 @@ flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset dire
 flags.DEFINE_string("backup", "./ckpt/", "path to backup folder")
 flags.DEFINE_string("summary", "./summary/", "path to TensorBoard summaries directory")
 flags.DEFINE_string("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
-flags.DEFINE_float("threshold", 0.1, "detection threshold")
+flags.DEFINE_float("threshold", -0.1, "detection threshold")
 flags.DEFINE_string("model", "", "configuration of choice")
 flags.DEFINE_string("trainer", "rmsprop", "training algorithm")
 flags.DEFINE_float("momentum", 0.0, "applicable for rmsprop and momentum optimizers")

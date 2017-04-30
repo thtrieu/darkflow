@@ -37,15 +37,23 @@ class TFNet(object):
 
 	def __init__(self, FLAGS, darknet = None):
 		self.ntrain = 0
+
 		if isinstance(FLAGS, dict):
-			defaultSettings = {"binary": "./bin/", "config": "./cfg/", "batch": 16, "threshold": 0.1, "train": False, "verbalise": False, "gpu": 0.0}
+			defaultSettings = {
+				"binary": "./bin/", 
+				"config": "./cfg/", 
+				"batch": 16, 
+				"threshold": 0.1, 
+				"train": False, 
+				"verbalise": False, 
+				"gpu": 0.0
+			}
 			defaultSettings.update(FLAGS)
 			FLAGS = dotdict(defaultSettings)
 
 		if darknet is None:	
 			darknet = Darknet(FLAGS)
 			self.ntrain = len(darknet.layers)
-			#self.ntrain = 1
 
 		self.darknet = darknet
 		args = [darknet.meta, FLAGS]

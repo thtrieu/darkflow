@@ -17,11 +17,14 @@ def constructor(self, meta, FLAGS):
 		g = 2 - (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
 
+	# load label into meta
 	misc.labels(meta, FLAGS)
 	assert len(meta['labels']) == meta['classes'], (
 		'labels.txt and {} indicate' + ' '
 		'inconsistent class numbers'
 	).format(meta['model'])
+
+	# assign a color for each label
 	colors = list()
 	base = int(np.ceil(pow(meta['classes'], 1./3)))
 	for x in range(len(meta['labels'])): 
@@ -29,3 +32,7 @@ def constructor(self, meta, FLAGS):
 	meta['colors'] = colors
 	self.fetch = list()
 	self.meta, self.FLAGS = meta, FLAGS
+
+	# over-ride the threshold in meta if FLAGS has it.
+	if FLAGS.threshold > 0.0:
+		self.meta['thresh'] = FLAGS.threshold
