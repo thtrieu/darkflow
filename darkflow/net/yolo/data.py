@@ -8,47 +8,14 @@ import numpy as np
 import os 
 
 def parse(self, exclusive = False):
-    """
-    Decide whether to parse the annotation or not, 
-    If the parsed file is not already there, parse.
-    """
     meta = self.meta
     ext = '.parsed'
-    history = os.path.join('darkflow', 'net', 'yolo', 'parse-history.txt');
-    if not os.path.isfile(history):
-        file = open(history, 'w')
-        file.close()
-    with open(history, 'r') as f:
-        lines = f.readlines()
-    for line in lines:
-        line = line.strip().split(' ')
-        labels = line[1:]
-        if labels == meta['labels']:
-            if os.path.isfile(line[0]):
-                with open(line[0], 'rb') as f:
-                    return pickle.load(f, encoding = 'latin1')[0]
-
-    # actual parsing
     ann = self.FLAGS.annotation
     if not os.path.isdir(ann):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
     print('\n{} parsing {}'.format(meta['model'], ann))
     dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
-
-    save_to = os.path.join('darkflow', 'net', 'yolo', meta['name'])
-    while True:
-        if not os.path.isfile(save_to + ext): break
-        save_to = save_to + '_'
-    save_to += ext
-
-    with open(save_to, 'wb') as f:
-        pickle.dump([dumps], f, protocol = -1)
-    with open(history, 'a') as f:
-        f.write('{} '.format(save_to))
-        f.write(' '.join(meta['labels']))
-        f.write('\n')
-    print('Result saved to {}'.format(save_to))
     return dumps
 
 
