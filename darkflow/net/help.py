@@ -73,21 +73,28 @@ def camera(self, file, SaveVideo):
         'file {} does not exist'.format(file)
         
     camera = cv2.VideoCapture(file)
-    self.say('Press [ESC] to quit demo')
+    
+    if file == 0:
+        self.say('Press [ESC] to quit demo')
+    
     assert camera.isOpened(), \
     'Cannot capture source'
 
     elapsed = int()
     start = timer()
     
-    cv2.namedWindow('', 0)
-    _, frame = camera.read()
-    height, width, _ = frame.shape
-    cv2.resizeWindow('', width, height)
-    
+    if file == 0:#camera window
+        cv2.namedWindow('', 0)
+        _, frame = camera.read()
+        height, width, _ = frame.shape
+        cv2.resizeWindow('', width, height)
+    else:
+        _, frame = camera.read()
+        height, width, _ = frame.shape
+
     if SaveVideo:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        if file == 0:
+        if file == 0:#camera window
           fps = 1 / self._get_fps(frame)
           if fps < 1:
             fps = 1
@@ -106,21 +113,24 @@ def camera(self, file, SaveVideo):
         processed = self.framework.postprocess(net_out, frame, False)
         if SaveVideo:
             videoWriter.write(processed)
-        cv2.imshow('', processed)
+        if file == 0:#camera window
+            cv2.imshow('', processed)
         elapsed += 1
         if elapsed % 5 == 0:
             sys.stdout.write('\r')
             sys.stdout.write('{0:3.3f} FPS'.format(
                 elapsed / (timer() - start)))
             sys.stdout.flush()
-        choice = cv2.waitKey(1)
-        if choice == 27: break
+        if file == 0: #camera window
+            choice = cv2.waitKey(1)
+            if choice == 27: break
 
     sys.stdout.write('\n')
     if SaveVideo:
         videoWriter.release()
     camera.release()
-    cv2.destroyAllWindows()
+    if file == 0: #camera window
+        cv2.destroyAllWindows()
 
 def to_darknet(self):
     darknet_ckpt = self.darknet
