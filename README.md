@@ -87,7 +87,7 @@ First, let's take a closer look at one of a very useful option `--load`
 
 ```bash
 # 1. Load yolo-tiny.weights
-./flow --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
+./flow --model cfg/v1/yolo-tiny.cfg --load bin/yolo-tiny.weights
 
 # 2. To completely initialize a model, leave the --load option
 ./flow --model cfg/yolo-new.cfg
@@ -101,7 +101,7 @@ All input images from default folder `test/` are flowed through the net and pred
 
 ```bash
 # Forward all images in test/ using tiny yolo and 100% GPU usage
-./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
+./flow --test test/ --model cfg/v1/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
 ```
 json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `test/out` folder by default. An example json array is shown below.
 ```bash
@@ -141,7 +141,7 @@ During training, the script will occasionally save intermediate results into Ten
 ./flow --model cfg/yolo-new.cfg --load 1500
 
 # Fine tuning yolo-tiny from the original one
-./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
+./flow --train --model cfg/v1/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
 Example of training on Pascal VOC 2007:
