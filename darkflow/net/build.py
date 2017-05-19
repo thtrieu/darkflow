@@ -25,6 +25,7 @@ class TFNet(object):
 		'momentum': tf.train.MomentumOptimizer,
 		'adam': tf.train.AdamOptimizer,
 		'ftrl': tf.train.FtrlOptimizer,
+		'sgd': tf.train.GradientDescentOptimizer
 	})
 
 	# imported methods
