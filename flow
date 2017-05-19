@@ -29,6 +29,8 @@ flags.DEFINE_string("demo", '', "demo on webcam")
 flags.DEFINE_boolean("profile", False, "profile")
 flags.DEFINE_boolean("json", False, "Outputs bounding box information in json format.")
 flags.DEFINE_boolean("saveVideo", False, "Records video from input video or camera")
+flags.DEFINE_string("pbLoad", "", "path to .pb protobuf file (metaLoad must also be specified)")
+flags.DEFINE_string("metaLoad", "", "path to .meta file generated during --savepb that corresponds to .pb file")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist
