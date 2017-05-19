@@ -49,6 +49,7 @@ class TFNet(object):
 				"threshold": 0.1, 
 				"train": False, 
 				"verbalise": False, 
+				"gpuName": "/gpu:0",
 				"gpu": 0.0
 			}
 			defaultSettings.update(FLAGS)
@@ -59,7 +60,10 @@ class TFNet(object):
 			self.say('\nLoading from .pb and .meta')
 			self.graph = tf.Graph()
 			with self.graph.as_default() as graph:
-				self.build_from_pb()
+				device = FLAGS.gpuName \
+					if FLAGS.gpu > 0.0 else None
+				with g.device(device):
+					self.build_from_pb()
 			return
 
 		if darknet is None:	
