@@ -28,6 +28,15 @@ def _save_ckpt(self, step, loss_profile):
 
 
 def train(self):
+    # process "steps" and "scales"
+    arg_steps = self.FLAGS.steps[1:-1] # remove '[' and ']'
+    arg_steps = arg_steps.split(',')
+    arg_steps = np.array(arg_steps).astype(np.int32)
+    arg_scales = self.FLAGS.scales[1:-1]  # remove '[' and ']'
+    arg_scales = arg_scales.split(',')
+    arg_scales = np.array(arg_scales).astype(np.float32)
+    lr = self.FLAGS.lr
+	
     loss_ph = self.framework.placeholders
     loss_mva = None; profile = list()
 
@@ -45,6 +54,15 @@ def train(self):
                 for key in loss_ph }
         feed_dict[self.inp] = x_batch
         feed_dict.update(self.feed)
+	
+	# update learning rate at user specified steps
+        feed_dict[self.learning_rate] = lr
+        idx = np.where(arg_steps[:] == i + 1)[0]
+        if len(idx):
+            new_lr = lr * arg_scales[idx][0]
+            lr = new_lr
+            feed_dict[self.learning_rate] = lr
+            print("\nSTEP {} - UPDATE LEARNING RATE TO {:.6}".format(i+1, new_lr))
 
         fetches = [self.train_op, loss_op, self.summary_op] 
         fetched = self.sess.run(fetches, feed_dict)
