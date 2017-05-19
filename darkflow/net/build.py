@@ -49,6 +49,7 @@ class TFNet(object):
 				"threshold": 0.1, 
 				"train": False, 
 				"verbalise": False, 
+				"gpuName": "/gpu:0",
 				"gpu": 0.0
 			}
 			defaultSettings.update(FLAGS)
