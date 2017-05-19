@@ -117,7 +117,7 @@ def postprocess(self, net_out, im, save = True):
 
 	# Removing trailing comma+newline adding json list terminator.
 	textBuff = textBuff[:-2] + "]"
-	outfolder = os.path.join(self.FLAGS.test, 'out')
+	outfolder = os.path.join(self.FLAGS.imgdir, 'out')
 	img_name = os.path.join(outfolder, im.split('/')[-1])
 	if self.FLAGS.json:
 		textFile = os.path.splitext(img_name)[0] + ".json"

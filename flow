@@ -4,7 +4,7 @@ from darkflow.net.build import TFNet
 from tensorflow import flags
 import os
 
-flags.DEFINE_string("test", "./test/", "path to testing directory")
+flags.DEFINE_string("imgdir", "./sample_img/", "path to testing directory with images")
 flags.DEFINE_string("binary", "./bin/", "path to .weights directory")
 flags.DEFINE_string("config", "./cfg/", "path to .cfg directory")
 flags.DEFINE_string("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
@@ -39,7 +39,7 @@ def get_dir(dirs):
 	for d in dirs:
 		this = os.path.abspath(os.path.join(os.path.curdir, d))
 		if not os.path.exists(this): os.makedirs(this)
-get_dir([FLAGS.test, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.test,'out'), FLAGS.summary])
+get_dir([FLAGS.imgdir, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.imgdir,'out'), FLAGS.summary])
 
 # fix FLAGS.load to appropriate type
 try: FLAGS.load = int(FLAGS.load)

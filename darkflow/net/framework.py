@@ -21,28 +21,28 @@ class YOLO(framework):
     constructor = yolo.constructor
     parse = yolo.data.parse
     shuffle = yolo.data.shuffle
-    preprocess = yolo.test.preprocess
-    postprocess = yolo.test.postprocess
+    preprocess = yolo.predict.preprocess
+    postprocess = yolo.predict.postprocess
     loss = yolo.train.loss
     is_inp = yolo.misc.is_inp
     profile = yolo.misc.profile
     _batch = yolo.data._batch
-    resize_input = yolo.test.resize_input
-    findboxes = yolo.test.findboxes
-    process_box = yolo.test.process_box
+    resize_input = yolo.predict.resize_input
+    findboxes = yolo.predict.findboxes
+    process_box = yolo.predict.process_box
 
 class YOLOv2(framework):
     constructor = yolo.constructor
     parse = yolo.data.parse
     shuffle = yolov2.data.shuffle
-    preprocess = yolo.test.preprocess
+    preprocess = yolo.predict.preprocess
     loss = yolov2.train.loss
     is_inp = yolo.misc.is_inp
-    postprocess = yolov2.test.postprocess
+    postprocess = yolov2.predict.postprocess
     _batch = yolov2.data._batch
-    resize_input = yolo.test.resize_input
-    findboxes = yolov2.test.findboxes
-    process_box = yolo.test.process_box
+    resize_input = yolo.predict.resize_input
+    findboxes = yolov2.predict.findboxes
+    process_box = yolo.predict.process_box
 
 """
 framework factory

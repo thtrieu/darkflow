@@ -1,5 +1,5 @@
 from . import train
-from . import test
+from . import predict
 from . import data
 from . import misc
 import numpy as np

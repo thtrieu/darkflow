@@ -97,16 +97,16 @@ First, let's take a closer look at one of a very useful option `--load`
 # this will print out which layers are reused, which are initialized
 ```
 
-All input images from default folder `test/` are flowed through the net and predictions are put in `test/out/`. We can always specify more parameters for such forward passes, such as detection threshold, batch size, test folder, etc.
+All input images from default folder `sample_img/` are flowed through the net and predictions are put in `sample_img/out/`. We can always specify more parameters for such forward passes, such as detection threshold, batch size, images folder, etc.
 
 ```bash
-# Forward all images in test/ using tiny yolo and 100% GPU usage
-./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
+# Forward all images in sample_img/ using tiny yolo and 100% GPU usage
+./flow --imgdir sample_img/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --gpu 1.0
 ```
-json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `test/out` folder by default. An example json array is shown below.
+json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `sample_img/out` folder by default. An example json array is shown below.
 ```bash
-# Forward all images in test/ using tiny yolo and JSON output.
-./flow --test test/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
+# Forward all images in sample_img/ using tiny yolo and JSON output.
+./flow --imgdir sample_img/ --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights --json
 ```
 JSON output:
 ```json
@@ -189,7 +189,7 @@ options = {"model": "cfg/yolo.cfg", "load": "bin/yolo.weights", "threshold": 0.1
 
 tfnet = TFNet(options)
 
-imgcv = cv2.imread("./test/dog.jpg")
+imgcv = cv2.imread("./sample_img/dog.jpg")
 result = tfnet.return_predict(imgcv)
 print(result)
 ```
@@ -210,8 +210,8 @@ The created `.pb` file can be used to migrate the graph to mobile devices (JAVA 
 
 Also, darkflow supports loading from a `.pb` and `.meta` file for generating predictions (instead of loading from a `.cfg` and checkpoint or `.weights`).
 ```bash
-## Forward images in test for predictions based on protobuf file
-./flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --test test/
+## Forward images in sample_img for predictions based on protobuf file
+./flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --imgdir sample_img/
 ```
 If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 
