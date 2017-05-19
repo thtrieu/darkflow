@@ -25,6 +25,7 @@ class TFNet(object):
 		'momentum': tf.train.MomentumOptimizer,
 		'adam': tf.train.AdamOptimizer,
 		'ftrl': tf.train.FtrlOptimizer,
+		'sgd': tf.train.GradientDescentOptimizer
 	})
 
 	# imported methods
@@ -76,8 +77,11 @@ class TFNet(object):
 		start = time.time()
 		self.graph = tf.Graph()
 		with self.graph.as_default() as g:
-			self.build_forward()
-			self.setup_meta_ops()
+			device = FLAGS.gpuName \
+				if FLAGS.gpu > 0.0 else None
+			with g.device(device):
+				self.build_forward()
+				self.setup_meta_ops()
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
 	
