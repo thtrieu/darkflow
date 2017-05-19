@@ -59,7 +59,7 @@ class TFNet(object):
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
 			self.say('\nLoading from .pb and .meta')
 			self.graph = tf.Graph()
-			with self.graph.as_default() as graph:
+			with self.graph.as_default() as g:
 				device = FLAGS.gpuName \
 					if FLAGS.gpu > 0.0 else None
 				with g.device(device):
