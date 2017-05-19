@@ -31,6 +31,8 @@ flags.DEFINE_boolean("json", False, "Outputs bounding box information in json fo
 flags.DEFINE_boolean("saveVideo", False, "Records video from input video or camera")
 flags.DEFINE_string("steps", "[-1]", "steps for changing learning rate")
 flags.DEFINE_string("scales", "[1]", "scales for changing learning rate")
+flags.DEFINE_string("pbLoad", "", "path to .pb protobuf file (metaLoad must also be specified)")
+flags.DEFINE_string("metaLoad", "", "path to .meta file generated during --savepb that corresponds to .pb file")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist

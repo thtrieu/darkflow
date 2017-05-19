@@ -194,13 +194,25 @@ result = tfnet.return_predict(imgcv)
 print(result)
 ```
 
-## Migrating the graph to mobile devices (JAVA / C++ / Objective-C++)
+
+## Save the built graph to a protobuf file (`.pb`)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
 ./flow --model cfg/yolo-new.cfg --load -1 --savepb
-```
 
-The name of input tensor and output tensor are respectively `'input'` and `'output'`. For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
+## Saving graph and weights to protobuf file
+./flow --model cfg/yolo.cfg --load bin/yolo.weights --savepb
+```
+When saving the `.pb` file, a `.meta` file will also be generated alongside it. This `.meta` file is a JSON dump of everything in the `meta` dictionary that contains information nessecary for post-processing such as `anchors` and `labels`. This way, everything you need to make predictions from the graph and do post processing is contained in those two files - no need to have the `.cfg` or any labels file tagging along.
+
+The created `.pb` file can be used to migrate the graph to mobile devices (JAVA / C++ / Objective-C++). The name of input tensor and output tensor are respectively `'input'` and `'output'`. For further usage of this protobuf file, please refer to the official documentation of `Tensorflow` on C++ API [_here_](https://www.tensorflow.org/versions/r0.9/api_docs/cc/index.html). To run it on, say, iOS application, simply add the file to Bundle Resources and update the path to this file inside source code.
+
+Also, darkflow supports loading from a `.pb` and `.meta` file for generating predictions (instead of loading from a `.cfg` and checkpoint or `.weights`).
+```bash
+## Forward images in test for predictions based on protobuf file
+./flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --test test/
+```
+If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 
 That's all.
