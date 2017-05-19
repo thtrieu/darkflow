@@ -5,10 +5,10 @@
 # Weight files
 bin/
 
-# Test data
-test/*.jpg
-!test/sample_*.jpg
-test/out/*.jpg
+# Sample image data
+test/*.jpg          #Exclude any added images
+!test/sample_*.jpg  #Don't exclude the default images
+test/out/*.jpg      #Exclude any generated images with predictions
 
 # Annotated test results
 results/
