@@ -6,9 +6,9 @@
 bin/
 
 # Sample image data
-sample_img/*.jpg          #Exclude any added images
-!sample_img/sample_*.jpg  #Don't exclude the default images
-sample_img/out/*.jpg      #Exclude any generated images with predictions
+sample_img/*.jpg
+!sample_img/sample_*.jpg
+sample_img/out/*
 
 # Annotated test results
 results/
