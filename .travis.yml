@@ -7,7 +7,7 @@ cache:
     - bin #cache .weights files
     
 # command to install dependencies
-install: "pip install -r test/test-requirements.txt"
+install: "pip install -r $TRAVIS_BUILD_DIR/test/test-requirements.txt"
 
 # command to run tests
 script: pytest
