@@ -37,7 +37,7 @@ build/
 summary/
 
 #Built graphs
-graph-cfg/
+built_graph/
 
 #pytest cache
 .cache/
