@@ -1,3 +1,5 @@
+import os
+import sys
 buildPath = os.environ.get("TRAVIS_BUILD_DIR")
 if buildPath is None:
     print()
@@ -10,8 +12,6 @@ from darkflow.net.build import TFNet
 import json
 import requests
 import cv2
-import os
-import sys
 import pytest
 
 #NOTE: This file is designed to be run in the TravisCI environment. If you want to run it locally set the environment variable TRAVIS_BUILD_DIR to the base
