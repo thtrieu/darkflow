@@ -12,7 +12,9 @@ import sys
 #Settings
 imgWidth = 640
 imgHeight = 424
-buildPath = os.environ.get("WERCKER_ROOT")
+buildPath = os.environ.get("TRAVIS_BUILD_DIR")
+if buildPath is None:
+    buildPath = os.environ.get("WERCKER_ROOT")
 if os.name == 'nt':
     buildPath = r"C:\Users\abags\OneDrive\School\Computer_Programming\salieo\darkflow" #We're running locally on Windows (dev hopefully!) #REMOVE THIS
 if buildPath is None:
