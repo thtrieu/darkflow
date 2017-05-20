@@ -167,4 +167,4 @@ def test_RETURNPREDICT_YOLOv1():
     imgcv = cv2.imread(testImgPath)
     loadedPredictions = tfnet.return_predict(imgcv)
 
-    assert compareObjectData(expectedDetectedObjectsV2, loadedPredictions, imgWidth, imgHeight), "Generated object predictions from return_predict() were not within margin of error compared to expected values."
+    assert compareObjectData(expectedDetectedObjectsV1, loadedPredictions, imgWidth, imgHeight), "Generated object predictions from return_predict() were not within margin of error compared to expected values."
