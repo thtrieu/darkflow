@@ -1,0 +1,5 @@
+tensorflow
+pytest
+requests
+opencv-python
+numpy
