@@ -4,6 +4,7 @@ import requests
 import cv2
 import os
 import sys
+import pytest
 
 #NOTE: This file is designed to be run in the TravisCI environment. If you want to run it locally set the environment variable TRAVIS_BUILD_DIR to the base
 #      directory of the cloned darkflow repository. WARNING: This file will make some modifications to the darkflow repository during testing such as
@@ -23,8 +24,8 @@ if buildPath is None:
     print("If you want to test this locally, set TRAVIS_BUILD_DIR to the base directory of the cloned darkflow repository.")
     exit()
 testImgPath = os.path.join(buildPath, "sample_img", "sample_person.jpg")
-expectedDetectedObjectsV1 = [{'label': 'dog', 'topleft': {'x': 84, 'y': 249}, 'bottomright': {'x': 208, 'y': 367}, 'confidence': 0.45600408}, 
-                             {'label': 'person', 'topleft': {'x': 159, 'y': 102}, 'bottomright': {'x': 304, 'y': 365}, 'confidence': 0.60294712}]
+expectedDetectedObjectsV1 = [{"label": "dog","confidence": 0.46,"topleft": {"x": 84, "y": 249},"bottomright": {"x": 208,"y": 367}}, 
+                             {"label": "person","confidence": 0.60,"topleft": {"x": 159, "y": 102},"bottomright": {"x": 304,"y": 365}}]
 
 expectedDetectedObjectsV2 = [{"label":"person","confidence":0.82,"topleft":{"x":189,"y":96},"bottomright":{"x":271,"y":380}},
                            {"label":"dog","confidence":0.79,"topleft":{"x":69,"y":258},"bottomright":{"x":209,"y":354}},
@@ -59,8 +60,8 @@ yoloCfgPathV1 = os.path.join(buildPath, "cfg", "v1", "{0}.cfg".format(os.path.sp
 yoloWeightPathV2 = os.path.join(buildPath, "bin", yoloDownloadV2.split("/")[-1])
 yoloCfgPathV2 = os.path.join(buildPath, "cfg", "{0}.cfg".format(os.path.splitext(os.path.basename(yoloWeightPathV2))[0]))
 
-pbPath = os.path.join(buildPath, "test", "built_graph", os.path.splitext(os.path.basename(yoloWeightPathV2))[0] + ".pb")
-metaPath = os.path.join(buildPath, "test", "built_graph", os.path.splitext(os.path.basename(yoloWeightPathV2))[0] + ".meta")
+pbPath = os.path.join(buildPath, "built_graph", os.path.splitext(os.path.basename(yoloWeightPathV2))[0] + ".pb")
+metaPath = os.path.join(buildPath, "built_graph", os.path.splitext(os.path.basename(yoloWeightPathV2))[0] + ".meta")
 
 generalConfigPath = os.path.join(buildPath, "cfg")
 
@@ -138,7 +139,9 @@ def test_CLI_SAVEPB_YOLOv2():
     #      contents of those files.
 
     testString = "./flow --model {0} --load {1} --config {2} --threshold 0.4 --savepb".format(yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
-    executeCLI(testString)
+    
+    with pytest.raises(SystemExit):
+            executeCLI(testString)
 
     assert os.path.exists(pbPath), "Expected output .pb file: {0} was not found.".format(pbPath)
     assert os.path.exists(metaPath), "Expected output .meta file: {0} was not found.".format(metaPath)
