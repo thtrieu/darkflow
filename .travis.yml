@@ -15,4 +15,8 @@ install:
     - pip install .
 
 # command to run tests
-script: pytest -x
+script: pytest -x --cov=./
+
+#Upload code coverage statistics
+after_success:
+  codecov
