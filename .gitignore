@@ -37,3 +37,6 @@ summary/
 
 #Built graphs
 graph-cfg/
+
+#pytest cache
+.cache/
