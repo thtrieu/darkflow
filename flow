@@ -2,9 +2,10 @@
 
 import sys
 import os
-from darkflow.defaults import defaultFLAGS #Import the default arguments (if you want to change/add default arguments do it in /darkflow/defaults.py)
+from darkflow.defaults import getDefaults #Import the default arguments (if you want to change/add default arguments do it in /darkflow/defaults.py)
 
 def main(args):
+	defaultFLAGS = getDefaults()
 	defaultFLAGS.parseArgs(args)
 	FLAGS = defaultFLAGS #Handle the arguments passed
 
@@ -40,5 +41,7 @@ def main(args):
 		tfnet.savepb(); exit('Done')
 
 	tfnet.predict()
+	
+if __name__ == "__main__":
+	main(sys.argv)
 
-main(sys.argv)

@@ -36,7 +36,8 @@ class TFNet(object):
 		self.ntrain = 0
 
 		if isinstance(FLAGS, dict):
-			from ..defaults import defaultFLAGS
+			from ..defaults import getDefaults
+			defaultFLAGS = getDefaults()
 			defaultFLAGS.update(FLAGS)
 			FLAGS = defaultFLAGS
 
