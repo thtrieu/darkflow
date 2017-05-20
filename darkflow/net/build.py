@@ -9,12 +9,6 @@ from darkflow.dark.darknet import Darknet
 import json
 import os
 
-class dotdict(dict):
-	"""dot.notation access to dictionary attributes to replace FLAGS when not needed"""
-	__getattr__ = dict.get
-	__setattr__ = dict.__setitem__
-	__delattr__ = dict.__delitem__
-
 class TFNet(object):
 
 	_TRAINER = dict({
@@ -42,18 +36,9 @@ class TFNet(object):
 		self.ntrain = 0
 
 		if isinstance(FLAGS, dict):
-			defaultSettings = {
-				"binary": "./bin/", 
-				"config": "./cfg/", 
-				"batch": 16, 
-				"threshold": 0.1, 
-				"train": False, 
-				"verbalise": False, 
-				"gpuName": "/gpu:0",
-				"gpu": 0.0
-			}
-			defaultSettings.update(FLAGS)
-			FLAGS = dotdict(defaultSettings)
+			from ..defaults import defaultFLAGS
+			defaultFLAGS.update(FLAGS)
+			FLAGS = defaultFLAGS
 
 		self.FLAGS = FLAGS
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
