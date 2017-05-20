@@ -21,7 +21,7 @@ coco_names = 'coco.names'
 nine_names = '9k.names'
 
 def labels(meta, FLAGS):    
-    model = meta['name'].split('/')[-1]
+    model = os.path.basename(meta['name'])
     if model in voc_models: 
         print("Model has a VOC model name, loading VOC labels.")
         meta['labels'] = labels20
