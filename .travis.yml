@@ -9,7 +9,7 @@ cache:
 # command to install dependencies
 install: 
     - pip install -r $TRAVIS_BUILD_DIR/test/requirements-testing.txt
-    - pip install -r $TRAVIS_BUILD_DIR
+    - pip install $TRAVIS_BUILD_DIR
 
 # command to run tests
 script: pytest
