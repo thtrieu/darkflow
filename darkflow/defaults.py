@@ -3,7 +3,7 @@ class argHandler(dict):
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-    _descriptions = {"help, -h": "show this super helpful message and exit"}
+    _descriptions = {"help, --h, -h": "show this super helpful message and exit"}
     
     def setDefaults(self):
         self.define("imgdir", "./sample_img/", "path to testing directory with images")
@@ -54,7 +54,7 @@ class argHandler(dict):
         print("")
         i = 1
         while i < len(args):
-            if args[i] == "-h" or args[i] == "--help":
+            if args[i] == "-h" or args[i] == "--h" or args[i] == "--help":
                 self.help() #Time for some self help! :)
             if len(args[i]) < 2:
                 print("ERROR - Invalid argument: " + args[i])
