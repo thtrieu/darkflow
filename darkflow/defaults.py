@@ -29,7 +29,7 @@ class argHandler(dict):
         self.define('epoch', 1000, 'number of epoch')
         self.define('save', 2000, 'save checkpoint every ? training examples')
         self.define('demo', '', 'demo on webcam')
-        self.define('queue', 5, 'process demo in batch')
+        self.define('queue', 1, 'process demo in batch')
         self.define('json', False, 'Outputs bounding box information in json format.')
         self.define('saveVideo', False, 'Records video from input video or camera')
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
