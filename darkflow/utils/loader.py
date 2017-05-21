@@ -2,7 +2,7 @@ import tensorflow as tf
 import os
 import darkflow.dark as dark
 import numpy as np
-from os import sep
+from os.path import basename
 
 class loader(object):
     """
@@ -138,7 +138,7 @@ class weights_walker(object):
         return float32_1D_array
 
 def model_name(file_path):
-    file_name = file_path.split(sep)[-1]
+    file_name = basename(file_path)
     ext = str()
     if '.' in file_name: # exclude extension
         file_name = file_name.split('.')
