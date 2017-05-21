@@ -1,6 +1,6 @@
 ## Intro
 
-[![Build Status](https://travis-ci.org/thtrieu/darkflow.svg?branch=master)](https://travis-ci.org/abagshaw/darkflow) [![codecov](https://codecov.io/gh/abagshaw/darkflow/branch/master/graph/badge.svg)](https://codecov.io/gh/abagshaw/darkflow)
+[![Build Status](https://travis-ci.org/thtrieu/darkflow.svg?branch=master)](https://travis-ci.org/thtrieu/darkflow) [![codecov](https://codecov.io/gh/thtrieu/darkflow/branch/master/graph/badge.svg)](https://codecov.io/gh/thtrieu/darkflow)
 
 Real-time object detection and classification. Paper: [version 1](https://arxiv.org/pdf/1506.02640.pdf), [version 2](https://arxiv.org/pdf/1612.08242.pdf).
 
