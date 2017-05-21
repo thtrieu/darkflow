@@ -97,11 +97,11 @@ def return_predict(self, im):
 import math
 
 def predict(self):
-    inp_path = self.FLAGS.test
+    inp_path = self.FLAGS.imgdir
     all_inps = os.listdir(inp_path)
     all_inps = [i for i in all_inps if self.framework.is_inp(i)]
     if not all_inps:
-        msg = 'Failed to find any test files in {} .'
+        msg = 'Failed to find any images in {} .'
         exit('Error: {}'.format(msg.format(inp_path)))
 
     batch = min(self.FLAGS.batch, len(all_inps))

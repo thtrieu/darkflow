@@ -1,0 +1,22 @@
+dist: trusty
+sudo: false
+
+language: python
+python:
+  - "3.6"
+
+cache:
+    directories:
+    - bin #cache .weights files
+    
+# command to install dependencies
+install: 
+    - pip install -r test/requirements-testing.txt
+    - pip install -e .
+
+# command to run tests
+script: pytest -x --cov=./
+
+#Upload code coverage statistics
+after_success:
+  - codecov

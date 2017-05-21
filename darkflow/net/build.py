@@ -9,12 +9,6 @@ from darkflow.dark.darknet import Darknet
 import json
 import os
 
-class dotdict(dict):
-	"""dot.notation access to dictionary attributes to replace FLAGS when not needed"""
-	__getattr__ = dict.get
-	__setattr__ = dict.__setitem__
-	__delattr__ = dict.__delitem__
-
 class TFNet(object):
 
 	_TRAINER = dict({
@@ -42,18 +36,11 @@ class TFNet(object):
 		self.ntrain = 0
 
 		if isinstance(FLAGS, dict):
-			defaultSettings = {
-				"binary": "./bin/", 
-				"config": "./cfg/", 
-				"batch": 16, 
-				"threshold": 0.1, 
-				"train": False, 
-				"verbalise": False, 
-				"gpuName": "/gpu:0",
-				"gpu": 0.0
-			}
-			defaultSettings.update(FLAGS)
-			FLAGS = dotdict(defaultSettings)
+			from ..defaults import argHandler
+			newFLAGS = argHandler()
+			newFLAGS.setDefaults()
+			newFLAGS.update(FLAGS)
+			FLAGS = newFLAGS
 
 		self.FLAGS = FLAGS
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
@@ -179,10 +166,11 @@ class TFNet(object):
 		tfnet_pb = TFNet(flags_pb, darknet_pb)		
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
 		# tfnet_pb.predict() # uncomment for unit testing
-		name = 'graph-{}.pb'.format(self.meta['name'])
+		name = 'built_graph/{}.pb'.format(self.meta['name'])
+		print(name)
 		os.makedirs(os.path.dirname(name), exist_ok=True)
 		#Save dump of everything in meta
-		with open('graph-{}.meta'.format(self.meta['name']), 'w') as fp:
+		with open('built_graph/{}.meta'.format(self.meta['name']), 'w') as fp:
 			json.dump(self.meta, fp)
 		self.say('Saving const graph def to {}'.format(name))
 		graph_def = tfnet_pb.sess.graph_def
