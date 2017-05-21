@@ -8,8 +8,8 @@ import sys
 import pytest
 
 #NOTE: This file is designed to be run in the TravisCI environment. If you want to run it locally set the environment variable TRAVIS_BUILD_DIR to the base
-#      directory of the cloned darkflow repository. WARNING: This file will make some modifications to the darkflow repository during testing such as
-#      deleting images from sample_img/ that won't be used for testing and renaming flow to flow.py (so don't run it locally if you don't want this happening!)
+#      directory of the cloned darkflow repository. WARNING: This file delete images from sample_img/ that won't be used for testing (so don't run it
+#      locally if you don't want this happening!)
 
 #Settings
 imgWidth = 640
@@ -104,7 +104,7 @@ def test_CLI_IMG_YOLOv2():
     #NOTE: This test currently does not verify anything about the image created (i.e. proper labeling, proper positioning of prediction boxes, etc.)
     #      it simply verifies that the code executes properly and that the expected output image is indeed created in ./test/img/out
 
-    testString = "./flow --imgdir {0} --model {1} --load {2} --config {3} --threshold 0.4".format(os.path.dirname(testImgPath), yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
+    testString = "flow --imgdir {0} --model {1} --load {2} --config {3} --threshold 0.4".format(os.path.dirname(testImgPath), yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
     executeCLI(testString)
 
     outputImgPath = os.path.join(os.path.dirname(testImgPath), "out", os.path.basename(testImgPath))
@@ -115,7 +115,7 @@ def test_CLI_JSON_YOLOv2():
     #NOTE: This test verifies that the code executes properly, the JSON file is created properly and the predictions generated are within a certain
     #      margin of error when compared to the expected predictions.
 
-    testString = "./flow --imgdir {0} --model {1} --load {2} --config {3} --threshold 0.4 --json".format(os.path.dirname(testImgPath), yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
+    testString = "flow --imgdir {0} --model {1} --load {2} --config {3} --threshold 0.4 --json".format(os.path.dirname(testImgPath), yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
     executeCLI(testString)
 
     outputJSONPath = os.path.join(os.path.dirname(testImgPath), "out", os.path.splitext(os.path.basename(testImgPath))[0] + ".json")
@@ -131,7 +131,7 @@ def test_CLI_SAVEPB_YOLOv2():
     #NOTE: This test verifies that the code executes properly, and the .pb and .meta files are successfully created. A subsequent test will verify the
     #      contents of those files.
 
-    testString = "./flow --model {0} --load {1} --config {2} --threshold 0.4 --savepb".format(yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
+    testString = "flow --model {0} --load {1} --config {2} --threshold 0.4 --savepb".format(yoloCfgPathV2, yoloWeightPathV2, generalConfigPath)
     
     with pytest.raises(SystemExit):
             executeCLI(testString)
