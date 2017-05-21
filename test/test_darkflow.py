@@ -1,4 +1,5 @@
 from darkflow.net.build import TFNet
+from darkflow.cli import cliHandler
 import json
 import requests
 import cv2
@@ -46,11 +47,6 @@ def download_file(url, savePath):
     else:
         print("Found existing " + fileName + " file.")
 
-if os.path.isfile(os.path.join(buildPath, "flow")):
-    os.rename(os.path.join(buildPath, "flow"), os.path.join(buildPath, "flow.py")) #Change flow to flow.py so we can import it
-sys.path.insert(0, buildPath) #Add the buildPath to the PATH
-from flow import main
-
 yoloWeightPathV1 = os.path.join(buildPath, "bin", yoloDownloadV1.split("/")[-1])
 yoloCfgPathV1 = os.path.join(buildPath, "cfg", "v1", "{0}.cfg".format(os.path.splitext(os.path.basename(yoloWeightPathV1))[0]))
 
@@ -70,7 +66,7 @@ def executeCLI(commandString):
     print("Executing: {0}".format(commandString))
     print()
     splitArgs = [item.strip() for item in commandString.split(" ")]
-    main(splitArgs) #Run the command
+    cliHandler(splitArgs) #Run the command
     print()
 
 def compareSingleObjects(firstObject, secondObject, width, height):

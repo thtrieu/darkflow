@@ -1,47 +1,7 @@
 #! /usr/bin/env python
 
 import sys
-import os
-from darkflow.defaults import getDefaults #Import the default arguments (if you want to change/add default arguments do it in /darkflow/defaults.py)
+from darkflow.cli import cliHandler
 
-def main(args):
-	defaultFLAGS = getDefaults()
-	defaultFLAGS.parseArgs(args)
-	FLAGS = defaultFLAGS #Handle the arguments passed
-
-	from darkflow.net.build import TFNet
-
-	# make sure all necessary dirs exist
-	def get_dir(dirs):
-		for d in dirs:
-			this = os.path.abspath(os.path.join(os.path.curdir, d))
-			if not os.path.exists(this): os.makedirs(this)
-	get_dir([FLAGS.imgdir, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.imgdir,'out'), FLAGS.summary])
-
-	# fix FLAGS.load to appropriate type
-	try: FLAGS.load = int(FLAGS.load)
-	except: pass
-
-	tfnet = TFNet(FLAGS)
-
-	if FLAGS.profile:
-		tfnet.framework.profile(tfnet)
-		exit()
-
-	if FLAGS.demo:
-		tfnet.camera(FLAGS.demo, FLAGS.saveVideo)
-		exit()
-
-	if FLAGS.train:
-		print('Enter training ...'); tfnet.train()
-		if not FLAGS.savepb: exit('Training finished')
-
-	if FLAGS.savepb:
-		print('Rebuild a constant version ...')
-		tfnet.savepb(); exit('Done')
-
-	tfnet.predict()
-	
-if __name__ == "__main__":
-	main(sys.argv)
+cliHandler(sys.argv)
 

@@ -5,6 +5,36 @@ class argHandler(dict):
     __delattr__ = dict.__delitem__
     _descriptions = {"help, -h": "show this super helpful message and exit"}
     
+    def setDefaults(self):
+        self.define("imgdir", "./sample_img/", "path to testing directory with images")
+        self.define("binary", "./bin/", "path to .weights directory")
+        self.define("config", "./cfg/", "path to .cfg directory")
+        self.define("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
+        self.define("backup", "./ckpt/", "path to backup folder")
+        self.define("summary", "./summary/", "path to TensorBoard summaries directory")
+        self.define("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
+        self.define("threshold", -0.1, "detection threshold")
+        self.define("model", "", "configuration of choice")
+        self.define("trainer", "rmsprop", "training algorithm")
+        self.define("momentum", 0.0, "applicable for rmsprop and momentum optimizers")
+        self.define("verbalise", True, "say out loud while building graph")
+        self.define("train", False, "train the whole net")
+        self.define("load", "", "how to initialize the net? Either from .weights or a checkpoint, or even from scratch")
+        self.define("savepb", False, "save net and weight to a .pb file")
+        self.define("gpu", 0.0, "how much gpu (from 0.0 to 1.0)")
+        self.define("gpuName", "/gpu:0", "GPU device name")
+        self.define("lr", 1e-5, "learning rate")
+        self.define("keep",20,"Number of most recent training results to save")
+        self.define("batch", 16, "batch size")
+        self.define("epoch", 1000, "number of epoch")
+        self.define("save", 2000, "save checkpoint every ? training examples")
+        self.define("demo", '', "demo on webcam")
+        self.define("profile", False, "profile")
+        self.define("json", False, "Outputs bounding box information in json format.")
+        self.define("saveVideo", False, "Records video from input video or camera")
+        self.define("pbLoad", "", "path to .pb protobuf file (metaLoad must also be specified)")
+        self.define("metaLoad", "", "path to .meta file generated during --savepb that corresponds to .pb file")
+
     def define(self, argName, default, description):
         self[argName] = default
         self._descriptions[argName] = description
@@ -63,35 +93,3 @@ class argHandler(dict):
                 print("Try running ./flow --help")
                 exit()
             i += 1
-
-def getDefaults():
-    defaultFLAGS = argHandler()
-    defaultFLAGS.define("imgdir", "./sample_img/", "path to testing directory with images")
-    defaultFLAGS.define("binary", "./bin/", "path to .weights directory")
-    defaultFLAGS.define("config", "./cfg/", "path to .cfg directory")
-    defaultFLAGS.define("dataset", "../pascal/VOCdevkit/IMG/", "path to dataset directory")
-    defaultFLAGS.define("backup", "./ckpt/", "path to backup folder")
-    defaultFLAGS.define("summary", "./summary/", "path to TensorBoard summaries directory")
-    defaultFLAGS.define("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
-    defaultFLAGS.define("threshold", -0.1, "detection threshold")
-    defaultFLAGS.define("model", "", "configuration of choice")
-    defaultFLAGS.define("trainer", "rmsprop", "training algorithm")
-    defaultFLAGS.define("momentum", 0.0, "applicable for rmsprop and momentum optimizers")
-    defaultFLAGS.define("verbalise", True, "say out loud while building graph")
-    defaultFLAGS.define("train", False, "train the whole net")
-    defaultFLAGS.define("load", "", "how to initialize the net? Either from .weights or a checkpoint, or even from scratch")
-    defaultFLAGS.define("savepb", False, "save net and weight to a .pb file")
-    defaultFLAGS.define("gpu", 0.0, "how much gpu (from 0.0 to 1.0)")
-    defaultFLAGS.define("gpuName", "/gpu:0", "GPU device name")
-    defaultFLAGS.define("lr", 1e-5, "learning rate")
-    defaultFLAGS.define("keep",20,"Number of most recent training results to save")
-    defaultFLAGS.define("batch", 16, "batch size")
-    defaultFLAGS.define("epoch", 1000, "number of epoch")
-    defaultFLAGS.define("save", 2000, "save checkpoint every ? training examples")
-    defaultFLAGS.define("demo", '', "demo on webcam")
-    defaultFLAGS.define("profile", False, "profile")
-    defaultFLAGS.define("json", False, "Outputs bounding box information in json format.")
-    defaultFLAGS.define("saveVideo", False, "Records video from input video or camera")
-    defaultFLAGS.define("pbLoad", "", "path to .pb protobuf file (metaLoad must also be specified)")
-    defaultFLAGS.define("metaLoad", "", "path to .meta file generated during --savepb that corresponds to .pb file")
-    return defaultFLAGS

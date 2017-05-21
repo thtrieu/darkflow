@@ -12,12 +12,11 @@ cache:
 # command to install dependencies
 install: 
     - pip install -r test/requirements-testing.txt
-    - coverage run -m pip install -e .
+    - pip install -e .
 
 # command to run tests
 script: pytest -x --cov=./
 
 #Upload code coverage statistics
 after_success:
-  - coverage combine
   - codecov
