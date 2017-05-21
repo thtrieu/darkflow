@@ -12,7 +12,7 @@ cache:
 # command to install dependencies
 install: 
     - pip install -r test/requirements-testing.txt
-    - coverage run pip install -e .
+    - coverage run -m pip install -e .
 
 # command to run tests
 script: pytest -x --cov=./
