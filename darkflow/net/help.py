@@ -41,7 +41,7 @@ def say(self, *msgs):
         if msg is None: continue
         print(msg)
 
-def load_old_graph(self, ckpt):	
+def load_old_graph(self, ckpt): 
     ckpt_loader = create_loader(ckpt)
     self.say(old_graph_msg.format(ckpt))
     
@@ -93,41 +93,41 @@ def camera(self):
         else:
             fps = round(camera.get(cv2.CAP_PROP_FPS))
         videoWriter = cv2.VideoWriter(
-			'video.avi', fourcc, fps, (width, height))
+            'video.avi', fourcc, fps, (width, height))
 
-	# buffers for demo in batch
-	buffer_inp = list()
-	buffer_pre = list()
-	
+    # buffers for demo in batch
+    buffer_inp = list()
+    buffer_pre = list()
+    
     elapsed = int()
     start = timer()
-	self.say('Press [ESC] to quit demo')
-	# Loop through frames
+    self.say('Press [ESC] to quit demo')
+    # Loop through frames
     while camera.isOpened():
-		elapsed += 1
+        elapsed += 1
         _, frame = camera.read()
         if frame is None:
             print ('\nEnd of Video')
             break
         preprocessed = self.framework.preprocess(frame)
-		buffer_inp.append(frame)
-		buffer_pre.append(preprocessed)
-		
-		# Only process and imshow when queue is full
-		if elapsed % self.FLAGS.queue == 0:
-			feed_dict = {self.inp: buffer_pre}
-			net_out = self.sess.run(self.out, feed_dict)
-			for img, single_out in zip(buffer_inp, net_out):
-				postprocessed = self.framework.postprocess(
-					net_out, frame, False)
-				if SaveVideo:
-					videoWriter.write(postprocessed)
-				cv2.imshow('', postprocessed)
-			# Clear Buffers
-			buffer_inp = list()
-			buffer_pre = list()
+        buffer_inp.append(frame)
+        buffer_pre.append(preprocessed)
+        
+        # Only process and imshow when queue is full
+        if elapsed % self.FLAGS.queue == 0:
+            feed_dict = {self.inp: buffer_pre}
+            net_out = self.sess.run(self.out, feed_dict)
+            for img, single_out in zip(buffer_inp, net_out):
+                postprocessed = self.framework.postprocess(
+                    net_out, frame, False)
+                if SaveVideo:
+                    videoWriter.write(postprocessed)
+                cv2.imshow('', postprocessed)
+            # Clear Buffers
+            buffer_inp = list()
+            buffer_pre = list()
 
-		if elapsed % 5 == 0:
+        if elapsed % 5 == 0:
             sys.stdout.write('\r')
             sys.stdout.write('{0:3.3f} FPS'.format(
                 elapsed / (timer() - start)))
