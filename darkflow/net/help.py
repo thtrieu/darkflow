@@ -14,7 +14,13 @@ old_graph_msg = 'Resolving old graph def {} (no guarantee)'
 def build_train_op(self):
     self.framework.loss(self.out)
     self.say('Building {} train op'.format(self.meta['model']))
-    optimizer = self._TRAINER[self.FLAGS.trainer](self.FLAGS.lr)
+    args = [self.FLAGS.lr]
+    kwargs = {}
+    if self.FLAGS.trainer in ['rmsprop', 'momentum']:
+        kwargs['momentum'] = self.FLAGS.momentum
+    if self.FLAGS.trainer == 'rmsprop':
+        kwargs['decay'] = self.FLAGS.decay
+    optimizer = self._TRAINER[self.FLAGS.trainer](*args, **kwargs)
     gradients = optimizer.compute_gradients(self.framework.loss)
     self.train_op = optimizer.apply_gradients(gradients)
 

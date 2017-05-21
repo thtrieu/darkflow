@@ -17,6 +17,7 @@ class argHandler(dict):
         self.define('model', '', 'configuration of choice')
         self.define('trainer', 'rmsprop', 'training algorithm')
         self.define('momentum', 0.0, 'applicable for rmsprop and momentum optimizers')
+        self.define('decay', 0.9, 'applicable for rmsprop optimizer'"')
         self.define('verbalise', True, 'say out loud while building graph')
         self.define('train', False, 'train the whole net')
         self.define('load', '', 'how to initialize the net? Either from .weights or a checkpoint, or even from scratch')
