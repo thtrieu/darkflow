@@ -36,10 +36,11 @@ class TFNet(object):
 		self.ntrain = 0
 
 		if isinstance(FLAGS, dict):
-			from ..defaults import getDefaults
-			defaultFLAGS = getDefaults()
-			defaultFLAGS.update(FLAGS)
-			FLAGS = defaultFLAGS
+			from ..defaults import argHandler
+			newFLAGS = argHandler()
+			newFLAGS.getDefaults()
+			newFLAGS.update(FLAGS)
+			FLAGS = newFLAGS
 
 		self.FLAGS = FLAGS
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
