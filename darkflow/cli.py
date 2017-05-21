@@ -20,13 +20,9 @@ def cliHandler(args):
     except: pass
 
     tfnet = TFNet(FLAGS)
-
-    if FLAGS.profile:
-        tfnet.framework.profile(tfnet)
-        exit()
-
+    
     if FLAGS.demo:
-        tfnet.camera(FLAGS.demo, FLAGS.saveVideo)
+        tfnet.camera()
         exit()
 
     if FLAGS.train:
