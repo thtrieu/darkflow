@@ -40,7 +40,7 @@ class argHandler(dict):
         self._descriptions[argName] = description
     
     def help(self):
-        print("Example usage: ./flow --imgdir sample_img/ --model cfg/yolo.cfg --load bin/yolo.weights")
+        print("Example usage: flow --imgdir sample_img/ --model cfg/yolo.cfg --load bin/yolo.weights")
         print("")
         print("Arguments:")
         spacing = max([len(i) for i in self._descriptions.keys()]) + 2
@@ -58,13 +58,13 @@ class argHandler(dict):
                 self.help() #Time for some self help! :)
             if len(args[i]) < 2:
                 print("ERROR - Invalid argument: " + args[i])
-                print("Try running ./flow --help")
+                print("Try running flow --help")
                 exit()
             argumentName = args[i][2:]
             if isinstance(self.get(argumentName), bool):
                 if not (i + 1) >= len(args) and (args[i + 1].lower() != "false" and args[i + 1].lower() != "true") and not args[i + 1].startswith("--"):
                     print("ERROR - Expected boolean value (or no value) following argument: " + args[i])
-                    print("Try running ./flow --help")
+                    print("Try running flow --help")
                     exit()
                 elif not (i + 1) >= len(args) and (args[i + 1].lower() == "false" or args[i + 1].lower() == "true"):
                     self[argumentName] = (args[i + 1].lower() == "true")
@@ -77,19 +77,19 @@ class argHandler(dict):
                         args[i + 1] = float(args[i + 1])
                     except:
                         print("ERROR - Expected float for argument: " + args[i])
-                        print("Try running ./flow --help")
+                        print("Try running flow --help")
                         exit()
                 elif isinstance(self[argumentName], int):
                     try:
                         args[i + 1] = int(args[i + 1])
                     except:
                         print("ERROR - Expected int for argument: " + args[i])
-                        print("Try running ./flow --help")
+                        print("Try running flow --help")
                         exit()
                 self[argumentName] = args[i + 1]
                 i += 1
             else:
                 print("ERROR - Invalid argument: " + args[i])
-                print("Try running ./flow --help")
+                print("Try running flow --help")
                 exit()
             i += 1
