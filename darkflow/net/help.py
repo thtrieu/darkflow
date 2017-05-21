@@ -119,7 +119,7 @@ def camera(self):
             net_out = self.sess.run(self.out, feed_dict)
             for img, single_out in zip(buffer_inp, net_out):
                 postprocessed = self.framework.postprocess(
-                    net_out, frame, False)
+                    single_out, img, False)
                 if SaveVideo:
                     videoWriter.write(postprocessed)
                 cv2.imshow('', postprocessed)
