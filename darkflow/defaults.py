@@ -41,17 +41,17 @@ class argHandler(dict):
     
     def help(self):
         print("Example usage: ./flow --imgdir sample_img/ --model cfg/yolo.cfg --load bin/yolo.weights")
-        print()
+        print("")
         print("Arguments:")
         spacing = max([len(i) for i in self._descriptions.keys()]) + 2
         for item in self._descriptions:
             currentSpacing = spacing - len(item)
             print("  --" + item + (" " * currentSpacing) + self._descriptions[item])
-        print()
+        print("")
         exit()
 
     def parseArgs(self, args):
-        print()
+        print("")
         i = 1
         while i < len(args):
             if args[i] == "-h" or args[i] == "--help":
