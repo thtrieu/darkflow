@@ -1,12 +1,11 @@
 from .defaults import argHandler #Import the default arguments
 import os
+from darkflow.net.build import TFNet
 
 def cliHandler(args):
     FLAGS = argHandler()
     FLAGS.setDefaults()
     FLAGS.parseArgs(args)
-
-    from darkflow.net.build import TFNet
 
     # make sure all necessary dirs exist
     def _get_dir(dirs):
