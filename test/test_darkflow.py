@@ -1,17 +1,9 @@
-import os
-import sys
-buildPath = os.environ.get("TRAVIS_BUILD_DIR")
-if buildPath is None:
-    print()
-    print("TRAVIS_BUILD_DIR environment variable was not found - is this running on TravisCI?")
-    print("If you want to test this locally, set TRAVIS_BUILD_DIR to the base directory of the cloned darkflow repository.")
-    exit()
-sys.path.insert(0, buildPath) #Add the buildPath to the PATH
-
 from darkflow.net.build import TFNet
 import json
 import requests
 import cv2
+import os
+import sys
 import pytest
 
 #NOTE: This file is designed to be run in the TravisCI environment. If you want to run it locally set the environment variable TRAVIS_BUILD_DIR to the base
@@ -21,6 +13,13 @@ import pytest
 #Settings
 imgWidth = 640
 imgHeight = 424
+buildPath = os.environ.get("TRAVIS_BUILD_DIR")
+
+if buildPath is None:
+    print()
+    print("TRAVIS_BUILD_DIR environment variable was not found - is this running on TravisCI?")
+    print("If you want to test this locally, set TRAVIS_BUILD_DIR to the base directory of the cloned darkflow repository.")
+    exit()
 testImgPath = os.path.join(buildPath, "sample_img", "sample_person.jpg")
 expectedDetectedObjectsV1 = [{"label": "dog","confidence": 0.46,"topleft": {"x": 84, "y": 249},"bottomright": {"x": 208,"y": 367}}, 
                              {"label": "person","confidence": 0.60,"topleft": {"x": 159, "y": 102},"bottomright": {"x": 304,"y": 365}}]
@@ -49,6 +48,7 @@ def download_file(url, savePath):
 
 if os.path.isfile(os.path.join(buildPath, "flow")):
     os.rename(os.path.join(buildPath, "flow"), os.path.join(buildPath, "flow.py")) #Change flow to flow.py so we can import it
+sys.path.insert(0, buildPath) #Add the buildPath to the PATH
 from flow import main
 
 yoloWeightPathV1 = os.path.join(buildPath, "bin", yoloDownloadV1.split("/")[-1])
