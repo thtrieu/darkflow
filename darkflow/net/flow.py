@@ -3,6 +3,7 @@ import time
 import numpy as np
 import tensorflow as tf
 import pickle
+from multiprocessing.pool import ThreadPool
 
 train_stats = (
     'Training statistics: \n'
@@ -135,9 +136,11 @@ def predict(self):
         # Post processing
         self.say('Post processing {} inputs ...'.format(len(inp_feed)))
         start = time.time()
-        for i, prediction in enumerate(out):
-            self.framework.postprocess(prediction,
-                os.path.join(inp_path, this_batch[i]))
+        pool = ThreadPool()
+        pool.map(lambda p: (lambda i, prediction:
+            self.framework.postprocess(
+               prediction, os.path.join(inp_path, this_batch[i])))(*p),
+            enumerate(out))
         stop = time.time(); last = stop - start
 
         # Timing
