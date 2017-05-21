@@ -213,7 +213,7 @@ The created `.pb` file can be used to migrate the graph to mobile devices (JAVA 
 Also, darkflow supports loading from a `.pb` and `.meta` file for generating predictions (instead of loading from a `.cfg` and checkpoint or `.weights`).
 ```bash
 ## Forward images in sample_img for predictions based on protobuf file
-flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --imgdir sample_img/
+flow --pbLoad built_graph/yolo.pb --metaLoad built_graph/yolo.meta --imgdir sample_img/
 ```
 If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 
