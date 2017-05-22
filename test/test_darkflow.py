@@ -144,6 +144,22 @@ def test_CLI_JSON_YOLOv2():
 
     assert compareObjectData(testImg["expected-objects"]["yolo"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from JSON were not within margin of error compared to expected values."
 
+def test_CLI_JSON_YOLOv1():
+    #Test predictions outputted to a JSON file using the YOLOv1 model through CLI
+    #NOTE: This test verifies that the code executes properly, the JSON file is created properly and the predictions generated are within a certain
+    #      margin of error when compared to the expected predictions.
+
+    testString = "flow --imgdir {0} --model {1} --load {2} --config {3} --threshold 0.4 --json".format(os.path.dirname(testImg["path"]), yolo_small_CfgPath, yolo_small_WeightPath, generalConfigPath)
+    executeCLI(testString)
+
+    outputJSONPath = os.path.join(os.path.dirname(testImg["path"]), "out", os.path.splitext(os.path.basename(testImg["path"]))[0] + ".json")
+    assert os.path.exists(outputJSONPath), "Expected output JSON file: {0} was not found.".format(outputJSONPath)
+
+    with open(outputJSONPath) as json_file:
+        loadedPredictions = json.load(json_file)
+
+    assert compareObjectData(testImg["expected-objects"]["yolo-small"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from JSON were not within margin of error compared to expected values."
+
 def test_CLI_SAVEPB_YOLOv2():
     #Save .pb and .meta as generated from the YOLOv2 model through CLI
     #NOTE: This test verifies that the code executes properly, and the .pb and .meta files are successfully created. The subsequent test will verify the
@@ -168,17 +184,6 @@ def test_RETURNPREDICT_PBLOAD_YOLOv2():
     loadedPredictions = tfnet.return_predict(imgcv)
 
     assert compareObjectData(testImg["expected-objects"]["yolo"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from return_predict() were not within margin of error compared to expected values."
-
-def test_RETURNPREDICT_YOLOv1():
-    #Test YOLOv1 using normal .weights and .cfg
-    #NOTE: This test verifies that the code executes properly, and that the predictions generated are within the accepted margin of error to the expected predictions.
-
-    options = {"model": yolo_small_CfgPath, "load": yolo_small_WeightPath, "config": generalConfigPath, "threshold": 0.4}
-    tfnet = TFNet(options)
-    imgcv = cv2.imread(testImg["path"])
-    loadedPredictions = tfnet.return_predict(imgcv)
-
-    assert compareObjectData(testImg["expected-objects"]["yolo-small"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from return_predict() were not within margin of error compared to expected values."
 
 #TESTS FOR TRAINING
 def test_TRAIN_FROM_WEIGHTS_CLI__LOAD_CHECKPOINT_RETURNPREDICT_YOLOv2():
