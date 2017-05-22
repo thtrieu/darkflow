@@ -194,7 +194,7 @@ def test_TRAIN_FROM_WEIGHTS_CLI__LOAD_CHECKPOINT_RETURNPREDICT_YOLOv2():
     assert os.path.exists(checkpointPath), "Expected output checkpoint file: {0} was not found.".format(checkpointPath)
 
     #Using trained weights
-    options = {"model": tiny_yolo_voc_CfgPath, "load": tiny_yolo_voc_WeightPath, "config": generalConfigPath, "threshold": 0.1}
+    options = {"model": tiny_yolo_voc_CfgPath, "load": 20, "config": generalConfigPath, "threshold": 0.1}
     tfnet = TFNet(options)
 
     #Make sure predictions very roughly match the expected values for image with bike and person
