@@ -46,10 +46,10 @@ class TFNet(object):
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
 			self.say('\nLoading from .pb and .meta')
 			self.graph = tf.Graph()
-			with self.graph.as_default() as g:
-				device = FLAGS.gpuName \
-					if FLAGS.gpu > 0.0 else None
-				with g.device(device):
+			device_name = FLAGS.gpuName \
+				if FLAGS.gpu > 0.0 else None
+			with tf.device(device_name):
+				with self.graph.as_default() as g:
 					self.build_from_pb()
 			return
 
@@ -71,8 +71,8 @@ class TFNet(object):
 			if FLAGS.gpu > 0.0 else None
 		with tf.device(device_name):
 			with self.graph.as_default() as g:
-					self.build_forward()
-					self.setup_meta_ops()
+				self.build_forward()
+				self.setup_meta_ops()
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
 	
