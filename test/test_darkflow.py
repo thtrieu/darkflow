@@ -187,8 +187,8 @@ def test_TRAIN_FROM_WEIGHTS_CLI__LOAD_CHECKPOINT_RETURNPREDICT_YOLOv2():
     #      In addition, predictions are generated using the checkpoint file to verify that training completed successfully.
 
     testString = "flow --model {0} --load {1} --train --dataset {2} --annotation {3} --epoch 20".format(tiny_yolo_voc_CfgPath, tiny_yolo_voc_WeightPath, os.path.join(buildPath, "test", "training", "images"), os.path.join(buildPath, "test", "training", "annotations"))
-    #with pytest.raises(SystemExit):
-    #    executeCLI(testString)
+    with pytest.raises(SystemExit):
+        executeCLI(testString)
 
     checkpointPath = os.path.join(buildPath, "ckpt", "tiny-yolo-voc-20.meta")
     assert os.path.exists(checkpointPath), "Expected output checkpoint file: {0} was not found.".format(checkpointPath)
