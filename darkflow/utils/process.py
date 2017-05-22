@@ -288,14 +288,17 @@ def cfg_yielder(model, binary):
 			routes = d['layers']
 			if type(routes) is int:
 				routes = [routes]
-			else:routes = [int(x.strip()) for x in routes.split(',')]
+			else:
+				routes = [int(x.strip()) for x in routes.split(',')]
 			routes = [i + x if x < 0 else x for x in routes]
 			for j, x in enumerate(routes):
-				lx = layers[x]; xtype = lx['type']
+				lx = layers[x]; 
+				xtype = lx['type']
 				_size = lx['_size'][:3]
-				if not j: w, h, c = _size
+				if j == 0:
+					h, w, c = _size
 				else: 
-					w_, h_, c_ = _size
+					h_, w_, c_ = _size
 					assert w_ == w and h_ == h, \
 					'Routing incompatible conv sizes'
 					c += c_
