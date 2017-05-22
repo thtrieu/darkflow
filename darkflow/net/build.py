@@ -67,12 +67,12 @@ class TFNet(object):
 		self.say('\nBuilding net ...')
 		start = time.time()
 		self.graph = tf.Graph()
-		with self.graph.as_default() as g:
-			device = FLAGS.gpuName \
-				if FLAGS.gpu > 0.0 else None
-			with g.device(device):
-				self.build_forward()
-				self.setup_meta_ops()
+		device_name = FLAGS.gpuName \
+			if FLAGS.gpu > 0.0 else None
+		with tf.device(device_name):
+			with self.graph.as_default() as g:
+					self.build_forward()
+					self.setup_meta_ops()
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
 	
