@@ -127,6 +127,7 @@ def test_CLI_IMG_YOLOv2():
 
     outputImgPath = os.path.join(os.path.dirname(testImg["path"]), "out", os.path.basename(testImg["path"]))
     assert os.path.exists(outputImgPath), "Expected output image: {0} was not found.".format(outputImgPath)
+    os.remove(outputImgPath) #Remove the image so that it does not affect subsequent tests
 
 def test_CLI_JSON_YOLOv2():
     #Test predictions outputted to a JSON file using the YOLOv2 model through CLI
@@ -143,6 +144,7 @@ def test_CLI_JSON_YOLOv2():
         loadedPredictions = json.load(json_file)
 
     assert compareObjectData(testImg["expected-objects"]["yolo"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from JSON were not within margin of error compared to expected values."
+    os.remove(outputJSONPath) #Remove the JSON file so that it does not affect subsequent tests
 
 def test_CLI_JSON_YOLOv1():
     #Test predictions outputted to a JSON file using the YOLOv1 model through CLI
@@ -159,6 +161,7 @@ def test_CLI_JSON_YOLOv1():
         loadedPredictions = json.load(json_file)
 
     assert compareObjectData(testImg["expected-objects"]["yolo-small"], loadedPredictions, testImg["width"], testImg["height"], threshCompareThreshold, posCompareThreshold), "Generated object predictions from JSON were not within margin of error compared to expected values."
+    os.remove(outputJSONPath) #Remove the JSON file so that it does not affect subsequent tests
 
 def test_CLI_SAVEPB_YOLOv2():
     #Save .pb and .meta as generated from the YOLOv2 model through CLI
