@@ -167,7 +167,6 @@ class TFNet(object):
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
 		# tfnet_pb.predict() # uncomment for unit testing
 		name = 'built_graph/{}.pb'.format(self.meta['name'])
-		print(name)
 		os.makedirs(os.path.dirname(name), exist_ok=True)
 		#Save dump of everything in meta
 		with open('built_graph/{}.meta'.format(self.meta['name']), 'w') as fp:
