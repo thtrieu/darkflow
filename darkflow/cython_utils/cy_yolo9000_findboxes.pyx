@@ -50,7 +50,7 @@ cdef void _softmax_c(float* x, int classes):
 @cython.cdivision(True)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-def conditional_softmax_tree(Classes, parent_index, hthreshold, hyponym_tree, row,col,box_loop):
+def conditional_softmax_tree(Classes, parent_index, hier_thresh, hyponym_tree, row,col,box_loop):
     cdef:
       float arr_max=0,sum=0
       np.intp_t group_size, offset
@@ -68,18 +68,18 @@ def conditional_softmax_tree(Classes, parent_index, hthreshold, hyponym_tree, ro
 
     for class_loop in range(offset, offset+group_size): 
       tempc = Classes[row,col,box_loop,class_loop]/sum # * Bbox_pred[row,col,box_loop,4] 
-      # This threshold determines what hyponyms splits could warrant further exploration
-      if(tempc > hthreshold): # If below hierarchy threshold, will not hit this node ever 
+      # This thresh determines what hyponyms splits could warrant further exploration
+      if(tempc > hier_thresh): # If below hierarchy thresh, will not hit this node ever 
         Classes[row,col,box_loop,class_loop] = tempc 
         if class_loop in hyponym_tree:
-          conditional_softmax_tree(Classes, class_loop, hthreshold, hyponym_tree, row,col,box_loop)
+          conditional_softmax_tree(Classes, class_loop, hier_thresh, hyponym_tree, row,col,box_loop)
 
 
 #FOLLOW TREE TO FIND MOST SPECIFIC PREDICTION BEFORE THRESHOLD
 @cython.cdivision(True)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-def find_top_prediction(Classes, parent_index, hthreshold, hyponym_tree, row,col,box_loop):
+def find_top_prediction(Classes, parent_index, hier_thresh, hyponym_tree, row,col,box_loop):
     cdef:
       float arr_max=0,sum=0
       int index_max=0
@@ -93,9 +93,9 @@ def find_top_prediction(Classes, parent_index, hthreshold, hyponym_tree, row,col
            arr_max = Classes[row, col, box_loop, class_loop]
            index_max = class_loop
 
-    if (arr_max > hthreshold): # Progress down the tree until value not above threshold 
+    if (arr_max > hier_thresh): # Progress down the tree until value not above thresh 
       if index_max in hyponym_tree and len(hyponym_tree[index_max]) > 0: # Hit leaf node of tree
-        return find_top_prediction(Classes, index_max, hthreshold, hyponym_tree, row,col,box_loop) 
+        return find_top_prediction(Classes, index_max, hier_thresh, hyponym_tree, row,col,box_loop) 
       else:
         return index_max
     else:
@@ -109,8 +109,8 @@ def find_top_prediction(Classes, parent_index, hthreshold, hyponym_tree, row,col
 def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
     cdef:
         np.intp_t H, W, _, C, B, row, col, box_loop, class_loop, top_pred_index
-        float threshold = meta['thresh']
-        float hthreshold = meta['hierarchythreshold']
+        float thresh = meta['thresh']
+        float hier_thresh = 0.5 
         float tempc,arr_max=0,sum=0
         double[:] anchors = np.asarray(meta['anchors'])
         list boxes = list()
@@ -135,24 +135,24 @@ def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
           Bbox_pred[row, col, box_loop, 2] = exp(Bbox_pred[row, col, box_loop, 2]) * anchors[2 * box_loop + 0] / W
           Bbox_pred[row, col, box_loop, 3] = exp(Bbox_pred[row, col, box_loop, 3]) * anchors[2 * box_loop + 1] / H
 
-          # To predict an object, YOLO9000 needs its object score to be above the threshold
-          if(Bbox_pred[row,col,box_loop,4] > threshold):
+          # To predict an object, YOLO9000 needs its object score to be above the thresh
+          if(Bbox_pred[row,col,box_loop,4] > thresh):
             # SEE get_region_boxes() in darknet as a reference
             # Softmax and make all probabilities conditional
-            conditional_softmax_tree(Classes, -1, hthreshold, hyponym_tree, row,col,box_loop)
+            conditional_softmax_tree(Classes, -1, hier_thresh, hyponym_tree, row,col,box_loop)
 
             # This section lets us run detection on just the 200 object classes,
-            # if you enable it remember to change thresholds  
+            # if you enable it remember to change threshs  
             """
             if 'map' in meta:
               for index in meta['coco_map']:
                 prob = Classes[row,col,box_loop,index]*Bbox_pred[row,col,box_loop,4] 
-                if prob > threshold:
+                if prob > thresh:
                   probs[row,col,box_loop,index] = prob
             """
             # Else we produce YOLO9000 results 
-            # We set the last detection that passes threshold as the object score for this box
-            top_pred_index = find_top_prediction(Classes, -1, hthreshold, hyponym_tree, row,col,box_loop) 
+            # We set the last detection that passes thresh as the object score for this box
+            top_pred_index = find_top_prediction(Classes, -1, hier_thresh, hyponym_tree, row,col,box_loop) 
             probs[row,col,box_loop,top_pred_index] = Bbox_pred[row,col,box_loop,4] 
 
           # This sets the last element in the class list for easy NMS box to box checking
