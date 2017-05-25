@@ -17,14 +17,14 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 ### Getting started
 
-There are three ways to get started with darkflow.
+You can choose _one_ of the following three ways to get started with darkflow.
 
-1. Just build the Cython extensions in place.
+1. Just build the Cython extensions in place. NOTE: If installing this way you will have to use `./flow` in the cloned darkflow directory instead of `flow` as darkflow is not installed globally.
     ```
     python3 setup.py build_ext --inplace
     ```
 
-2. Let pip install darkflow in dev mode (globally accessible but changes to the code immediately take effect)
+2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
     ```
     pip install -e .
     ```
@@ -213,7 +213,7 @@ The created `.pb` file can be used to migrate the graph to mobile devices (JAVA 
 Also, darkflow supports loading from a `.pb` and `.meta` file for generating predictions (instead of loading from a `.cfg` and checkpoint or `.weights`).
 ```bash
 ## Forward images in sample_img for predictions based on protobuf file
-flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --imgdir sample_img/
+flow --pbLoad built_graph/yolo.pb --metaLoad built_graph/yolo.meta --imgdir sample_img/
 ```
 If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 

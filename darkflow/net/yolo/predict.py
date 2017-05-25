@@ -99,7 +99,7 @@ def postprocess(self, net_out, im, save = True):
 			line = 	('{"label": "%s",'
 					'"confidence": %.2f,'
 					'"topleft": {"x": %d, "y": %d},'
-					'"bottomright": {"x": %d,"y": %d}}, \n') % \
+					'"bottomright": {"x": %d,"y": %d}},\n') % \
 					(mess, confidence, left, top, right, bot)
 			textBuff += line
 			continue
