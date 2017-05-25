@@ -35,3 +35,5 @@ def constructor(self, meta, FLAGS):
 	# over-ride the threshold in meta if FLAGS has it.
 	if FLAGS.threshold > 0.0:
 		self.meta['thresh'] = FLAGS.threshold
+	if FLAGS.hierarchythreshold > 0.0:
+		self.meta['hierarchythreshold'] = FLAGS.hierarchythreshold

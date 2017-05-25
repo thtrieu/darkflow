@@ -33,6 +33,21 @@ def labels(meta, FLAGS):
         elif model == 'yolo9000':
             print("Model has name yolo9000, loading yolo9000 labels.")
             file = os.path.join(FLAGS.config, nine_names)
+            print("Model has name yolo9000, loading yolo9000 tree.")
+            tree_file = os.path.join(FLAGS.config, meta['tree'])
+            with open(tree_file, 'r') as t_f:
+              flat_tree = np.array([int(l[:-1].split(' ')[1]) for l in t_f.readlines()])
+            hyponym_tree = {}
+            for i, parent in enumerate(flat_tree):
+              if parent in hyponym_tree:
+                hyponym_tree[parent].append(i)
+              else:
+                hyponym_tree[parent] = [i]
+            meta['hyponym_tree'] = hyponym_tree
+            print("Model has name yolo9000, loading yolo9000 map.")
+            map_file = os.path.join(FLAGS.config, meta['map'])
+            with open(map_file, 'r') as m_f:
+              meta['coco_map'] = np.array([int(l[:-1]) for l in m_f.readlines()])
         with open(file, 'r') as f:
             meta['labels'] = list()
             labs = [l.strip() for l in f.readlines()]

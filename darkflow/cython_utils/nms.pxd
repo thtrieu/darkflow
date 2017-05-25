@@ -7,5 +7,6 @@ from utils.box import BoundBox
 
 
 cdef NMS(float[:, ::1] , float[:, ::1] )
+cdef NMS9000(float[:, ::1] , float[:, ::1] )
 
 
