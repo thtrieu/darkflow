@@ -180,7 +180,7 @@ def box_constructor(meta,np.ndarray[float,ndim=3] net_out_in):
     
     
     #NMS                    
-    if 'map_array' in meta or 'tree_dict' not in meta:
+    if 'tree_dict' not in meta:
         return NMS(np.ascontiguousarray(probs).reshape(H*W*B,C), np.ascontiguousarray(Bbox_pred).reshape(H*B*W,5))
     else:
         return NMS9000(np.ascontiguousarray(probs).reshape(H*W*B,C), np.ascontiguousarray(Bbox_pred).reshape(H*B*W,5))
