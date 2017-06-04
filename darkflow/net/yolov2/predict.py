@@ -7,7 +7,6 @@ import os
 #from utils.box import prob_compare2, box_intersection
 from darkflow.utils.box import BoundBox
 from darkflow.cython_utils.cy_yolo2_findboxes import box_constructor
-from darkflow.cython_utils.cy_yolo9000_findboxes import box_constructor as box_constructor9000
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))
@@ -22,12 +21,7 @@ def findboxes(self, net_out):
 	meta = self.meta
 	boxes = list()
 
-	# Checking if YOLO9000 or not
-	model = os.path.basename(meta['name'])
-	if model == 'yolo9000':
-		boxes=box_constructor9000(meta,net_out)
-	else:
-		boxes=box_constructor(meta,net_out)
+	boxes=box_constructor(meta,net_out)
 	return boxes
 
 def complementary(b, r, g):
@@ -77,13 +71,13 @@ def postprocess(self, net_out, im, save = True):
 			(left, top), (left+wt, top-5-ht),
 			colors[max_indx], cv2.FILLED)
 		#cv2.rectangle(imgcv,
-		#	(right-wc, bot), (right, bot+hc),
+		# (right-wc, bot), (right, bot+hc),
 		#	colors[max_indx], cv2.FILLED)
 		# Draw labels 
 		cv2.putText(imgcv, mess, (left, top-5),
 			0, 1e-3 * h, complementary(*colors[max_indx]),thick//2)
 		#cv2.putText(imgcv, str(format(confidence, '.3f')), (right-wc, bot+hc),
-		#	0, 1e-3 * h, complementary(*colors[max_indx]),thick//2)
+		#		0, 1e-3 * h, complementary(*colors[max_indx]),thick//2)
 
 
 	if not save: return imgcv

@@ -20,6 +20,25 @@ coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
 coco_names = 'coco.names'
 nine_names = '9k.names'
 
+def tree(meta, FLAGS):    
+    print("Model has tree meta key, loading tree into dict.")
+    tree_file = os.path.join(FLAGS.config, meta['tree'])
+    with open(tree_file, 'r') as t_f:
+      flat_tree = np.array([int(l[:-1].split(' ')[1]) for l in t_f.readlines()])
+    tree_dict = {}
+    for i, parent in enumerate(flat_tree):
+      if parent in tree_dict:
+        tree_dict[parent].append(i)
+      else:
+        tree_dict[parent] = [i]
+    meta['tree_dict'] = tree_dict
+
+def map(meta, FLAGS):    
+    print("Model has map meta key, loading map into array.")
+    map_file = os.path.join(FLAGS.config, meta['map'])
+    with open(map_file, 'r') as m_f:
+      meta['map_array'] = np.array([int(l[:-1]) for l in m_f.readlines()])
+
 def labels(meta, FLAGS):    
     model = os.path.basename(meta['name'])
     if model in voc_models: 
@@ -33,21 +52,6 @@ def labels(meta, FLAGS):
         elif model == 'yolo9000':
             print("Model has name yolo9000, loading yolo9000 labels.")
             file = os.path.join(FLAGS.config, nine_names)
-            print("Model has name yolo9000, loading yolo9000 tree.")
-            tree_file = os.path.join(FLAGS.config, meta['tree'])
-            with open(tree_file, 'r') as t_f:
-              flat_tree = np.array([int(l[:-1].split(' ')[1]) for l in t_f.readlines()])
-            hyponym_tree = {}
-            for i, parent in enumerate(flat_tree):
-              if parent in hyponym_tree:
-                hyponym_tree[parent].append(i)
-              else:
-                hyponym_tree[parent] = [i]
-            meta['hyponym_tree'] = hyponym_tree
-            print("Model has name yolo9000, loading yolo9000 map.")
-            map_file = os.path.join(FLAGS.config, meta['map'])
-            with open(map_file, 'r') as m_f:
-              meta['coco_map'] = np.array([int(l[:-1]) for l in m_f.readlines()])
         with open(file, 'r') as f:
             meta['labels'] = list()
             labs = [l.strip() for l in f.readlines()]

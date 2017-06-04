@@ -14,6 +14,7 @@ class argHandler(dict):
         self.define('summary', './summary/', 'path to TensorBoard summaries directory')
         self.define('annotation', '../pascal/VOCdevkit/ANN/', 'path to annotation directory')
         self.define('threshold', -0.1, 'detection threshold')
+        self.define('hierarchyThreshold', 0.6, 'threshold to follow for wordtree label specificity')
         self.define('model', '', 'configuration of choice')
         self.define('trainer', 'rmsprop', 'training algorithm')
         self.define('momentum', 0.0, 'applicable for rmsprop and momentum optimizers')
