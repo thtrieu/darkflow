@@ -1,6 +1,6 @@
 from .defaults import argHandler #Import the default arguments
 import os
-from darkflow.net.build import TFNet
+from .net.build import TFNet
 
 def cliHandler(args):
     FLAGS = argHandler()
