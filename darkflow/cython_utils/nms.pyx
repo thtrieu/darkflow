@@ -62,6 +62,7 @@ cdef float box_iou_c(float ax, float ay, float aw, float ah, float bx, float by,
 @cython.cdivision(True)
 cdef NMS(float[:, ::1] final_probs , float[:, ::1] final_bbox):
     cdef list boxes = list()
+    cdef set indices = set()
     cdef:
         np.intp_t pred_length,class_length,class_loop,index,index2
 
@@ -79,15 +80,17 @@ cdef NMS(float[:, ::1] final_probs , float[:, ::1] final_bbox):
                         final_probs[index, class_loop] =0
                         break
                     final_probs[index2,class_loop]=0
-            bb=BoundBox(class_length)
-            bb.x = final_bbox[index, 0]
-            bb.y = final_bbox[index, 1]
-            bb.w = final_bbox[index, 2]
-            bb.h = final_bbox[index, 3]
-            bb.c = final_bbox[index, 4]
-            bb.probs = np.asarray(final_probs[index,:])
-            boxes.append(bb)
-  
+            
+            if index not in indices:
+                bb=BoundBox(class_length)
+                bb.x = final_bbox[index, 0]
+                bb.y = final_bbox[index, 1]
+                bb.w = final_bbox[index, 2]
+                bb.h = final_bbox[index, 3]
+                bb.c = final_bbox[index, 4]
+                bb.probs = np.asarray(final_probs[index,:])
+                boxes.append(bb)
+                indices.add(index)
     return boxes
 
 # cdef NMS(float[:, ::1] final_probs , float[:, ::1] final_bbox):
