@@ -1,7 +1,7 @@
 """
 tfnet secondary (helper) methods
 """
-from darkflow.utils.loader import create_loader
+from ..utils.loader import create_loader
 from time import time as timer
 import tensorflow as tf
 import numpy as np

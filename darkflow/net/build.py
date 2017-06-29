@@ -5,7 +5,7 @@ from . import flow
 from .ops import op_create, identity
 from .ops import HEADER, LINE
 from .framework import create_framework
-from darkflow.dark.darknet import Darknet
+from ..dark.darknet import Darknet
 import json
 import os
 
