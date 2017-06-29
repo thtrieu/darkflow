@@ -23,6 +23,7 @@ class TFNet(object):
 	})
 
 	# imported methods
+	_get_fps = help._get_fps
 	say = help.say
 	train = flow.train
 	camera = help.camera
