@@ -10,6 +10,7 @@ class argHandler(dict):
         self.define('binary', './bin/', 'path to .weights directory')
         self.define('config', './cfg/', 'path to .cfg directory')
         self.define('dataset', '../pascal/VOCdevkit/IMG/', 'path to dataset directory')
+        self.define('labels', 'labels.txt', 'path to labels file')
         self.define('backup', './ckpt/', 'path to backup folder')
         self.define('summary', './summary/', 'path to TensorBoard summaries directory')
         self.define('annotation', '../pascal/VOCdevkit/ANN/', 'path to annotation directory')
