@@ -63,8 +63,7 @@ def _batch(self, chunk):
 
     for obj in allobj:
         probs[obj[5], :] = [0.] * C
-        if obj[0] != 'UNDEFINED':
-            probs[obj[5], :, labels.index(obj[0])] = 1.
+        probs[obj[5], labels.index(obj[0])] = 1.
         proid[obj[5], :] = [1] * C
         coord[obj[5], :, :] = [obj[1:5]] * B
         prear[obj[5],0] = obj[1] - obj[3]**2 * .5 * S # xleft
