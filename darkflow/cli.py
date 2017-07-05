@@ -1,5 +1,6 @@
 from .defaults import argHandler #Import the default arguments
 import os
+import sys
 from .net.build import TFNet
 
 def cliHandler(args):
@@ -19,8 +20,12 @@ def cliHandler(args):
     try: FLAGS.load = int(FLAGS.load)
     except: pass
 
+    if FLAGS.quiet:
+        sys.stdout = os.devnull
+        sys.stderr = os.devnull
+
     tfnet = TFNet(FLAGS)
-    
+
     if FLAGS.demo:
         tfnet.camera()
         exit('Demo stopped, exit.')
