@@ -60,6 +60,7 @@ def _batch(self, chunk):
     coord = np.zeros([S*S,B,4])
     proid = np.zeros([S*S,C])
     prear = np.zeros([S*S,4])
+
     for obj in allobj:
         probs[obj[5], :] = [0.] * C
         probs[obj[5], labels.index(obj[0])] = 1.

@@ -26,6 +26,7 @@ def _batch(self, chunk):
     path = os.path.join(self.FLAGS.dataset, jpg)
     img = self.preprocess(path, allobj)
 
+
     # Calculate regression target
     cellx = 1. * w / W
     celly = 1. * h / H
@@ -51,9 +52,11 @@ def _batch(self, chunk):
     coord = np.zeros([H*W,B,4])
     proid = np.zeros([H*W,B,C])
     prear = np.zeros([H*W,4])
+
     for obj in allobj:
         probs[obj[5], :, :] = [[0.]*C] * B
-        probs[obj[5], :, labels.index(obj[0])] = 1.
+        if obj[0] != 'UNDEFINED':
+            probs[obj[5], :, labels.index(obj[0])] = 1.
         proid[obj[5], :, :] = [[1.]*C] * B
         coord[obj[5], :, :] = [obj[1:5]] * B
         prear[obj[5],0] = obj[1] - obj[3]**2 * .5 * W # xleft
