@@ -20,7 +20,7 @@ def build_train_op(self):
 
 def load_from_ckpt(self):
     if self.FLAGS.load < 0: # load lastest ckpt
-        with open(self.FLAGS.backup + 'checkpoint', 'r') as f:
+        with open(os.path.join(self.FLAGS.backup, 'checkpoint'), 'r') as f:
             last = f.readlines()[-1].strip()
             load_point = last.split(' ')[1]
             load_point = load_point.split('"')[1]
