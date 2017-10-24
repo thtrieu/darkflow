@@ -92,7 +92,8 @@ def return_predict(self, im):
                 "y": tmpBox[2]},
             "bottomright": {
                 "x": tmpBox[1],
-                "y": tmpBox[3]}
+                "y": tmpBox[3]},
+            "colorIdx": tmpBox[5]
         })
     return boxesInfo
 
