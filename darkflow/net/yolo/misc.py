@@ -43,7 +43,7 @@ def labels(meta, FLAGS):
         meta['labels'] = labels20
 
 def is_inp(self, name): 
-    return name[-4:] in ['.jpg','.JPG', '.jpeg', '.JPEG', '.png', '.PNG']
+    return name.lower().endswith(('.jpg', '.jpeg', '.png'))
 
 def show(im, allobj, S, w, h, cellx, celly):
     for obj in allobj:
@@ -59,7 +59,7 @@ def show(im, allobj, S, w, h, cellx, celly):
             (int(centerx - ww/2), int(centery - hh/2)),
             (int(centerx + ww/2), int(centery + hh/2)),
             (0,0,255), 2)
-    cv2.imshow("result", im)
+    cv2.imshow('result', im)
     cv2.waitKey()
     cv2.destroyAllWindows()
 
