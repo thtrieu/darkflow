@@ -17,14 +17,14 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 ### Getting started
 
-There are three ways to get started with darkflow.
+You can choose _one_ of the following three ways to get started with darkflow.
 
-1. Just build the Cython extensions in place.
+1. Just build the Cython extensions in place. NOTE: If installing this way you will have to use `./flow` in the cloned darkflow directory instead of `flow` as darkflow is not installed globally.
     ```
     python3 setup.py build_ext --inplace
     ```
 
-2. Let pip install darkflow in dev mode (globally accessible but changes to the code immediately take effect)
+2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
     ```
     pip install -e .
     ```
@@ -53,7 +53,7 @@ person
 pottedplant
 ```
 
-And that's it. `darkflow` will take care of the rest.
+And that's it. `darkflow` will take care of the rest. You can also set darkflow to load from a custom labels file with the `--labels` flag (i.e. `--labels myOtherLabelsFile.txt`). This can be helpful when working with multiple models with different sets of output labels. When this flag is not set, darkflow will load from `labels.txt` by default (unless you are using one of the recognized `.cfg` files designed for the COCO or VOC dataset - then the labels file will be ignored and the COCO or VOC labels will be loaded).
 
 ## Design the net
 
@@ -159,6 +159,63 @@ vim VOCdevkit/VOC2007/Annotations/000001.xml
 flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages" --annotation "~/VOCdevkit/VOC2007/Annotations"
 ```
 
+### Training on your own dataset
+
+*The steps below assume we want to use tiny YOLO and our dataset has 3 classes*
+
+1. Create a copy of the configuration file `tiny-yolo-voc.cfg` and rename it according to your preference `tiny-yolo-voc-3c.cfg` (It is crucial that you leave the original `tiny-yolo-voc.cfg` file unchanged, see below for explanation).
+
+2. In `tiny-yolo-voc-3c.cfg`, change classes in the [region] layer (the last layer) to the number of classes you are going to train for. In our case, classes are set to 3.
+    
+    ```python
+    ...
+
+    [region]
+    anchors = 1.08,1.19,  3.42,4.41,  6.63,11.38,  9.42,5.11,  16.62,10.52
+    bias_match=1
+    classes=3
+    coords=4
+    num=5
+    softmax=1
+    
+    ...
+    ```
+
+3. In `tiny-yolo-voc-3c.cfg`, change filters in the [convolutional] layer (the second to last layer) to num * (classes + 5). In our case, num is 5 and classes are 3 so 5 * (3 + 5) = 40 therefore filters are set to 40.
+    
+    ```python
+    ...
+
+    [convolutional]
+    size=1
+    stride=1
+    pad=1
+    filters=40
+    activation=linear
+
+    [region]
+    anchors = 1.08,1.19,  3.42,4.41,  6.63,11.38,  9.42,5.11,  16.62,10.52
+    
+    ...
+    ```
+
+4. Change `labels.txt` to include the label(s) you want to train on (number of labels should be the same as the number of classes you set in `tiny-yolo-voc-3c.cfg` file). In our case, `labels.txt` will contain 3 labels.
+
+    ```
+    label1
+    label2
+    label3
+    ```
+5. Reference the `tiny-yolo-voc-3c.cfg` model when you train.
+
+    `flow --model cfg/tiny-yolo-voc-3c.cfg --load bin/tiny-yolo-voc.weights --train --annotation train/Annotations --dataset train/Images`
+
+
+* Why should I leave the original `tiny-yolo-voc.cfg` file unchanged?
+    
+    When darkflow sees you are loading `tiny-yolo-voc.weights` it will look for `tiny-yolo-voc.cfg` in your cfg/ folder and compare that configuration file to the new one you have set with `--model cfg/tiny-yolo-voc-3c.cfg`. In this case, every layer will have the same exact number of weights except for the last two, so it will load the weights into all layers up to the last two because they now contain different number of weights.
+
+
 ## Camera/video file demo
 
 For a demo that entirely runs on the CPU:
@@ -213,7 +270,7 @@ The created `.pb` file can be used to migrate the graph to mobile devices (JAVA 
 Also, darkflow supports loading from a `.pb` and `.meta` file for generating predictions (instead of loading from a `.cfg` and checkpoint or `.weights`).
 ```bash
 ## Forward images in sample_img for predictions based on protobuf file
-flow --pbLoad graph-cfg/yolo.pb --metaLoad graph-cfg/yolo.meta --imgdir sample_img/
+flow --pbLoad built_graph/yolo.pb --metaLoad built_graph/yolo.meta --imgdir sample_img/
 ```
 If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 

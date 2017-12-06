@@ -12,6 +12,7 @@ train_stats = (
     '\tEpoch number  : {}\n'
     '\tBackup every  : {}'
 )
+pool = ThreadPool()
 
 def _save_ckpt(self, step, loss_profile):
     file = '{}-{}{}'
@@ -136,7 +137,6 @@ def predict(self):
         # Post processing
         self.say('Post processing {} inputs ...'.format(len(inp_feed)))
         start = time.time()
-        pool = ThreadPool()
         pool.map(lambda p: (lambda i, prediction:
             self.framework.postprocess(
                prediction, os.path.join(inp_path, this_batch[i])))(*p),

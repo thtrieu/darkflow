@@ -1,14 +1,14 @@
 from . import yolo
 from . import yolov2
 from . import vanilla
-from os import sep
+from os.path import basename
 
 class framework(object):
     constructor = vanilla.constructor
     loss = vanilla.train.loss
     
     def __init__(self, meta, FLAGS):
-        model = meta['model'].split(sep)[-1]
+        model = basename(meta['model'])
         model = '.'.join(model.split('.')[:-1])
         meta['name'] = model
         

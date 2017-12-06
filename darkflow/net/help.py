@@ -1,7 +1,7 @@
 """
 tfnet secondary (helper) methods
 """
-from darkflow.utils.loader import create_loader
+from ..utils.loader import create_loader
 from time import time as timer
 import tensorflow as tf
 import numpy as np
@@ -76,17 +76,25 @@ def camera(self):
         'file {} does not exist'.format(file)
         
     camera = cv2.VideoCapture(file)
+    
+    if file == 0:
+        self.say('Press [ESC] to quit demo')
+        
     assert camera.isOpened(), \
     'Cannot capture source'
     
-    cv2.namedWindow('', 0)
-    _, frame = camera.read()
-    height, width, _ = frame.shape
-    cv2.resizeWindow('', width, height)
-    
+    if file == 0:#camera window
+        cv2.namedWindow('', 0)
+        _, frame = camera.read()
+        height, width, _ = frame.shape
+        cv2.resizeWindow('', width, height)
+    else:
+        _, frame = camera.read()
+        height, width, _ = frame.shape
+
     if SaveVideo:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        if file == 0:
+        if file == 0:#camera window
           fps = 1 / self._get_fps(frame)
           if fps < 1:
             fps = 1
@@ -122,7 +130,8 @@ def camera(self):
                     single_out, img, False)
                 if SaveVideo:
                     videoWriter.write(postprocessed)
-                cv2.imshow('', postprocessed)
+                if file == 0: #camera window
+                    cv2.imshow('', postprocessed)
             # Clear Buffers
             buffer_inp = list()
             buffer_pre = list()
@@ -132,14 +141,16 @@ def camera(self):
             sys.stdout.write('{0:3.3f} FPS'.format(
                 elapsed / (timer() - start)))
             sys.stdout.flush()
-        choice = cv2.waitKey(1)
-        if choice == 27: break
+        if file == 0: #camera window
+            choice = cv2.waitKey(1)
+            if choice == 27: break
 
     sys.stdout.write('\n')
     if SaveVideo:
         videoWriter.release()
     camera.release()
-    cv2.destroyAllWindows()
+    if file == 0: #camera window
+        cv2.destroyAllWindows()
 
 def to_darknet(self):
     darknet_ckpt = self.darknet

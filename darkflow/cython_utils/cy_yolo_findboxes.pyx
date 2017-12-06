@@ -3,7 +3,7 @@ cimport numpy as np
 cimport cython
 ctypedef np.float_t DTYPE_t
 from libc.math cimport exp
-from darkflow.utils.box import BoundBox
+from ..utils.box import BoundBox
 from nms cimport NMS
 
 

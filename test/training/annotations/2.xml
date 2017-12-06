@@ -1,0 +1,44 @@
+<annotation>
+	<folder>VOC2007</folder>
+	<filename>2.jpg</filename>
+	<source>
+		<database>The VOC2007 Database</database>
+		<annotation>PASCAL VOC2007</annotation>
+		<image>flickr</image>
+		<flickrid>329950741</flickrid>
+	</source>
+	<owner>
+		<flickrid>Lothar Lenz</flickrid>
+		<name>Lothar Lenz</name>
+	</owner>
+	<size>
+		<width>500</width>
+		<height>332</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>person</name>
+		<pose>Left</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>235</xmin>
+			<ymin>51</ymin>
+			<xmax>309</xmax>
+			<ymax>222</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>horse</name>
+		<pose>Left</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>157</xmin>
+			<ymin>106</ymin>
+			<xmax>426</xmax>
+			<ymax>294</ymax>
+		</bndbox>
+	</object>
+</annotation>
