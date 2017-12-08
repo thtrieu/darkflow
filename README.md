@@ -248,7 +248,7 @@ options = {"model": "cfg/yolo.cfg", "load": "bin/yolo.weights", "threshold": 0.1
 
 tfnet = TFNet(options)
 
-imgcv = cv2.imread("./sample_img/dog.jpg")
+imgcv = cv2.imread("./sample_img/sample_dog.jpg")
 result = tfnet.return_predict(imgcv)
 print(result)
 ```
