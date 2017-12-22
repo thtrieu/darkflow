@@ -53,12 +53,12 @@ def loss(self, net_out):
     net_out_reshape = tf.reshape(net_out, [-1, H, W, B, (4 + 1 + C)])
     coords = net_out_reshape[:, :, :, :, :4]
     coords = tf.reshape(coords, [-1, H*W, B, 4])
-    adjusted_coords_xy = tf.nn.sigmoid(coords[:,:,:,0:2])
+    adjusted_coords_xy = tf.sigmoid(coords[:,:,:,0:2])
     adjusted_coords_wh = tf.exp(tf.clip_by_value(coords[:,:,:,2:4], -1e3, 10)) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2])
     adjusted_coords_wh = tf.sqrt(tf.clip_by_value(adjusted_coords_wh, 1e-10, 1e5))
     coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
 
-    adjusted_c = tf.nn.sigmoid(net_out_reshape[:, :, :, :, 4])
+    adjusted_c = tf.sigmoid(net_out_reshape[:, :, :, :, 4])
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
 
     adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, 5:])
