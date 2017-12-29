@@ -89,11 +89,6 @@ class conv_select_layer(Layer):
                 'moving_mean': [real_n], 
                 'gamma' : [real_n]
             })
-            self.h['is_training'] = {
-                'shape': (),
-                'feed': True,
-                'dfault': False
-            }
 
     @property
     def signature(self):
@@ -141,11 +136,6 @@ class convolutional_layer(Layer):
                 'moving_mean': [n], 
                 'gamma' : [n]
             })
-            self.h['is_training'] = {
-                'feed': True,
-                'dfault': False,
-                'shape': ()
-            }
 
     def finalize(self, _):
         """deal with darknet"""

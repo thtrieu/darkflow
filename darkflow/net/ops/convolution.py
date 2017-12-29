@@ -78,7 +78,11 @@ class convolutional(BaseOp):
             'center' : False, 'scale' : True,
             'epsilon': 1e-5, 'scope' : self.scope,
             'updates_collections' : None,
-            'is_training': layer.h['is_training'],
+            'is_training': {
+                'feed': True,
+                'dfault': False,
+                'shape': ()
+            },
             'param_initializers': layer.w
             })
         return slim.batch_norm(inp, **args)
