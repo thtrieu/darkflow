@@ -35,6 +35,7 @@ class argHandler(dict):
         self.define('saveVideo', False, 'Records video from input video or camera')
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
         self.define('metaLoad', '', 'path to .meta file generated during --savepb that corresponds to .pb file')
+        self.define('notificationURL', '', 'http(s) url for reporting detections in JSON format')
 
     def define(self, argName, default, description):
         self[argName] = default
