@@ -8,7 +8,6 @@ import json
 #from utils.box import prob_compare2, box_intersection
 from ...utils.box import BoundBox
 from ...cython_utils.cy_yolo2_findboxes import box_constructor
-import requests
 
 def expit(x):
 	return 1. / (1. + np.exp(-x))
@@ -48,23 +47,15 @@ def postprocess(self, net_out, im, save = True):
 			continue
 		left, right, top, bot, mess, max_indx, confidence = boxResults
 		thick = int((h + w) // 300)
-		resultsForJSON.append({"label": mess, "confidence": float('%.2f' % confidence), "width": w, "height": h, "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
+		if self.FLAGS.json:
+			resultsForJSON.append({"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
+			continue
 
 		cv2.rectangle(imgcv,
 			(left, top), (right, bot),
 			colors[max_indx], thick)
 		cv2.putText(imgcv, mess, (left, top - 12),
 			0, 1e-3 * h, colors[max_indx],thick//3)
-
-	if self.FLAGS.notificationURL != '':
-
-		url = self.FLAGS.notificationURL
-
-		try:
-			resp = requests.post(url, json=resultsForJSON )
-
-		except:
-			print("Failed sending detection result.");
 
 	if not save: return imgcv
 
