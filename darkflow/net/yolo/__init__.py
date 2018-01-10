@@ -39,7 +39,6 @@ def constructor(self, meta, FLAGS):
 		self.meta['thresh'] = FLAGS.threshold
 
 	# Kick off UDP Service
-	print("UDP: " + str(FLAGS.UDP))
 	if FLAGS.UDP:
 		if FLAGS.address is None:
 			FLAGS.address = 'localhost'

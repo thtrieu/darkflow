@@ -6,8 +6,8 @@ class UDPService(Thread):
 
     def __init__(self, address, port, queue):
         Thread.__init__(self)
-        print("in UDPService init")
-        self.queue = queue
+        self.daemon = True
+		self.queue = queue
         self.socket = socket(AF_INET, SOCK_DGRAM)
         self.address = address
         self.port = port
