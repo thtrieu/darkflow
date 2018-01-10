@@ -40,10 +40,10 @@ def process_box(self, b, h, w, threshold):
 def findboxes(self, net_out):
 	meta, FLAGS = self.meta, self.FLAGS
 	threshold = FLAGS.threshold
-	
+
 	boxes = []
 	boxes = yolo_box_constructor(meta, net_out, threshold)
-	
+
 	return boxes
 
 def preprocess(self, im, allobj = None):
@@ -108,6 +108,8 @@ def postprocess(self, net_out, im, save = True):
 			0, 1e-3 * h, self.meta['colors'][max_indx],
 			thick // 3)
 
+	if self.FLAGS.UDP:
+		self.jsonQueue.put(json.dumps(resultsForJSON))
 
 	if not save: return imgcv
 
@@ -118,6 +120,6 @@ def postprocess(self, net_out, im, save = True):
 		textFile = os.path.splitext(img_name)[0] + ".json"
 		with open(textFile, 'w') as f:
 			f.write(textJSON)
-		return	
+		return
 
 	cv2.imwrite(img_name, imgcv)

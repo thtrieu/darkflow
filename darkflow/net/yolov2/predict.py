@@ -39,7 +39,7 @@ def postprocess(self, net_out, im, save = True):
 		imgcv = cv2.imread(im)
 	else: imgcv = im
 	h, w, _ = imgcv.shape
-	
+
 	resultsForJSON = []
 	for b in boxes:
 		boxResults = self.process_box(b, h, w, threshold)
@@ -56,6 +56,9 @@ def postprocess(self, net_out, im, save = True):
 			colors[max_indx], thick)
 		cv2.putText(imgcv, mess, (left, top - 12),
 			0, 1e-3 * h, colors[max_indx],thick//3)
+
+	if self.FLAGS.UDP:
+		self.jsonQueue.put(json.dumps(resultsForJSON))
 
 	if not save: return imgcv
 
