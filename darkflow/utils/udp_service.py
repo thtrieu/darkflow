@@ -19,5 +19,7 @@ class UDPService(Thread):
 
         while True:
             textJSON = self.queue.get()
-            if self.addr is not None:
+            try:
                 self.conn.send(textJSON.encode())
+            except:
+                pass
