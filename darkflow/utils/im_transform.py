@@ -11,7 +11,8 @@ def imcv2_recolor(im, a = .1):
 	im = im * (1 + t * a)
 	mx = 255. * (1 + a)
 	up = np.random.uniform() * 2 - 1
-	im = np.power(im/mx, 1. + up * .5)
+# 	im = np.power(im/mx, 1. + up * .5)
+	im = cv2.pow(im/mx, 1. + up * .5)
 	return np.array(im * 255., np.uint8)
 
 def imcv2_affine_trans(im):
