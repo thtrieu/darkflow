@@ -2,7 +2,7 @@ from . import train
 from . import predict
 from . import data
 from . import misc
-from ..utils.udp_service import UDPService
+from ...utils.udp_service import UDPService
 import numpy as np
 from queue import Queue
 
