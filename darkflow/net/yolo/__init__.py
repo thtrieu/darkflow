@@ -45,4 +45,4 @@ def constructor(self, meta, FLAGS):
 		if FLAGS.port is None:
 			FLAGS.port = 48051
 		self.jsonQueue = Queue()
-		UDPService(FLAGS.address, FLAGS.port, jsonQueue)
+		UDPService(FLAGS.address, FLAGS.port, self.jsonQueue)
