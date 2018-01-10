@@ -6,12 +6,12 @@ from os.path import basename
 class framework(object):
     constructor = vanilla.constructor
     loss = vanilla.train.loss
-    
+
     def __init__(self, meta, FLAGS):
         model = basename(meta['model'])
         model = '.'.join(model.split('.')[:-1])
         meta['name'] = model
-        
+
         self.constructor(meta, FLAGS)
 
     def is_inp(self, file_name):

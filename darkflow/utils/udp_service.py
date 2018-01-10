@@ -1,4 +1,4 @@
-from socket import socket, AF_INET, SOCK_STREAM
+from socket import socket, AF_INET, SOCK_DGRAM
 from threading import Thread
 
 
@@ -7,7 +7,7 @@ class UDPService(Thread):
     def __init__(self, address, port, queue):
         Thread.__init__(self)
         self.queue = queue
-        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = socket(AF_INET, SOCK_DGRAM)
         self.address = address
         self.port = port
 
