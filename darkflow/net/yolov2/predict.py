@@ -7,6 +7,7 @@ import json
 #from utils.box import BoundBox, box_iou, prob_compare
 #from utils.box import prob_compare2, box_intersection
 from ...utils.box import BoundBox
+from ...utils.color import rgb2hex
 from ...cython_utils.cy_yolo2_findboxes import box_constructor
 
 def expit(x):
@@ -47,9 +48,8 @@ def postprocess(self, net_out, im, save = True):
 			continue
 		left, right, top, bot, mess, max_indx, confidence = boxResults
 		thick = int((h + w) // 300)
-		if self.FLAGS.json:
-			resultsForJSON.append({"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
-			continue
+		if self.FLAGS.json or self.FLAGS.UDP:
+			resultsForJSON.append({"label": mess, "color": rgb2hex(*tuple(colors[max_indx])), "confidence": float('%.2f' % confidence), "maxY": im.shape[1], "maxX": im.shape[0], "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
 
 		cv2.rectangle(imgcv,
 			(left, top), (right, bot),
