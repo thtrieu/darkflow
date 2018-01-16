@@ -112,14 +112,23 @@ flow --imgdir sample_img/ --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights
 ```
 JSON output:
 ```json
-[{"label":"person", "confidence": 0.56, "topleft": {"x": 184, "y": 101}, "bottomright": {"x": 274, "y": 382}},
-{"label": "dog", "confidence": 0.32, "topleft": {"x": 71, "y": 263}, "bottomright": {"x": 193, "y": 353}},
-{"label": "horse", "confidence": 0.76, "topleft": {"x": 412, "y": 109}, "bottomright": {"x": 592,"y": 337}}]
+[{"label":"person", "color": "#FFFFFFFF", "maxX": 1920, "maxY": 1080, "confidence": 0.56, "topleft": {"x": 184, "y": 101}, "bottomright": {"x": 274, "y": 382}},
+{"label": "dog", "color": "#FFFFFFFF", "maxX": 1920, "maxY": 1080, "confidence": 0.32, "topleft": {"x": 71, "y": 263}, "bottomright": {"x": 193, "y": 353}},
+{"label": "horse", "color": "#FFFFFFFF", "maxX": 1920, "maxY": 1080, "confidence": 0.76, "topleft": {"x": 412, "y": 109}, "bottomright": {"x": 592,"y": 337}}]
 ```
  - label: self explanatory
+ - color: color of the box that is drawn in r,g,b,t format
+ - maxX: width of image/video
+ - maxY: height of image/video
  - confidence: somewhere between 0 and 1 (how confident yolo is about that detection)
  - topleft: pixel coordinate of top left corner of box.
  - bottomright: pixel coordinate of bottom right corner of box.
+
+
+You can export the json data to a UDP socket using the following flag
+```bash
+flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo camera --gpu 1.0 --UDP --address 127.0.0.1 --port 48051"color": "#FFFFFFFF", "maxX": 1920, "maxY": 1080
+```
 
 ## Training new model
 

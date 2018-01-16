@@ -2,7 +2,9 @@ from . import train
 from . import predict
 from . import data
 from . import misc
+from ...utils.udp_service import UDPService
 import numpy as np
+from queue import Queue
 
 
 """ YOLO framework __init__ equivalent"""
@@ -35,3 +37,12 @@ def constructor(self, meta, FLAGS):
 	# over-ride the threshold in meta if FLAGS has it.
 	if FLAGS.threshold > 0.0:
 		self.meta['thresh'] = FLAGS.threshold
+
+	# Kick off UDP Service
+	if FLAGS.UDP:
+		if FLAGS.address is None:
+			FLAGS.address = 'localhost'
+		if FLAGS.port is None:
+			FLAGS.port = 48051
+		self.jsonQueue = Queue()
+		UDPService(FLAGS.address, FLAGS.port, self.jsonQueue)
