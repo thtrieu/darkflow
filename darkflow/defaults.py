@@ -1,3 +1,5 @@
+from os.path import dirname
+
 class argHandler(dict):
     #A super duper fancy custom made CLI argument handler!!
     __getattr__ = dict.get
@@ -6,10 +8,13 @@ class argHandler(dict):
     _descriptions = {'help, --h, -h': 'show this super helpful message and exit'}
     
     def setDefaults(self):
-        self.define('imgdir', './sample_img/', 'path to testing directory with images')
-        self.define('binary', './bin/', 'path to .weights directory')
-        self.define('config', './cfg/', 'path to .cfg directory')
-        self.define('dataset', '../pascal/VOCdevkit/IMG/', 'path to dataset directory')
+        yolo_install = dirname(dirname(__file__))
+        self.define('imgdir', yolo_install + '/sample_img/',
+                    'path to testing directory with images')
+        self.define('binary', yolo_install + '/bin/', 'path to .weights directory')
+        self.define('config', yolo_install + '/cfg/', 'path to .cfg directory')
+        self.define('dataset', yolo_install + '/../pascal/VOCdevkit/IMG/',
+                    'path to dataset directory')
         self.define('labels', 'labels.txt', 'path to labels file')
         self.define('backup', './ckpt/', 'path to backup folder')
         self.define('summary', '', 'path to TensorBoard summaries directory')
