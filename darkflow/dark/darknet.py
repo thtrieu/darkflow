@@ -37,7 +37,7 @@ class Darknet(object):
             self.src_bin = FLAGS.model
         if FLAGS.binary != "":
             self.src_bin = FLAGS.binary
-        if FLAGS.load != "":
+        if FLAGS.load != "" and type(FLAGS.load) is not int:
             self.src_bin = FLAGS.load
         if self.src_bin != "" and os.path.splitext(self.src_bin)[1] == "":
             self.src_bin = self.src_bin + self._EXT
