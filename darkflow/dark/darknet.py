@@ -32,21 +32,27 @@ class Darknet(object):
         source binary and what is its config.
         can be: None, FLAGS.model, or some other
         """
-        self.src_bin = FLAGS.model + self._EXT
-        self.src_bin = FLAGS.binary + self.src_bin
-        self.src_bin = os.path.abspath(self.src_bin)
+        self.src_bin = ""
+        if FLAGS.model != "":
+            self.src_bin = FLAGS.model
+        if FLAGS.load != "":
+            self.src_bin = FLAGS.load
+        if self.src_bin != "" and os.path.splitext(self.src_bin)[1] == "":
+            self.src_bin = self.src_bin + self._EXT
+        if not os.path.isabs(self.src_bin):
+            self.src_bin = os.path.abspath(self.src_bin)
         exist = os.path.isfile(self.src_bin)
 
         if FLAGS.load == str(): FLAGS.load = int()
+
         if type(FLAGS.load) is int:
             self.src_cfg = FLAGS.model
             if FLAGS.load: self.src_bin = None
             elif not exist: self.src_bin = None
         else:
-            assert os.path.isfile(FLAGS.load), \
+            assert os.path.isfile(self.src_bin), \
             '{} not found'.format(FLAGS.load)
-            self.src_bin = FLAGS.load
-            name = loader.model_name(FLAGS.load)
+            name = loader.model_name(os.path.basename(self.src_bin))
             cfg_path = os.path.join(FLAGS.config, name + '.cfg')
             if not os.path.isfile(cfg_path):
                 warnings.warn(
