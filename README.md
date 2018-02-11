@@ -7,9 +7,9 @@ Real-time object detection and classification. Paper: [version 1](https://arxiv.
 Read more about YOLO (in darknet) and download weight files [here](http://pjreddie.com/darknet/yolo/). In case the weight file cannot be found, I uploaded some of mine [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU), which include `yolo-full` and `yolo-tiny` of v1.0, `tiny-yolo-v1.1` of v1.1 and `yolo`, `tiny-yolo-voc` of v2.
 
 
-Click on this image to see demo from yolov2:
+See demo below or see on [this imgur](http://i.imgur.com/EyZZKAA.gif)
 
-[![img](preview.png)](http://i.imgur.com/EyZZKAA.gif)
+<p align="center"> <img src="demo.gif"/> </p>
 
 ## Dependencies
 
