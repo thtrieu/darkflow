@@ -9,7 +9,7 @@ class loader(object):
     interface to work with both .weights and .ckpt files
     in loading / recollecting / resolving mode
     """
-    VAR_LAYER = ['convolutional', 'connected', 'local', 
+    VAR_LAYER = ['convolutional', 'connected', 'local',
                  'select', 'conv-select',
                  'extract', 'conv-extract']
 
@@ -23,7 +23,7 @@ class loader(object):
             val = self.find(key, idx)
             if val is not None: return val
         return None
-    
+
     def find(self, key, idx):
         up_to = min(len(self.src_key), 4)
         for i in range(up_to):
@@ -40,7 +40,7 @@ class loader(object):
 
 class weights_loader(loader):
     """one who understands .weights files"""
-    
+
     _W_ORDER = dict({ # order of param flattened into .weights file
         'convolutional': [
             'biases','gamma','moving_mean','moving_variance','kernel'
@@ -56,9 +56,9 @@ class weights_loader(loader):
         for i, layer in enumerate(src_layers):
             if layer.type not in self.VAR_LAYER: continue
             self.src_key.append([layer])
-            
+
             if walker.eof: new = None
-            else: 
+            else:
                 args = layer.signature
                 new = dark.darknet.create_darkop(*args)
             self.vals.append(new)
@@ -99,9 +99,9 @@ def create_loader(path, cfg = None):
         load_type = weights_loader
     elif '.weights' in path:
         load_type = weights_loader
-    else: 
+    else:
         load_type = checkpoint_loader
-    
+
     return load_type(path, cfg)
 
 class weights_walker(object):
@@ -109,16 +109,16 @@ class weights_walker(object):
     def __init__(self, path):
         self.eof = False # end of file
         self.path = path  # current pos
-        if path is None: 
+        if path is None:
             self.eof = True
             return
-        else: 
+        else:
             self.size = os.path.getsize(path)# save the path
             major, minor, revision, seen = np.memmap(path,
                 shape = (), mode = 'r', offset = 0,
                 dtype = '({})i4,'.format(4))
             self.transpose = major > 1000 or minor > 1000
-            self.offset = 16
+            self.offset = 20
 
     def walk(self, size):
         if self.eof: return None
@@ -127,13 +127,13 @@ class weights_walker(object):
         'Over-read {}'.format(self.path)
 
         float32_1D_array = np.memmap(
-            self.path, shape = (), mode = 'r', 
+            self.path, shape = (), mode = 'r',
             offset = self.offset,
             dtype='({})float32,'.format(size)
         )
 
         self.offset = end_point
-        if end_point == self.size: 
+        if end_point == self.size:
             self.eof = True
         return float32_1D_array
 
