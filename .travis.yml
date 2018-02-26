@@ -11,7 +11,7 @@ cache:
     
 # command to install dependencies
 install: 
-    - pip install -r test/requirements-testing.txt
+    - sudo pip install -r test/requirements-testing.txt
     - pip install pytest-faulthandler
     - pip install -e .
 
