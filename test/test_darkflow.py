@@ -12,7 +12,7 @@ import pytest
 #      locally if you don't want this happening!)
 
 #Settings
-buildPath = os.environ.get("CIRCLE_WORKING_DIRECTORY")
+buildPath = os.path.expanduser(os.environ.get("CIRCLE_WORKING_DIRECTORY"))
 
 if buildPath is None:
     print()

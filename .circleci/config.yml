@@ -29,12 +29,6 @@ jobs:
             - ./bin #Cache .weight files
           key: v1-dependencies-{{ checksum "test/requirements-testing.txt" }}
       
-      - run:
-          name: debug
-          command: |
-            echo $PWD
-            ls
-        
       # run tests!
       - run:
           name: run tests
