@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "test/requirements-testing.txt" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            pip install -r test/requirements-testing.txt
+      
+      - run:
+          name: install darkflow
+          command: |
+            pip install -e .
+
+      - save_cache:
+          paths:
+            - ./bin #Cache .weight files
+          key: v1-dependencies-{{ checksum "test/requirements-testing.txt" }}
+        
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            pytest -x --cov=./
+            python manage.py test
+      
+      - run:
+          name: upload coverage results
+          command: |
+            codecov
