@@ -12,7 +12,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "test/requirements-testing.txt" }}
+          - v1-weights-{{ checksum "./bin/yolo.weights" }}
 
       - run:
           name: install dependencies
@@ -23,18 +23,17 @@ jobs:
           name: install darkflow
           command: |
             pip install -e .
-
-      - save_cache:
-          paths:
-            - ./bin #Cache .weight files
-          key: v1-dependencies-{{ checksum "test/requirements-testing.txt" }}
       
       # run tests!
       - run:
           name: run tests
           command: |
             pytest -x --cov=./
-            python manage.py test
+
+      - save_cache:
+          paths:
+            - ./bin #Cache .weight files
+          key: v1-weights-{{ checksum "./bin/yolo.weights" }}
       
       - run:
           name: upload coverage results
