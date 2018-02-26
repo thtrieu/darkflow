@@ -7,17 +7,17 @@ import os
 import sys
 import pytest
 
-#NOTE: This file is designed to be run in the CircleCI environment. If you want to run it locally set the environment variable CIRCLE_WORKING_DIRECTORY to the base
+#NOTE: This file is designed to be run in the TravisCI environment. If you want to run it locally set the environment variable TRAVIS_BUILD_DIR to the base
 #      directory of the cloned darkflow repository. WARNING: This file delete images from sample_img/ that won't be used for testing (so don't run it
 #      locally if you don't want this happening!)
 
 #Settings
-buildPath = os.path.expanduser(os.environ.get("CIRCLE_WORKING_DIRECTORY"))
+buildPath = os.environ.get("TRAVIS_BUILD_DIR")
 
 if buildPath is None:
     print()
-    print("CIRCLE_WORKING_DIRECTORY environment variable was not found - is this running on CircleCI?")
-    print("If you want to test this locally, set CIRCLE_WORKING_DIRECTORY to the base directory of the cloned darkflow repository.")
+    print("TRAVIS_BUILD_DIR environment variable was not found - is this running on TravisCI?")
+    print("If you want to test this locally, set TRAVIS_BUILD_DIR to the base directory of the cloned darkflow repository.")
     exit()
 
 testImg = {"path": os.path.join(buildPath, "sample_img", "sample_person.jpg"), "width": 640, "height": 424,
