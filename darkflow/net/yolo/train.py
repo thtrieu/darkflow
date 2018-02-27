@@ -16,8 +16,8 @@ def loss(self, net_out):
     sprob = float(m['class_scale'])
     sconf = float(m['object_scale'])
     snoob = float(m['noobject_scale'])
-    scoor = float(m['coord_scale'])
-    S, B, C = m['side'], m['num'], m['classes']
+    scoor = float(m['coord_scale']) # Penalty variables
+    S, B, C = m['side'], m['num'], m['classes'] # S = grid size, B= bbox per grid, C = classes
     SS = S * S # number of grid cells
 
     print('{} loss hyper-parameters:'.format(m['model']))

@@ -3,6 +3,9 @@ import numpy as np
 import cv2
 import os
 
+
+#file summary: assigns labels according to the training scheme and makes bounding boxes around images and shows
+
 labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
     "horse", "motorbike", "person", "pottedplant", "sheep", "sofa",
@@ -21,40 +24,43 @@ coco_names = 'coco.names'
 nine_names = '9k.names'
 
 def labels(meta, FLAGS):    
-    model = os.path.basename(meta['name'])
-    if model in voc_models: 
+    model = os.path.basename(meta['name'])#Dafuq is meta? ## meta['name'] has path/to/yolo, passing through basename gives the model name
+    if model in voc_models: #check for model in the list of available models 
         print("Model has a VOC model name, loading VOC labels.")
-        meta['labels'] = labels20
+        meta['labels'] = labels20 # Assigns labels according to the model
     else:
-        file = FLAGS.labels
-        if model in coco_models:
+        file = FLAGS.labels # If not in voc models, set a default labels if it is not even a coco models/ maybe user defined?
+        if model in coco_models: # Check for models in coco models
             print("Model has a coco model name, loading coco labels.")
-            file = os.path.join(FLAGS.config, coco_names)
+            file = os.path.join(FLAGS.config, coco_names) #reassign coco labelfile
         elif model == 'yolo9000':
             print("Model has name yolo9000, loading yolo9000 labels.")
             file = os.path.join(FLAGS.config, nine_names)
-        with open(file, 'r') as f:
-            meta['labels'] = list()
-            labs = [l.strip() for l in f.readlines()]
-            for lab in labs:
-                if lab == '----': break
-                meta['labels'] += [lab]
-    if len(meta['labels']) == 0: 
-        meta['labels'] = labels20
+        with open(file, 'r') as f:# finally open the labelfile in read mode
+            meta['labels'] = list() #  meta['labels'] is a list element
+            labs = [l.strip() for l in f.readlines()] #reading each line in the file iteratively and assigning it to labs after stripping using list comprehension
+            for lab in labs: #for each element in labs
+                if lab == '----': break # if this element is encountered, break the assignment loop
+                meta['labels'] += [lab]# adding lab as a list element to meta['labels']
+    if len(meta['labels']) == 0: # if there are no labels in list in then assign voc labels anyway
+        meta['labels'] = labels20 
 
-def is_inp(self, name): 
+def is_inp(self, name): #returns whether input is an image
     return name.lower().endswith(('.jpg', '.jpeg', '.png'))
 
-def show(im, allobj, S, w, h, cellx, celly):
-    for obj in allobj:
-        a = obj[5] % S
-        b = obj[5] // S
-        cx = a + obj[1]
+def show(im, allobj, S, w, h, cellx, celly):# grid cell coordinates, height and width of image, im is numpy image,
+# Obj for a single object,
+    for obj in allobj: 
+        a = obj[5] % S #remainder
+        b = obj[5] // S #quotient
+        cx = a + obj[1] # coordinates of central pixel
         cy = b + obj[2]
-        centerx = cx * cellx
-        centery = cy * celly
-        ww = obj[3]**2 * w
-        hh = obj[4]**2 * h
+        centerx = cx * cellx #is the absolute center of the object 
+        centery = cy * celly 
+        ww = obj[3]**2 * w # width of the bounding box
+        hh = obj[4]**2 * h # height of the bounding box
+
+        # drawing bounding box on the image im.
         cv2.rectangle(im,
             (int(centerx - ww/2), int(centery - hh/2)),
             (int(centerx + ww/2), int(centery + hh/2)),

@@ -13,7 +13,7 @@ def parser(model):
 	"""
 	def _parse(l, i = 1):
 		return l.split('=')[i].strip()
-
+	print(model)
 	with open(model, 'rb') as f:
 		lines = f.readlines()
 

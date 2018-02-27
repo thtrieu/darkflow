@@ -3,21 +3,24 @@ from . import yolov2
 from . import vanilla
 from os.path import basename
 
+#OOPed 
+#frameworks are made as classes, desired framework is initialized
+
 class framework(object):
-    constructor = vanilla.constructor
+    constructor = vanilla.constructor #FCF
     loss = vanilla.train.loss
     
     def __init__(self, meta, FLAGS):
         model = basename(meta['model'])
-        model = '.'.join(model.split('.')[:-1])
-        meta['name'] = model
+        model = '.'.join(model.split('.')[:-1])#removing the last element from the model name
+        meta['name'] = model 
         
-        self.constructor(meta, FLAGS)
+        self.constructor(meta, FLAGS) #passing it to vanilla constructor that essentially does nothing
 
     def is_inp(self, file_name):
         return True
 
-class YOLO(framework):
+class YOLO(framework): #both YOLO and v2 are childs of framework class
     constructor = yolo.constructor
     parse = yolo.data.parse
     shuffle = yolo.data.shuffle
@@ -53,7 +56,7 @@ types = {
     '[region]': YOLOv2
 }
 
-def create_framework(meta, FLAGS):
+def create_framework(meta, FLAGS): #launching a selected framework with meta and FLAGS as args
     net_type = meta['type']
-    this = types.get(net_type, framework)
-    return this(meta, FLAGS)
+    this = types.get(net_type, framework) #"This" will be assigned the value YOLO/v2 or framework as default
+    return this(meta, FLAGS) # Selected framework is called with meta and FLAGS as args
