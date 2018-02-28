@@ -12,9 +12,9 @@ train_stats = (
     '\tEpoch number  : {}\n'
     '\tBackup every  : {}'
 )
-pool = ThreadPool()
+pool = ThreadPool() # runs process in multiple threads
 
-def _save_ckpt(self, step, loss_profile):
+def _save_ckpt(self, step, loss_profile): # Save checkpoint
     file = '{}-{}{}'
     model = self.meta['name']
 

@@ -6,6 +6,8 @@ import numpy as np
 import pickle
 import os
 
+#builds Computer graph according to the cfg file
+# Also model specific parameters are loaded into meta
 def parser(model):
 	"""
 	Read the .cfg file to extract layers into `layers`
@@ -51,7 +53,7 @@ def parser(model):
 					'banana ninja yadayada'
 
 	meta.update(layer) # last layer contains meta info
-	if 'anchors' in meta:
+	if 'anchors' in meta: # Anchors are not in yoloV2 
 		splits = meta['anchors'].split(',')
 		anchors = [float(x.strip()) for x in splits]
 		meta['anchors'] = anchors
