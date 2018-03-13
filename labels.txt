@@ -2,3 +2,4 @@ aeroplane
 bicycle
 bird
 boat
+Person
