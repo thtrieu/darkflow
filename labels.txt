@@ -1,4 +1,8 @@
-aeroplane
-bicycle
-bird
-boat
+left-lower-leg
+left-uppper-leg
+right-lower-leg
+right-upper-leg
+left-lower-arm
+left-upper-arm
+right-lower-arm
+right-upper-arm
