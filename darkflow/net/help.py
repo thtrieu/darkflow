@@ -65,7 +65,7 @@ def _get_fps(self, frame): #check for FPS
     processed = self.framework.postprocess(net_out, frame, False)
     return timer() - start
 
-def camera(self): # Only for demo run, takes a video from camera or a given file, '0 stands for file, '
+def camera(self): # Only for demo run, takes a video from camera or a given file, '0 stands for camera, '
     file = self.FLAGS.demo # input file given, 0 for webcam feed
     SaveVideo = self.FLAGS.saveVideo # bool
     
