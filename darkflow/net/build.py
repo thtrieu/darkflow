@@ -60,7 +60,7 @@ class TFNet(object):
 
 		self.darknet = darknet
 		args = [darknet.meta, FLAGS]
-		self.num_layer = len(darknet.layers)
+		self.num_layer = min(len(darknet.layers), int(self.FLAGS.nblayers)) if self.FLAGS.nblayers else len(darknet.layers)
 		self.framework = create_framework(*args)
 		
 		self.meta = darknet.meta
