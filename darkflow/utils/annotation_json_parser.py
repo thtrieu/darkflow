@@ -1,7 +1,20 @@
-#json format parser
-# author: chadrick.kwag@gmail.com
+"""
+json format parser
+author: chadrick.kwag@gmail.com
 
-# most part of the code is just copied from pascal_voc_clean_xml.py
+most part of the code is just copied from pascal_voc_clean_xml.py
+
+the format of the json file should be like the following example:
+
+{"imgfile": "0313.png", "w": 640, "h": 480, "objects": [{"rect": {"y1": 4, "y2": 144, "x1": 385, "x2": 587}, "name": "face"}]}
+
+the json file should be in a single line.
+it is convenient to use the python's json module when creating these files.
+
+also, this parser checks the size comparison of x1/x2 and y1/y2.
+when this size rule is broken and mapped to xn,yn,xx,yx, then it will cause and error during training.
+
+"""
 
 import json
 import os
@@ -13,11 +26,9 @@ import glob
 def _pp(l): # pretty printing 
     for i in l: print('{}: {}'.format(i,l[i]))
 
-def chadrick_jsonparser(ANN, pick, exclusive = False):
+def annotation_json_parser(ANN, pick, exclusive = False):
     # ANN = FLAGS.annotation -> annotation dir
     # pick = meta['labels']
-    print("using chadrick json parser")
-    print('using chadrick')
 
     dumps= list()
     cur_dir = os.getcwd()
@@ -40,7 +51,7 @@ def chadrick_jsonparser(ANN, pick, exclusive = False):
         print("opening file {}".format(file))
         in_file = open(file)
 
-        # the file containds zero padding and the actual json is in the first line
+        # the file contains zero padding and the actual json is in the first line
         firstline = in_file.readline()
         firstline = firstline.replace('\0','')
 
@@ -61,12 +72,6 @@ def chadrick_jsonparser(ANN, pick, exclusive = False):
                     continue
 
                 rect = obj['rect']
-
-                
-                # xn = int(float(xmlbox.find('xmin').text))
-                # xx = int(float(xmlbox.find('xmax').text))
-                # yn = int(float(xmlbox.find('ymin').text))
-                # yx = int(float(xmlbox.find('ymax').text))
 
                 # xn = x1, xx = x2, yn = y1, yx = y2
 

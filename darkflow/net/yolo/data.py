@@ -18,12 +18,12 @@ def parse(self, exclusive = False):
     print('\n{} parsing {}'.format(meta['model'], ann))
 
     dumps = None
+
     if self.FLAGS.annotationformat == 'xml':
         dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
     elif self.FLAGS.annotationformat == 'json':
         dumps = annotation_json_parser(ann, meta['labels'], exclusive)
     
-
     return dumps
 
 
