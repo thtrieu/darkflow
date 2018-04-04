@@ -56,7 +56,7 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
                 a  = int(float(xmlbox.find('angle').text))
                 current = [name,xn,yn,xx,yx,a]
                 # current = [name,xn,yn,xx,yx]
-                # print(current)
+                print(jpg, current)
                 all += [current]
 
         add = [[jpg, [w, h, all]]]
