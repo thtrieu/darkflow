@@ -72,7 +72,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or subj[1:][0] == subj[:-1][0] or subj[1:][1] == subj[:-1][1]:
+        if len(set(subj)) != 4 or list(map(lambda x: x[0], subj))[1:] == list(map(lambda x: x[0], subj))[:-1] or list(map(lambda x: x[1], subj))[1:] == list(map(lambda x: x[1], subj))[:-1]:
             if vertices:
                 return 0, []
             else:
@@ -81,7 +81,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or clip[1:][0] == clip[:-1][0] or clip[1:][1] == clip[:-1][1]:
+        if len(set(clip)) != 4 or list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1] or list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]:
             if vertices:
                 return 0, []
             else:
@@ -119,7 +119,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or subj[1:][0] == subj[:-1][0] or subj[1:][1] == subj[:-1][1]:
+        if len(set(subj)) != 4 or list(map(lambda x: x[0], subj))[1:] == list(map(lambda x: x[0], subj))[:-1] or list(map(lambda x: x[1], subj))[1:] == list(map(lambda x: x[1], subj))[:-1]:
             if vertices:
                 return 0, []
             else:
@@ -128,7 +128,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or clip[1:][0] == clip[:-1][0] or clip[1:][1] == clip[:-1][1]:
+        if len(set(clip)) != 4 or list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1] or list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]:
             if vertices:
                 return 0, []
             else:
@@ -219,13 +219,10 @@ if __name__ == "__main__":
     rec2 = Rectangle(rec2_x, rec2_y, rec2_w, rec2_h, rec2_angle)
     # rec2.draw(img, colour=(0, 0, 255))
 
-    rec1 = Rectangle(555.9999990463257,  570.4999995231628,  50.00000121268499,  139.00000418962463,  -88.0)
-    rec2 = Rectangle(469.66484785079956,  584.0530031919479,  22.127154920561054,  130.96031750163496,  -17.019222259521484 )
+    rec1 = Rectangle(1591.9999980926514, 743.5000026226044, 49.99999667005966, 173.00000557877794, -62.0)
+    rec2 = Rectangle(1440.4873877763748, 674.5056468236726, 0.45413674288479366,  1.1896752718451964,  0.002339532133191824)
 
-    rich = rec1.get_vertices_points()
 
-    for g in rich:
-        print(g.x, ' ',g.y)
 
 
     # Calculate IOU
@@ -234,6 +231,8 @@ if __name__ == "__main__":
 
     union, shape_vertices_union = rec1.find_union_shape_area(rec2, vertices=True)
     draw_polygon(img, shape_vertices_union, colour=(255, 255, 255))
+    draw_polygon(img, rec1.get_vertices_points(), colour=(255, 0, 255))
+    draw_polygon(img, rec2.get_vertices_points(), colour=(255, 255, 0))
 
     iou = intersection_over_union(rec1, rec2)
 
