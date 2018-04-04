@@ -110,7 +110,9 @@ def loss(self, net_out):
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
     # Class Probs * box Confidence
-    confs = tf.multiply(best_box, _confs)
+    best_box_new = tf.py_func(printTensor, [best_box], tf.float32)
+    best_box_new.set_shape(best_box.get_shape())
+    confs = tf.multiply(best_box_new, _confs)
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
@@ -146,15 +148,10 @@ def loss(self, net_out):
     tf.summary.scalar('{} loss'.format(m['model']), self.loss)
 
 
-def printTensor(tensor, ):
-    # print(true_tensor)
-    # print("true_tensor Length {}".format(len(true_tensor)))
-    # print(pred_tensor)
-    # print("pred_tensor Length {}".format(len(pred_tensor)))
-    # print("INTERSECT TENSOR OUTPUT!!!")
-    # for x in tensor:
-    #     print(x)
-    #     print("length: ", len(x))
+def printTensor(tensor):
+    for x in tensor:
+        print("Best Box ", x)
+        print("length: ", len(x))
     return tensor
 
 
@@ -238,12 +235,12 @@ def calculate_iou(image_tens, gt_tensor, net_out_tensor, iou):
                 out_net_rec = Rectangle(out_net_centre_x, out_net_centre_y, out_net_width, out_net_height,
                                         net_out_box[4])
 
+                iou_val = intersection_over_union(ground_truth_rec, out_net_rec)
+
                 if cell_index == 51:
-                    print("IOU for box ", cell_box_index, ": ", iou_val)
+                    print("IOU for box {}: {}".format(cell_box_index, iou_val))
                     print("Ground Truth Rectangle", ground_truth_rec, "\n")
                     print("Output Network Rectangle", out_net_rec, "\n")
-
-                iou_val = intersection_over_union(ground_truth_rec, out_net_rec)
 
                 # print("IOU for box ", cell_box_index, ": ", iou_val)
                 iou[image_index][cell_index][cell_box_index] = iou_val
