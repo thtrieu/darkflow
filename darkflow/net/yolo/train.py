@@ -110,9 +110,7 @@ def loss(self, net_out):
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
     # Class Probs * box Confidence
-    best_box_new = tf.py_func(printTensor, [best_box], tf.float32)
-    best_box_new.set_shape(best_box.get_shape())
-    confs = tf.multiply(best_box_new, _confs)
+    confs = tf.multiply(best_box, _confs)
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs

@@ -7,7 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9aa2a4d5-6272-4f30-973a-893f06fb2a77" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yolo/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yolo/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +29,8 @@
             <file leaf-file-name="calulating_IOU.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="696">
-                    <caret line="234" column="48" selection-start-line="234" selection-start-column="48" selection-end-line="234" selection-end-column="48" />
+                  <state relative-caret-position="444">
+                    <caret line="222" column="32" selection-start-line="222" selection-start-column="32" selection-end-line="222" selection-end-column="32" />
                     <folding>
                       <element signature="e#0#11#0" expanded="true" />
                     </folding>
@@ -43,6 +45,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="pascal_voc_clean_xml.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="666">
+              <caret line="55" column="53" lean-forward="true" selection-start-line="55" selection-start-column="53" selection-end-line="55" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="build.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/build.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -64,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="train.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="235" column="55" selection-start-line="235" selection-start-column="55" selection-end-line="235" selection-end-column="55" />
+            <state relative-caret-position="4266">
+              <caret line="237" column="35" selection-start-line="237" selection-start-column="33" selection-end-line="237" selection-end-column="35" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -107,8 +118,8 @@
       <file leaf-file-name="data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1152">
-              <caret line="70" column="44" selection-start-line="70" selection-start-column="44" selection-end-line="70" selection-end-column="44" />
+            <state relative-caret-position="324">
+              <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
               <folding>
                 <element signature="e#0#62#0" expanded="true" />
               </folding>
@@ -132,36 +143,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>CX:  4.0  CY:  6</find>
+      <find />
       <find>cell_index</find>
       <find>57.99999861606587</find>
       <find>NEW</find>
-      <find>Ground Truth Rectangle</find>
+      <find />
       <find>150</find>
       <find>OLD</find>
       <find>printTensor</find>
       <find>Ora</find>
       <find>37</find>
       <find>net_out</find>
-      <find>Output At</find>
+      <find />
       <find>intersection_over_union</find>
       <find>loss</find>
-      <find>IOU shape</find>
+      <find />
       <find>IOU</find>
       <find>_areas</find>
       <find>-162</find>
-      <find>IOU input tensor</find>
-      <find>Start calculate_iou</find>
+      <find />
+      <find />
       <find>yey</find>
       <find>yopo_print</find>
       <find>clip</find>
       <find>count</find>
-      <find>area</find>
       <find>iou</find>
-      <find>iou_val</find>
-      <find>IOU for box  2 :  0.</find>
+      <find />
       <find>find_intersection_shape_area</find>
       <find>output</find>
+      <find>iou_val</find>
+      <find>area</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/darkflow/net/yolo</dir>
@@ -193,15 +204,15 @@
         <option value="$PROJECT_DIR$/sub_set/labels/000033016.xml" />
         <option value="$PROJECT_DIR$/sub_set/labels/000015774.xml" />
         <option value="$PROJECT_DIR$/darkflow/net/build.py" />
-        <option value="$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolo/predict.py" />
         <option value="$PROJECT_DIR$/darkflow/net/flow.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolov2/train.py" />
         <option value="$PROJECT_DIR$/cfg/yopo.cfg" />
         <option value="$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/tensorflow/python/client/session.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolo/data.py" />
-        <option value="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolo/train.py" />
+        <option value="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" />
+        <option value="$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py" />
       </list>
     </option>
   </component>
@@ -212,9 +223,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1985" />
+    <option name="x" value="3232" />
     <option name="y" value="-4" />
-    <option name="width" value="2495" />
+    <option name="width" value="1248" />
     <option name="height" value="1444" />
   </component>
   <component name="ProjectView">
@@ -332,7 +343,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.flow_new">
+  <component name="RunManager" selected="Python.flow_cont">
     <configuration name="calulating_IOU" type="PythonConfigurationType" factoryName="Python">
       <module name="darkflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -487,7 +498,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.51282054" side_tool="true" weight="0.3908397" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4985972" weight="0.32784432" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.91382766" visible="true" weight="0.4513473" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.91382766" visible="true" weight="0.2791916" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32934132" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -555,32 +566,32 @@
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>map(lambda x: x[0], clip)[1:] == map(lambda x: x[0], clip)[:-1]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>clip[1:][0] == clip[:-1][0]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>subj[1:][1] == subj[:-1][1]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>subj[1:][0] == subj[:-1][0]</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -768,13 +779,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="51" column="45" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sub_set/labels/000004812.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
@@ -902,16 +906,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1152">
-          <caret line="70" column="44" selection-start-line="70" selection-start-column="44" selection-end-line="70" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sub_set/images/000033016.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -941,8 +935,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="696">
-          <caret line="234" column="48" selection-start-line="234" selection-start-column="48" selection-end-line="234" selection-end-column="48" />
+        <state relative-caret-position="444">
+          <caret line="222" column="32" selection-start-line="222" selection-start-column="32" selection-end-line="222" selection-end-column="32" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -951,11 +945,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="235" column="55" selection-start-line="235" selection-start-column="55" selection-end-line="235" selection-end-column="55" />
+        <state relative-caret-position="4266">
+          <caret line="237" column="35" selection-start-line="237" selection-start-column="33" selection-end-line="237" selection-end-column="35" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="666">
+          <caret line="55" column="53" lean-forward="true" selection-start-line="55" selection-start-column="53" selection-end-line="55" selection-end-column="53" />
         </state>
       </provider>
     </entry>

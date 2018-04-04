@@ -53,7 +53,7 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
                 xx = int(float(xmlbox.find('xmax').text))
                 yn = int(float(xmlbox.find('ymin').text))
                 yx = int(float(xmlbox.find('ymax').text))
-                a  = int(float(xmlbox.find('angle').text))
+                a  = float(xmlbox.find('angle').text)
                 current = [name,xn,yn,xx,yx,a]
                 # current = [name,xn,yn,xx,yx]
                 print(jpg, current)

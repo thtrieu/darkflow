@@ -72,7 +72,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or list(map(lambda x: x[0], subj))[1:] == list(map(lambda x: x[0], subj))[:-1] or list(map(lambda x: x[1], subj))[1:] == list(map(lambda x: x[1], subj))[:-1]:
+        if len(set(subj)) != 4 or len(set(subj)) <= 2:
             if vertices:
                 return 0, []
             else:
@@ -81,7 +81,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1] or list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]:
+        if len(set(clip)) != 4 or len(set(clip)) <= 2:
             if vertices:
                 return 0, []
             else:
@@ -119,7 +119,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or list(map(lambda x: x[0], subj))[1:] == list(map(lambda x: x[0], subj))[:-1] or list(map(lambda x: x[1], subj))[1:] == list(map(lambda x: x[1], subj))[:-1]:
+        if len(set(subj)) != 4 or len(set(subj)) <= 2:
             if vertices:
                 return 0, []
             else:
@@ -128,7 +128,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1] or list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]:
+        if len(set(clip)) != 4 or len(set(clip)) <= 2:
             if vertices:
                 return 0, []
             else:
@@ -197,7 +197,7 @@ def intersection_over_union(bbox_ground_truth, bbox_predicted):
 if __name__ == "__main__":
     print("Calculate IOU of left-lower-arm")
 
-    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/000004812.jpg")
+    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/000033016.jpg")
 
     #  Ground Truth - left-lower-arm
     centre_point_x = (1503 + 1553) / 2
@@ -219,8 +219,8 @@ if __name__ == "__main__":
     rec2 = Rectangle(rec2_x, rec2_y, rec2_w, rec2_h, rec2_angle)
     # rec2.draw(img, colour=(0, 0, 255))
 
-    rec1 = Rectangle(1591.9999980926514, 743.5000026226044, 49.99999667005966, 173.00000557877794, -62.0)
-    rec2 = Rectangle(1440.4873877763748, 674.5056468236726, 0.45413674288479366,  1.1896752718451964,  0.002339532133191824)
+    rec1 = Rectangle(555.9999990463257, 570.4999995231628, 50.00000121268499, 139.00000418962463, -88.0)
+    rec2 = Rectangle(100, 100, 0, 58.1619032498341, -86.7201919555664)
 
 
 
