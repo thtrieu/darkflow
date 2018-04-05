@@ -194,6 +194,12 @@ def intersection_over_union(bbox_ground_truth, bbox_predicted):
 
     return intersection / union
 
+
+def show_image(img):
+    cv2.namedWindow("Display window", cv2.WINDOW_AUTOSIZE)
+    cv2.imshow("Display Window", img)
+    cv2.waitKey(0)
+
 if __name__ == "__main__":
     print("Calculate IOU of left-lower-arm")
 
