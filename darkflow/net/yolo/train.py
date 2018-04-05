@@ -226,19 +226,21 @@ def calculate_iou(image_tens, gt_tensor, net_out_tensor, iou):
                 out_net_width = (net_out_box[2] ** 2) * image_width
                 out_net_height = (net_out_box[3] ** 2) * image_height
                 #
-                # print("Output At ", cell_index, " CX: ", cell_x, " CY: ", cell_y, " X: ", out_net_centre_x, " Y: ", out_net_centre_y,
-                #       " W: ", out_net_width, " H: ", out_net_height)
+                # print("Output At ", cell_index, " CX: ", cell_x, " CY: ", cell_y, " X: ", out_net_centre_x, " Y: ",
+                #       out_net_centre_y, " W: ", out_net_width, " H: ", out_net_height, 'angle')
 
                 # Create ground truth Tensor
                 out_net_rec = Rectangle(out_net_centre_x, out_net_centre_y, out_net_width, out_net_height,
                                         net_out_box[4])
 
+                print("Ground Truth Rectangle", ground_truth_rec, "\n")
+                print("Output Network Rectangle", out_net_rec, "\n")
+
                 iou_val = intersection_over_union(ground_truth_rec, out_net_rec)
 
-                if cell_index == 51:
-                    print("IOU for box {}: {}".format(cell_box_index, iou_val))
-                    print("Ground Truth Rectangle", ground_truth_rec, "\n")
-                    print("Output Network Rectangle", out_net_rec, "\n")
+                # if cell_index == 51:
+                print("IOU for box {}: {}".format(cell_box_index, iou_val))
+
 
                 # print("IOU for box ", cell_box_index, ": ", iou_val)
                 iou[image_index][cell_index][cell_box_index] = iou_val

@@ -53,8 +53,8 @@ class Rectangle:
 
     def get_vertices_points(self):
         x0, y0, width, height, _angle = self.x, self.y, self.w, self.h, self.angle
-        b = math.cos(_angle) * 0.5
-        a = math.sin(_angle) * 0.5
+        b = math.cos(math.radians(_angle)) * 0.5
+        a = math.sin(math.radians(_angle)) * 0.5
         pt0 = Point(int(x0 - a * height - b * width), int(y0 + b * height - a * width))
         pt1 = Point(int(x0 + a * height - b * width), int(y0 - b * height - a * width))
         pt2 = Point(int(2 * x0 - pt0.x), int(2 * y0 - pt0.y))
@@ -72,7 +72,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or len(set(subj)) <= 2:
+        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(clip_rectangle.h) == 0:
             if vertices:
                 return 0, []
             else:
@@ -81,7 +81,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or len(set(clip)) <= 2:
+        if len(set(clip)) != 4:
             if vertices:
                 return 0, []
             else:
@@ -119,7 +119,7 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or len(set(subj)) <= 2:
+        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(clip_rectangle.h) == 0:
             if vertices:
                 return 0, []
             else:
@@ -128,7 +128,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4 or len(set(clip)) <= 2:
+        if len(set(clip)) != 4:
             if vertices:
                 return 0, []
             else:
@@ -197,7 +197,7 @@ def intersection_over_union(bbox_ground_truth, bbox_predicted):
 if __name__ == "__main__":
     print("Calculate IOU of left-lower-arm")
 
-    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/000033016.jpg")
+    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/040967287.jpg")
 
     #  Ground Truth - left-lower-arm
     centre_point_x = (1503 + 1553) / 2
@@ -219,8 +219,9 @@ if __name__ == "__main__":
     rec2 = Rectangle(rec2_x, rec2_y, rec2_w, rec2_h, rec2_angle)
     # rec2.draw(img, colour=(0, 0, 255))
 
-    rec1 = Rectangle(555.9999990463257, 570.4999995231628, 50.00000121268499, 139.00000418962463, -88.0)
-    rec2 = Rectangle(100, 100, 0, 58.1619032498341, -86.7201919555664)
+    rec1 = Rectangle(599.0000009536743,  397.9999977350235,  105.99999847437786,  49.99999667005966,  -129.2513427734375)
+    rec2 = Rectangle(490.2878352999687,  271.58785675652325,  0.2539491610125122,  2.3729914290343963,  -0.15401481091976166)
+    # rec2 = Rectangle(100, 100, 0, 58.1619032498341, -86.7201919555664)
 
 
 
@@ -232,7 +233,8 @@ if __name__ == "__main__":
     union, shape_vertices_union = rec1.find_union_shape_area(rec2, vertices=True)
     draw_polygon(img, shape_vertices_union, colour=(255, 255, 255))
     draw_polygon(img, rec1.get_vertices_points(), colour=(255, 0, 255))
-    draw_polygon(img, rec2.get_vertices_points(), colour=(255, 255, 0))
+    draw_polygon(img, rec2.get_vertices_points(), colour=(255, 0, 255))
+
 
     iou = intersection_over_union(rec1, rec2)
 
