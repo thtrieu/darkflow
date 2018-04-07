@@ -246,13 +246,13 @@ def calculate_iou(image_tens, gt_tensor, net_out_tensor, iou):
                 out_net_rec = Rectangle(out_net_centre_x, out_net_centre_y, out_net_width, out_net_height,
                                         net_out_angle)
 
-                print("Ground Truth Rectangle", ground_truth_rec, "\n")
-                print("Output Network Rectangle", out_net_rec, "\n")
+                print("Ground Truth Rectangle", ground_truth_rec)
+                print("Output Network Rectangle", out_net_rec)
 
                 iou_val = intersection_over_union(ground_truth_rec, out_net_rec)
 
                 # if cell_index == 51:
-                print("IOU for box {}: {}".format(cell_box_index, iou_val))
+                print("IOU for box {}: {} \n\n".format(cell_box_index, iou_val))
 
 
                 # print("IOU for box ", cell_box_index, ": ", iou_val)

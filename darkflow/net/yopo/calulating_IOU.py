@@ -187,9 +187,13 @@ def intersection_over_union(bbox_ground_truth, bbox_predicted):
     :param bbox_predicted: YOPO Rectangle Object
     :return: Intersection over union value
     """
+    try:
 
-    intersection = bbox_ground_truth.find_intersection_shape_area(bbox_predicted, vertices=False)
-    union = bbox_ground_truth.find_union_shape_area(bbox_predicted, vertices=False)
+        intersection = bbox_ground_truth.find_intersection_shape_area(bbox_predicted, vertices=False)
+        union = bbox_ground_truth.find_union_shape_area(bbox_predicted, vertices=False)
+
+    except pyclipper.ClipperException:
+        return 0
 
     if union == 0:
         return 0
@@ -265,9 +269,8 @@ if __name__ == "__main__":
     # rec2.draw(img, colour=(0, 0, 255))
 
     # TODO CLIPPING ERROR!!!
-    rec1 = Rectangle(658.4999997275216, 220.00000068119596, 89.00000038378948, 49.999997442956285, -78.43986690044403)
-    rec2 = Rectangle(646.7366170883179, 212.04363265207837, 1.3590652958357197, 1.0475772630980373,
-                     -41.93526774644852)
+    rec1 = Rectangle(608.5000010899134, 313.0000001192093, 122.99999113075273, 49.99999667005966, -45.331188440322876)
+    rec2 = Rectangle(571.423647063119, 313.0299306980201,  1.274746256824555,  3.9270291193666402, -35.68650394678116)
     # rec2 = Rectangle(100, 100, 0, 58.1619032498341, -86.7201919555664)
 
     # IOU
@@ -290,20 +293,25 @@ if __name__ == "__main__":
     # Rectangle: x: 695.4430913925171, y: 490.2400955557823, w: 95.81683375372563, h: 52.13581478280169, angle: 91.01072072982788
 
     # Calculate IOU
-    intersection, shape_vertices = rec1.find_intersection_shape_area(rec2, vertices=True)
+    # intersection, shape_vertices = rec1.find_intersection_shape_area(rec2, vertices=True)
     # draw_polygon(img, shape_vertices)
 
-    union, shape_vertices_union = rec1.find_union_shape_area(rec2, vertices=True)
-    draw_polygon(img, shape_vertices_union, colour=(255, 255, 255))
-    # draw_polygon(img, rec1.get_vertices_points(), colour=(255, 0, 255))
-    # draw_polygon(img, rec2.get_vertices_points(), colour=(255, 0, 255))
-    intersection_shape, points = rec1.find_intersection_shape_area(rec2, True)
-    draw_polygon(img, points, colour=(255, 133, 133))
+    # union, shape_vertices_union = rec1.find_union_shape_area(rec2, vertices=True)
+    # draw_polygon(img, shape_vertices_union, colour=(255, 255, 255))
+    draw_polygon(img, rec1.get_vertices_points(), colour=(255, 255, 255))
+    draw_polygon(img, rec2.get_vertices_points(), colour=(255, 0, 255))
+    # intersection_shape, points = rec1.find_intersection_shape_area(rec2, True)
+    # draw_polygon(img, points, colour=(255, 133, 133))
 
     iou = intersection_over_union(rec1, rec2)
 
     print("IOU: {}".format(iou))
     cv2.imwrite("output_union.jpg", img)
+
+
+    # Show Points
+
+
 
     # Show result
     cv2.namedWindow("Display window", cv2.WINDOW_AUTOSIZE)
