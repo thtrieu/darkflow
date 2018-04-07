@@ -24,7 +24,9 @@ def loss(self, net_out):
     snoob = float(m['noobject_scale'])
     scoor = float(m['coord_scale'])
     S, B, C = m['side'], m['num'], m['classes']
-    S = 8  # Grid Number
+
+    print("Number of Grid Cells", S)
+
     SS = S * S  # number of grid cells
 
     print('{} loss hyper-parameters:'.format(m['model']))
@@ -206,12 +208,16 @@ def calculate_iou(image_tens, gt_tensor, net_out_tensor, iou):
                 gt_width = (ground_truth_box[2] ** 2) * image_width
                 gt_height = (ground_truth_box[3] ** 2) * image_height
 
+                print("Angled Ground Truth", ground_truth_box[4])
+                gt_angle = ground_truth_box[4] * 360
+
+
                 # print("NEW At ", cell_index, " CX: ", cell_x, " CY: ", cell_y, " X: ", centre_x, " Y: ", centre_y,
                 #       " W: ", gt_width, " H: ", gt_height)
                 # print("Cell Number", cell_index, " CX: ", cell_x, " CY: ", cell_y)
 
                 # Create ground truth Tensor
-                ground_truth_rec = Rectangle(centre_x, centre_y, gt_width, gt_height, ground_truth_box[4])
+                ground_truth_rec = Rectangle(centre_x, centre_y, gt_width, gt_height, gt_angle)
                 # print("Ground Truth Rectangle", ground_truth_rec, "\n")
 
                 # Network out tensor
@@ -225,13 +231,20 @@ def calculate_iou(image_tens, gt_tensor, net_out_tensor, iou):
 
                 out_net_width = (net_out_box[2] ** 2) * image_width
                 out_net_height = (net_out_box[3] ** 2) * image_height
+
+
+                net_out_angle = net_out_box[4]
+                net_out_angle = net_out_angle * 360
+                print("RAW: Angle Network output", net_out_box[4])
+
+                print("GROUND TRUTH ANGLE", gt_angle, "IOU Calculation Network", net_out_angle)
                 #
                 # print("Output At ", cell_index, " CX: ", cell_x, " CY: ", cell_y, " X: ", out_net_centre_x, " Y: ",
                 #       out_net_centre_y, " W: ", out_net_width, " H: ", out_net_height, 'angle')
 
                 # Create ground truth Tensor
                 out_net_rec = Rectangle(out_net_centre_x, out_net_centre_y, out_net_width, out_net_height,
-                                        net_out_box[4])
+                                        net_out_angle)
 
                 print("Ground Truth Rectangle", ground_truth_rec, "\n")
                 print("Output Network Rectangle", out_net_rec, "\n")

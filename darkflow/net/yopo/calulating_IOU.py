@@ -72,7 +72,8 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(clip_rectangle.h) == 0:
+        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(
+                clip_rectangle.h) == 0:
             if vertices:
                 return 0, []
             else:
@@ -81,12 +82,11 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4:
+        if len(set(clip)) != 4 or check_intersection_is_line(clip_rectangle):
             if vertices:
                 return 0, []
             else:
                 return 0
-
 
         pc = pyclipper.Pyclipper()
         pc.AddPath(clip, pyclipper.PT_CLIP, True)
@@ -119,7 +119,8 @@ class Rectangle:
              (point_3_rec1.x, point_3_rec1.y))
         )
 
-        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(clip_rectangle.h) == 0:
+        if len(set(subj)) != 4 or int(self.w) == 0 or int(self.h) == 0 or int(clip_rectangle.w) == 0 or int(
+                clip_rectangle.h) == 0:
             if vertices:
                 return 0, []
             else:
@@ -128,7 +129,7 @@ class Rectangle:
         clip = ((point_0_rec2.x, point_0_rec2.y), (point_1_rec2.x, point_1_rec2.y), (point_2_rec2.x, point_2_rec2.y),
                 (point_3_rec2.x, point_3_rec2.y))
 
-        if len(set(clip)) != 4:
+        if len(set(clip)) != 4 or check_intersection_is_line(clip_rectangle):
             if vertices:
                 return 0, []
             else:
@@ -158,6 +159,7 @@ class Rectangle:
 
     def __str__(self):
         return "Rectangle: x: {}, y: {}, w: {}, h: {}, angle: {}".format(self.x, self.y, self.w, self.h, self.angle)
+
 
 def draw_polygon(image, pts, colour=(51, 255, 51), thickness=2):
     """
@@ -200,10 +202,47 @@ def show_image(img):
     cv2.imshow("Display Window", img)
     cv2.waitKey(0)
 
+
+def check_intersection_is_line(rec):
+
+    """
+    :param rec: Rectangle Object
+    Checks if Rectangle has a non-zero area, by looking at the x and y point ensuring that at l
+    east two points on each axis are different.
+    :return: bool: True or False
+    """
+    point_0_rec2, point_1_rec2, point_2_rec2, point_3_rec2 = rec.get_vertices_points()
+
+    x_axis = (point_0_rec2.x, point_1_rec2.x, point_2_rec2.x, point_3_rec2.x)
+
+    y_axis = (point_0_rec2.y, point_1_rec2.y, point_2_rec2.y, point_3_rec2.y)
+
+    x_axis = set(x_axis)
+    y_axis = set(y_axis)
+
+    x_axis_len = len(set(x_axis))
+    y_axis_len = len(set(y_axis))
+
+    if y_axis_len <= 1 or x_axis_len <= 1 or int(rec.h) == 0 or int(rec.w) == 0:
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     print("Calculate IOU of left-lower-arm")
 
-    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/040967287.jpg")
+    netout_rec = Rectangle(646.7366170883179, 212.04363265207837, 0, 1.0475772630980373,
+                           0)
+
+    check_intersection_is_line(netout_rec)
+
+    print(check_intersection_is_line(Rectangle(4, 4, 0, 2, 0)))
+    print(check_intersection_is_line(Rectangle(4, 4, 2, 0, 0)))
+    print(check_intersection_is_line(Rectangle(4, 4, 0, 2, -66)))
+    print(check_intersection_is_line(Rectangle(4, 4, 2, 0, 99)))
+
+    img = cv2.imread("/home/richard/git/darkflow/sub_set/images/043538940.jpg")
 
     #  Ground Truth - left-lower-arm
     centre_point_x = (1503 + 1553) / 2
@@ -225,12 +264,30 @@ if __name__ == "__main__":
     rec2 = Rectangle(rec2_x, rec2_y, rec2_w, rec2_h, rec2_angle)
     # rec2.draw(img, colour=(0, 0, 255))
 
-    rec1 = Rectangle(599.0000009536743,  397.9999977350235,  105.99999847437786,  49.99999667005966,  -129.2513427734375)
-    rec2 = Rectangle(490.2878352999687,  271.58785675652325,  0.2539491610125122,  2.3729914290343963,  -0.15401481091976166)
+    # TODO CLIPPING ERROR!!!
+    rec1 = Rectangle(658.4999997275216, 220.00000068119596, 89.00000038378948, 49.999997442956285, -78.43986690044403)
+    rec2 = Rectangle(646.7366170883179, 212.04363265207837, 1.3590652958357197, 1.0475772630980373,
+                     -41.93526774644852)
     # rec2 = Rectangle(100, 100, 0, 58.1619032498341, -86.7201919555664)
 
-
-
+    # IOU
+    # for box 2: 0.6500378368938821
+    # GROUND
+    # TRUTH
+    # ANGLE
+    # 96.29394292831421
+    # NETWORK
+    # ANGLE
+    # 0.25280756
+    # Ground
+    # Truth
+    # Rectangle
+    # Rectangle: x: 745.0, y: 526.000000834465, w: 136.00000770980955, h: 49.999997442956285, angle: 96.29394292831421
+    #
+    # Output
+    # Network
+    # Rectangle
+    # Rectangle: x: 695.4430913925171, y: 490.2400955557823, w: 95.81683375372563, h: 52.13581478280169, angle: 91.01072072982788
 
     # Calculate IOU
     intersection, shape_vertices = rec1.find_intersection_shape_area(rec2, vertices=True)
@@ -238,9 +295,10 @@ if __name__ == "__main__":
 
     union, shape_vertices_union = rec1.find_union_shape_area(rec2, vertices=True)
     draw_polygon(img, shape_vertices_union, colour=(255, 255, 255))
-    draw_polygon(img, rec1.get_vertices_points(), colour=(255, 0, 255))
-    draw_polygon(img, rec2.get_vertices_points(), colour=(255, 0, 255))
-
+    # draw_polygon(img, rec1.get_vertices_points(), colour=(255, 0, 255))
+    # draw_polygon(img, rec2.get_vertices_points(), colour=(255, 0, 255))
+    intersection_shape, points = rec1.find_intersection_shape_area(rec2, True)
+    draw_polygon(img, points, colour=(255, 133, 133))
 
     iou = intersection_over_union(rec1, rec2)
 

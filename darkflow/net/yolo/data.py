@@ -28,7 +28,6 @@ def _batch(self, chunk):
     """
     meta = self.meta
     S, B = meta['side'], meta['num']
-    S = 8
     C, labels = meta['classes'], meta['labels']
 
     # preprocess
@@ -81,6 +80,11 @@ def _batch(self, chunk):
         # Offset inside cell!
         obj[1] = cx - np.floor(cx)  # off set x for a given cell
         obj[2] = cy - np.floor(cy)  # off set y for a given cell
+
+        # Normalise Angle
+
+        obj[5] = obj[5] / 360
+
         # print("AFTER: XXX", obj[1])
         # print("AFTER: YYY", obj[2])
         # print("BEN: ", int(np.floor(cy) * S + np.floor(cx)))
@@ -119,14 +123,16 @@ def _batch(self, chunk):
         # print("BCUNT", obj[1:6])
         # Copies Box Coordinates to it's cell and creates three copies of the same box.
         coord[obj[6], :, :] = [obj[1:6]] * B
-        # print("CUNT at", obj[6], " is ", coord[obj[6]], " B: ", B)
-        # print("Angle Obejct {}".format(coord))
-        #
+
+        # Normalise Angle by 360
+        # print(coord[obj[6], :, :])
+        # coord = coord[obj[6], :, 4]
+        # print(coord[obj[6], :, :])
+
         prear[obj[6], 0] = obj[1] - obj[3] ** 2 * .5 * S  # xleft
         prear[obj[6], 1] = obj[2] - obj[4] ** 2 * .5 * S  # yup
         prear[obj[6], 2] = obj[1] + obj[3] ** 2 * .5 * S  # xright
         prear[obj[6], 3] = obj[2] + obj[4] ** 2 * .5 * S  # ybot
-        # prear[obj[6],4] = obj[]
         confs[obj[6], :] = [1.] * B
 
     # Finalise the placeholders' values

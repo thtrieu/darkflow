@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/darkflow/net/yolo/data.py" line="41" />
+    <bookmark url="file://$PROJECT_DIR$/darkflow/net/yolo/data.py" line="40" />
     <bookmark url="file://$PROJECT_DIR$/darkflow/utils/loader.py" />
-    <bookmark url="file://$PROJECT_DIR$/darkflow/net/yolo/train.py" line="104" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/darkflow/net/yolo/train.py" line="106" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9aa2a4d5-6272-4f30-973a-893f06fb2a77" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfg/yopo.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/cfg/yopo.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yolo/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yolo/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yolo/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yolo/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yopo/output_union.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yopo/output_union.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yopo/parse-darkflow.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py" beforeDir="false" afterPath="$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,19 +31,12 @@
       <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="573">
-              <caret line="243" selection-start-line="243" selection-end-line="243" />
+            <state relative-caret-position="2927">
+              <caret line="254" column="69" lean-forward="true" selection-start-line="254" selection-start-column="69" selection-end-line="254" selection-end-column="69" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="logs_new.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../darknet/logs/logs_new.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-115362" />
           </provider>
         </entry>
       </file>
@@ -51,42 +49,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="043538940.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sub_set/labels/043538940.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="data.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
-              <folding>
-                <element signature="e#0#62#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="040967287.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sub_set/images/040967287.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file leaf-file-name="043538940.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sub_set/images/043538940.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
       <file leaf-file-name="calulating_IOU.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-649">
-              <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
+            <state relative-caret-position="423">
+              <caret line="222" column="33" lean-forward="true" selection-start-line="222" selection-start-column="33" selection-end-line="222" selection-end-column="33" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -94,11 +61,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="scratch_1.py" pinned="false" current-in-tab="false">
+        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
       <file leaf-file-name="test_calculate_IOU.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="773">
-              <caret line="127" column="39" selection-start-line="127" selection-start-column="39" selection-end-line="127" selection-end-column="39" />
+            <state relative-caret-position="317">
+              <caret line="133" column="95" selection-start-line="133" selection-start-column="95" selection-end-line="133" selection-end-column="95" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -109,10 +81,42 @@
       <file leaf-file-name="case.py" pinned="false" current-in-tab="false">
         <entry file="file:///usr/lib/python3.5/unittest/case.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="672" column="8" selection-start-line="672" selection-start-column="8" selection-end-line="672" selection-end-column="8" />
+            <state relative-caret-position="261">
+              <caret line="647" selection-start-line="647" selection-end-line="647" />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="case.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/case.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="261">
+              <caret line="45" selection-start-line="45" selection-end-line="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="suite.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/suite.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="261">
+              <caret line="177" selection-start-line="177" selection-end-line="177" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/core.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="378">
+              <caret line="67" selection-start-line="67" selection-end-line="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/__init__.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -126,35 +130,35 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>NEW</find>
-      <find />
-      <find>150</find>
       <find>OLD</find>
       <find>printTensor</find>
       <find>Ora</find>
       <find>37</find>
       <find>net_out</find>
-      <find />
+      <find>Output At</find>
       <find>intersection_over_union</find>
       <find>loss</find>
-      <find />
+      <find>IOU shape</find>
       <find>IOU</find>
       <find>_areas</find>
       <find>-162</find>
-      <find />
-      <find />
+      <find>IOU input tensor</find>
+      <find>Start calculate_iou</find>
       <find>yey</find>
       <find>yopo_print</find>
       <find>clip</find>
       <find>count</find>
       <find>iou</find>
-      <find />
+      <find>IOU for box  2 :  0.</find>
       <find>find_intersection_shape_area</find>
       <find>output</find>
       <find>139</find>
       <find>-88</find>
       <find>88</find>
       <find>area</find>
+      <find>GROUND TRUTH ANGLE</find>
+      <find>Number of Grid Cells</find>
+      <find>-97.31349349021912</find>
       <find>iou_val</find>
     </findStrings>
     <dirStrings>
@@ -190,14 +194,15 @@
         <option value="$PROJECT_DIR$/darkflow/net/yolo/predict.py" />
         <option value="$PROJECT_DIR$/darkflow/net/flow.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolov2/train.py" />
-        <option value="$PROJECT_DIR$/cfg/yopo.cfg" />
         <option value="$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/tensorflow/python/client/session.py" />
-        <option value="$PROJECT_DIR$/darkflow/net/yolo/data.py" />
         <option value="$PROJECT_DIR$/darkflow/utils/pascal_voc_clean_xml.py" />
         <option value="$PROJECT_DIR$/sub_set/labels/040967287.xml" />
         <option value="$PROJECT_DIR$/sub_set/labels/043538940.xml" />
-        <option value="$PROJECT_DIR$/darkflow/net/yolo/train.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yopo/tests/test_calulating_IOU.py" />
+        <option value="$PROJECT_DIR$/darkflow/net/yolo/data.py" />
+        <option value="$PROJECT_DIR$/cfg/yopo.cfg" />
+        <option value="$PROJECT_DIR$/darkflow/net/yolo/train.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py" />
       </list>
@@ -220,6 +225,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -231,12 +237,6 @@
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="darkflow" type="462c0819:PsiDirectoryNode" />
               <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-              <item name="cython_utils" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
@@ -269,12 +269,6 @@
             <path>
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
               <item name="sub_set" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -293,11 +287,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../yopo" />
   </component>
   <component name="RecentsManager">
@@ -356,13 +350,13 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/flow" />
-      <option name="PARAMETERS" value="--model cfg/yopo.cfg --load -1 --train --annotation sub_set/labels --dataset sub_set/images/ --epoch 10000 --&quot;gpu&quot; 0.8 --summary sub_set/" />
+      <option name="PARAMETERS" value="--model cfg/yopo.cfg --load -1 --train --annotation sub_set/labels --dataset sub_set/images/ --epoch 25000 --&quot;gpu&quot; 0.8" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <configuration name="flow_new" type="PythonConfigurationType" factoryName="Python">
-      <output_file path="$PROJECT_DIR$/../darknet/logs/logs_new.txt" is_save="true" />
+      <output_file path="$PROJECT_DIR$/logs/log_new.txt" is_save="true" />
       <module name="darkflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -375,12 +369,12 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/flow" />
-      <option name="PARAMETERS" value="--model cfg/yopo.cfg --load $PROJECT_DIR$/bin/yolo.weights --train --annotation sub_set/labels --dataset sub_set/images/ --epoch 10000 --&quot;gpu&quot; 0.8 --summary sub_set/" />
+      <option name="PARAMETERS" value="--model cfg/yopo.cfg --load $PROJECT_DIR$/bin/yolo.weights --train --annotation sub_set/labels --dataset sub_set/images/ --epoch 1 --&quot;gpu&quot; 0.8" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
+    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
       <module name="darkflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -391,21 +385,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_regexPattern" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-    </configuration>
-    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
-      <module name="darkflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/darkflow/net/yopo/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_regexPattern" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area&quot;" />
+      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
     <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
@@ -422,7 +402,7 @@
       <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test_intersection_over_union&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
-    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union_angled" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
+    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_network_output_iou_calculation" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
       <module name="darkflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -433,7 +413,21 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_regexPattern" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test_intersection_over_union_angled&quot;" />
+      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test_network_output_iou_calculation&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    </configuration>
+    <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_points_handel_line" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
+      <module name="darkflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/darkflow/net/yopo/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_regexPattern" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_calculate_IOU.TestCalculateIOU.test_points_handel_line&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
     <configuration name="Nosetests in test_calculate_IOU.py" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
@@ -454,19 +448,19 @@
       <item itemvalue="Python.flow_cont" />
       <item itemvalue="Python.flow_new" />
       <item itemvalue="Python.calulating_IOU" />
-      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU" />
-      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" />
-      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" />
-      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union_angled" />
       <item itemvalue="Python tests.Nosetests in test_calculate_IOU.py" />
+      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_network_output_iou_calculation" />
+      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test" />
+      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_points_handel_line" />
+      <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Nosetests in test_calculate_IOU.py" />
-        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union_angled" />
         <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" />
-        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" />
-        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU" />
+        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_points_handel_line" />
+        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test" />
+        <item itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_network_output_iou_calculation" />
       </list>
     </recent_temporary>
   </component>
@@ -484,62 +478,62 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_zero_height_handling - 2018.04.05 at 04h 20m 45s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_zero_height_handling" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 31m 04s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_zero_height_and_width_handling - 2018.04.05 at 04h 21m 18s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_zero_height_and_width_handling" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 33m 13s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_zero_height_and_width_handling - 2018.04.05 at 04h 21m 30s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_zero_height_and_width_handling" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 33m 52s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU - 2018.04.05 at 04h 21m 52s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 33m 54s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_find_union_shape_area - 2018.04.05 at 04h 25m 50s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 35m 08s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_find_union_shape_area - 2018.04.05 at 04h 25m 56s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 41m 41s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_find_union_shape_area - 2018.04.05 at 04h 26m 07s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 41m 43s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_find_union_shape_area - 2018.04.05 at 04h 27m 50s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_find_union_shape_area" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 42m 02s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_intersection_over_union - 2018.04.05 at 04h 37m 16s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 42m 27s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_for_test_calculate_IOU_TestCalculateIOU_test_intersection_over_union_angled - 2018.04.05 at 04h 37m 42s.xml">
-      <configuration name="Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union_angled" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 42m 48s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="1985" y="-4" width="2495" height="1444" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11783567" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13867736" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.51282054" side_tool="true" weight="0.3908397" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4985972" weight="0.32784432" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.91382766" visible="true" weight="0.35553893" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32934132" />
       <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.91382766" visible="true" weight="0.4678144" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4871795" weight="0.3226048" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.93507016" weight="0.373503" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.93507016" weight="0.373503" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="bottom" id="Messages" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="SciView" order="5" weight="0.31570512" />
-      <window_info anchor="bottom" id="Messages" order="7" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4985972" weight="0.32784432" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -558,13 +552,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/darkflow/net/yolo/train.py</url>
-          <line>64</line>
+          <line>66</line>
           <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py</url>
-          <line>244</line>
-          <option name="timeStamp" value="74" />
+          <url>file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py</url>
+          <line>121</line>
+          <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py</url>
+          <line>139</line>
+          <option name="timeStamp" value="92" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -574,24 +578,30 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="80" />
+      <option name="time" value="93" />
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="tests">
+        <watch expression="x_axis_len = len(set(x_axis))&#10;y_axis_len = len(set(y_axis))" language="Python" />
+        <watch expression="y_axis_len &lt;= 1" language="Python" />
+        <watch expression="x_axis_len &lt;= 1" language="Python" />
+        <watch expression="int(rec.h) == 0" language="Python" />
+        <watch expression="int(rec.h) &lt; 0" language="Python" />
+        <watch expression="int(rec.w) &lt; 0" language="Python" />
+        <watch expression="int(rec.w) == 0" language="Python" />
+      </configuration>
       <configuration name="PythonConfigurationType">
         <watch expression="list(map(lambda x: x[0], clip))[1:] == list(map(lambda x: x[0], clip))[:-1]" language="Python" />
         <watch expression="list(map(lambda x: x[1], clip))[1:] == list(map(lambda x: x[1], clip))[:-1]" language="Python" />
         <watch expression="clip" language="Python" />
+        <watch expression="rec.h" language="Python" />
+        <watch expression="rec.w" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>clip</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
         <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
@@ -622,27 +632,35 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>fn</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>enumerate(cfg_layers)</expression-string>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tf.Session()</expression-string>
+        <expression-string />
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string />
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/darkflow/cython_utils/cy_yolo2_findboxes.pyx">
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="649">
-          <caret line="56" column="21" selection-start-line="56" selection-start-column="21" selection-end-line="56" selection-end-column="21" />
+        <state relative-caret-position="4086">
+          <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -706,9 +724,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1224">
           <caret line="74" column="39" selection-start-line="74" selection-start-column="39" selection-end-line="74" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#67#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -730,25 +745,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-482">
           <caret line="7" selection-start-line="7" selection-end-line="7" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolov2/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/utils/darknet_parser.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/utils/loader.py">
@@ -769,13 +769,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="535">
           <caret line="59" selection-start-line="59" selection-end-line="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cfg/yopo.cfg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="655">
-          <caret line="245" column="8" selection-start-line="245" selection-start-column="8" selection-end-line="245" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -825,9 +818,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
           <caret line="47" selection-start-line="47" selection-end-line="47" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -845,18 +835,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/utils/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="18" selection-start-line="18" selection-end-line="18" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/images/000033016.jpg">
-      <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/framework.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -876,9 +860,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-696">
           <caret line="59" column="40" selection-start-line="59" selection-start-column="40" selection-end-line="59" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -889,6 +870,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sub_set/labels/000004812.xml" />
+    <entry file="file://$PROJECT_DIR$/sub_set/labels/000033016.xml" />
+    <entry file="file://$PROJECT_DIR$/../darknet/logs/logs_new.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-115362" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calulating_IOU.py" />
+    <entry file="file://$PROJECT_DIR$/cfg/yopo.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4374">
+          <caret line="243" column="11" selection-start-line="243" selection-start-column="11" selection-end-line="243" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="29" column="36" selection-start-line="29" selection-start-column="36" selection-end-line="29" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sub_set/labels/043538940.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="28" selection-start-line="20" selection-start-column="28" selection-end-line="20" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.travis.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -896,26 +909,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/labels/000004812.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="60" column="23" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="23" />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/parse-darkflow.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/labels/000033016.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="24" column="17" lean-forward="true" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/output_union.jpg">
+      <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/labels/043538940.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/sub_set/labels/040967287.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -924,58 +925,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/images/040967287.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sub_set/images/043538940.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../darknet/logs/logs_new.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-115362" />
-      </provider>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="573">
-          <caret line="243" selection-start-line="243" selection-end-line="243" />
+        <state relative-caret-position="2927">
+          <caret line="254" column="69" lean-forward="true" selection-start-line="254" selection-start-column="69" selection-end-line="254" selection-end-column="69" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calulating_IOU.py">
+    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="19" lean-forward="true" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+        <state relative-caret-position="378">
+          <caret line="67" selection-start-line="67" selection-end-line="67" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/output_union.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file:///usr/lib/python3.5/unittest/case.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="672" column="8" selection-start-line="672" selection-start-column="8" selection-end-line="672" selection-end-column="8" />
+        <state relative-caret-position="261">
+          <caret line="647" selection-start-line="647" selection-end-line="647" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/suite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="177" selection-start-line="177" selection-end-line="177" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-649">
-          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
+        <state relative-caret-position="423">
+          <caret line="222" column="33" lean-forward="true" selection-start-line="222" selection-start-column="33" selection-end-line="222" selection-end-column="33" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -984,8 +978,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="773">
-          <caret line="127" column="39" selection-start-line="127" selection-start-column="39" selection-end-line="127" selection-end-column="39" />
+        <state relative-caret-position="317">
+          <caret line="133" column="95" selection-start-line="133" selection-start-column="95" selection-end-line="133" selection-end-column="95" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
