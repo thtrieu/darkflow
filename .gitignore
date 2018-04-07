@@ -49,3 +49,4 @@ ckpt/*
 .train/
 test_images/
 voc/
+sub_set/large_sub_set_100/

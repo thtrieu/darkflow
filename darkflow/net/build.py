@@ -69,9 +69,13 @@ class TFNet(object):
         self.say('\nBuilding net ...')
         start = time.time()
         self.graph = tf.Graph()
+        print("GPU Percentage", FLAGS.gpu)
+
         device_name = FLAGS.gpuName \
             if FLAGS.gpu > 0.0 else None
+        self.say("GPU Name", device_name)
         with tf.device(device_name):
+            # print(tf.device(device_name))
             with self.graph.as_default() as g:
                 self.build_forward()
                 self.setup_meta_ops()
