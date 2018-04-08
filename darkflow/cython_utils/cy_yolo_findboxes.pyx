@@ -43,7 +43,8 @@ def yolo_box_constructor(meta,np.ndarray[float] net_out, float threshold):
             coords[grid, b, 1] = (coords[grid, b, 1] + grid // S) / S
             coords[grid, b, 2] =  coords[grid, b, 2] ** sqrt
             coords[grid, b, 3] =  coords[grid, b, 3] ** sqrt
-            coords[grid, b, 4] = coords[grid, b, 4] * 360
+            coords[grid, b, 4] = coords[grid, b, 4]
+            print("Angles", coords[grid, b, 4])
             for class_loop in range(C):
                 probs[grid, class_loop] = probs[grid, class_loop] * confs[grid, b]
                 #print("PROBS",probs[grid,class_loop])

@@ -87,7 +87,9 @@ cdef NMS(float[:, ::1] final_probs , float[:, ::1] final_bbox):
                 bb.y = final_bbox[index, 1]
                 bb.w = final_bbox[index, 2]
                 bb.h = final_bbox[index, 3]
-                bb.c = final_bbox[index, 4]
+                bb.angle = final_bbox[index, 4]
+                bb.c = final_bbox[index, 5]
+
                 bb.probs = np.asarray(final_probs[index,:])
                 boxes.append(bb)
                 indices.add(index)

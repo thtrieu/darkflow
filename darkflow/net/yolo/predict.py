@@ -5,6 +5,7 @@ import cv2
 import os
 import json
 from ...cython_utils.cy_yolo_findboxes import yolo_box_constructor
+from darkflow.net.yopo.calulating_IOU import intersection_over_union, Rectangle
 
 
 def _fix(obj, dims, scale, offs):
@@ -32,6 +33,9 @@ def process_box(self, b, h, w, threshold):
         right = int((b.x + b.w / 2.) * w)
         top = int((b.y - b.h / 2.) * h)
         bot = int((b.y + b.h / 2.) * h)
+        angle = b.angle * 360
+        rec = Rectangle((b.x * w), (b.y * h), (b.w * w), (b.h * h), angle)
+        print(rec, "\n")
         if left < 0:  left = 0
         if right > w - 1: right = w - 1
         if top < 0:   top = 0
@@ -108,6 +112,11 @@ def postprocess(self, net_out, im, save=True):
                 {"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top},
                  "bottomright": {"x": right, "y": bot}})
             continue
+        
+        x = int((left - right / 2.) * w)
+        y = int((top - bot / 2.) * h)
+        # angle =
+        # rec = Rectangle()
 
         cv2.rectangle(imgcv,
                       (left, top), (right, bot),
