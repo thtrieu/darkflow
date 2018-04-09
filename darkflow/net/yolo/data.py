@@ -68,9 +68,16 @@ def _batch(self, chunk):
         ymin = obj[2] / celly
         ymax = obj[4] / celly
 
-        print("Object Vertices, xmin: {}, xmax:{}, ymin:{}, ymax: {}".format(xmin, xmax, ymin, ymax))
+        # todo ???
+        # Normalise?
+
+        print("Object Vertices, xmin: {}, xmax: {}, ymin: {}, ymax: {}".format(xmin, xmax, ymin, ymax))
 
         if xmin >= S or xmax >= S or ymin >= S or ymax >= S: return None, None
+
+
+        # todo???
+        # Do I still need this?
 
 
 
@@ -137,11 +144,13 @@ def _batch(self, chunk):
         # coord = coord[obj[6], :, 4]
         # print(coord[obj[6], :, :])
 
-        prear[obj[6], 0] = obj[1] - obj[3] ** 2 * .5 * S  # xleft
-        prear[obj[6], 1] = obj[2] - obj[4] ** 2 * .5 * S  # yup
-        prear[obj[6], 2] = obj[1] + obj[3] ** 2 * .5 * S  # xright
-        prear[obj[6], 3] = obj[2] + obj[4] ** 2 * .5 * S  # ybot
-        confs[obj[6], :] = [1.] * B
+        # todo???
+        # Change these to just xmin, xmax, ymin, ymax
+        prear[obj[5], 0] = obj[1] - obj[3] ** 2 * .5 * S  # xleft
+        prear[obj[5], 1] = obj[2] - obj[4] ** 2 * .5 * S  # yup
+        prear[obj[5], 2] = obj[1] + obj[3] ** 2 * .5 * S  # xright
+        prear[obj[5], 3] = obj[2] + obj[4] ** 2 * .5 * S  # ybot
+        confs[obj[5], :] = [1.] * B
 
     # Finalise the placeholders' values
     upleft = np.expand_dims(prear[:, 0:2], 1)
