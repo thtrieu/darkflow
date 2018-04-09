@@ -50,74 +50,23 @@ def _batch(self, chunk):
     print("BATCH INFORMATION HERE: ", cellx, celly, jpg)
     # YOPO Converting all images and labels to darknet format.
     for obj in allobj:
-        # print("CURRENT OBJECT: ", obj)
-
-        centerx = .5 * (obj[1] + obj[3])  # xmin, xmax
-        centery = .5 * (obj[2] + obj[4])  # ymin, ymax
-
-        # print("centrex: ", centerx, " centrey: ", centery)
-        # print("width: ", (obj[3] - obj[1]), " height: ", (obj[4] - obj[2]))
-
-        # Cell x and Cell y are the width and height of the cells in the image.
-        cx = centerx / cellx
-        cy = centery / celly
 
         # min and max values for the network i.e BBox vertices
-        xmin = obj[1] / cellx
-        xmax = obj[3] / cellx
-        ymin = obj[2] / celly
-        ymax = obj[4] / celly
 
-        # todo ???
-        # Normalise?
+        obj[1] = obj[1] / cellx # xmin
+        obj[3] = obj[3] / cellx # xmax
+        obj[2] = obj[2] / celly # ymin
+        obj[4] = obj[4] / celly # ymax
 
-        print("Object Vertices, xmin: {}, xmax: {}, ymin: {}, ymax: {}".format(xmin, xmax, ymin, ymax))
+        print("Object Vertices, xmin: {}, xmax: {}, ymin: {}, ymax: {}".format(obj[1], obj[2], obj[3], obj[4]))
 
-        if xmin >= S or xmax >= S or ymin >= S or ymax >= S: return None, None
+        #  if this is true, everything has gone wrong and it's time eject out of here.
+        if obj[1] >= S or obj[2] >= S or obj[3] >= S or obj[4] >= S: return None, None
 
-
-        # todo???
-        # Do I still need this?
-
-
-
-        # print("w: {}, h: {}".format(w, h))
-        # Normalise the value and turn them into darknet format. (YOPO -21)
-        obj[3] = float(obj[3] - obj[1]) / w # w of image (normalised)
-        obj[4] = float(obj[4] - obj[2]) / h # h of image (normalised)
-        # print("Check Sqaure root func, {} {}".format(obj[3], obj[4]))
-        #
-        obj[3] = np.sqrt(obj[3])
-        obj[4] = np.sqrt(obj[4])
-        # print("Check Sqaure root func, AFTER: {} {}".format(obj[3], obj[4]))
-        # print("XXX", obj[1])
-        # print("YYY", obj[2])
-        # Offset inside cell!
-        obj[1] = cx - np.floor(cx)  # off set x for a given cell
-        obj[2] = cy - np.floor(cy)  # off set y for a given cell
-
-        # Normalise Angle
-
-        obj[5] = obj[5] / 360
-
-        # print("AFTER: XXX", obj[1])
-        # print("AFTER: YYY", obj[2])
-        # print("BEN: ", int(np.floor(cy) * S + np.floor(cx)))
-        # print("Benfinal: ", obj[1:5])
-        obj += [int(np.floor(cy) * S + np.floor(cx))]
-
-        # print(obj)
-
-    # show(im, allobj, S, w, h, cellx, celly) # unit test
-
-    # Calculate placeholders' values
-    # print(C)
-    # print(B)
-    # print(labels)
 
     probs = np.zeros([S * S, C])
     confs = np.zeros([S * S, B])
-    coord = np.zeros([S * S, B, 5])
+    coord = np.zeros([S * S, B, 4])
     proid = np.zeros([S * S, C])
     prear = np.zeros([S * S, 4])
     iou = np.zeros([S * S, B])
@@ -130,21 +79,16 @@ def _batch(self, chunk):
     for obj in allobj:
         # print("obj", obj)
         # All to do with confidence score of the boxes.
-        probs[obj[6], :] = [0.] * C
+        probs[obj[5], :] = [0.] * C
         # Set the confidence score of that class to 1 because it's label so you it's 100% that class.
-        probs[obj[6], labels.index(obj[0])] = 1.
+        probs[obj[5], labels.index(obj[0])] = 1.
         #
-        proid[obj[6], :] = [1] * C #
-        # print("BCUNT", obj[1:6])
+        proid[obj[5], :] = [1] * C #
+
         # Copies Box Coordinates to it's cell and creates three copies of the same box.
-        coord[obj[6], :, :] = [obj[1:6]] * B
+        coord[obj[5], :, :] = [obj[1:5]] * B
 
-        # Normalise Angle by 360
-        # print(coord[obj[6], :, :])
-        # coord = coord[obj[6], :, 4]
-        # print(coord[obj[6], :, :])
-
-        # todo???
+        # todo??? NOT SURE ABOUT THIS ONE HERE!!!
         # Change these to just xmin, xmax, ymin, ymax
         prear[obj[5], 0] = obj[1] - obj[3] ** 2 * .5 * S  # xleft
         prear[obj[5], 1] = obj[2] - obj[4] ** 2 * .5 * S  # yup
