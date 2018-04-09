@@ -28,7 +28,7 @@ class argHandler(dict):
         self.define('keep',20,'Number of most recent training results to save')
         self.define('batch', 16, 'batch size')
         self.define('epoch', 1000, 'number of epoch')
-        self.define('save', 2000, 'save checkpoint every ? training examples')
+        self.define('save', 4000, 'save checkpoint every ? training examples')
         self.define('demo', '', 'demo on webcam')
         self.define('queue', 1, 'process demo in batch')
         self.define('json', False, 'Outputs bounding box information in json format.')

@@ -72,43 +72,6 @@ def loss(self, net_out):
     iou = tf.py_func(calculate_iou, [_image, _coord, coords, iou], tf.float32)
     iou = tf.reshape(iou, [-1, SS, B])
 
-    # coords_print = tf.py_func(yopo_print, [coords], tf.float32)
-    # coords_print.set_shape(coords.get_shape())
-
-    #
-    wh = tf.pow(coords[:, :, :, 2:4], 2) * S  # unit: grid cell
-    area_pred = wh[:, :, :, 0] * wh[:, :, :, 1]  # unit: grid cell^2
-    centers = coords[:, :, :, 0:2]  # [batch, SS, B, 2]
-
-    # Print a box - Might need un-normalised it.
-    # new_wh = tf.py_func(print_box, [centers, wh], tf.float32)
-    # new_wh.set_shape(wh.get_shape())
-
-    floor = centers - (wh * .5)  # [batch, SS, B, 2]
-    ceil = centers + (wh * .5)  # [batch, SS, B, 2]
-
-    # output = tf.Print(_areas, [_areas], "_area tensor")
-    # _area_output = tf.py_func(yopo_print, [area_pred], tf.float32)
-    # _area_output.set_shape(area_pred.get_shape())
-    # print("OUTPUT:", output)
-
-    # calculate the intersection areas
-    # intersect_upleft = tf.maximum(floor, _upleft)
-    # intersect_botright = tf.minimum(ceil, _botright)
-    # intersect_wh = intersect_botright - intersect_upleft
-    # intersect_wh = tf.maximum(intersect_wh, 0.0)
-    # intersect = tf.multiply(intersect_wh[:, :, :, 0], intersect_wh[:, :, :, 1])
-    # intersect_new = tf.py_func(printTensor, [intersect], tf.float32)
-    # intersect_new.set_shape(intersect.get_shape())
-
-    # calculate the best IOU, set 0.0 confidence for worse boxes
-    # iou = tf.truediv(intersect_new, _areas + area_pred - intersect_new, "IOU")
-
-    # print('IOU shape: ', iou)
-
-    # new_iou = tf.py_func(testFunc, [true, net_out], tf.float32)
-    # new_iou.set_shape(iou.get_shape())
-
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
     # Class Probs * box Confidence

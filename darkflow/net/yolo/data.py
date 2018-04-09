@@ -61,11 +61,19 @@ def _batch(self, chunk):
         # Cell x and Cell y are the width and height of the cells in the image.
         cx = centerx / cellx
         cy = centery / celly
-        # print("Centre point x:{}, y:{}".format(centerx, centery))
-        # print("cx:{}, cy:{}".format(cx,cy))
-        # print("WTF: ", obj[4])
 
-        if cx >= S or cy >= S: return None, None
+        # min and max values for the network i.e BBox vertices
+        xmin = obj[1] / cellx
+        xmax = obj[3] / cellx
+        ymin = obj[2] / celly
+        ymax = obj[4] / celly
+
+        print("Object Vertices, xmin: {}, xmax:{}, ymin:{}, ymax: {}".format(xmin, xmax, ymin, ymax))
+
+        if xmin >= S or xmax >= S or ymin >= S or ymax >= S: return None, None
+
+
+
         # print("w: {}, h: {}".format(w, h))
         # Normalise the value and turn them into darknet format. (YOPO -21)
         obj[3] = float(obj[3] - obj[1]) / w # w of image (normalised)
