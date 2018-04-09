@@ -5,7 +5,7 @@ import cv2
 import os
 import json
 from ...cython_utils.cy_yolo_findboxes import yolo_box_constructor
-from darkflow.net.yopo.calulating_IOU import intersection_over_union, Rectangle
+from darkflow.net.yopo.calulating_IOU import intersection_over_union, Rectangle, draw_polygon
 
 
 def _fix(obj, dims, scale, offs):
@@ -35,13 +35,14 @@ def process_box(self, b, h, w, threshold):
         bot = int((b.y + b.h / 2.) * h)
         angle = b.angle * 360
         rec = Rectangle((b.x * w), (b.y * h), (b.w * w), (b.h * h), angle)
-        print(rec, "\n")
-        if left < 0:  left = 0
-        if right > w - 1: right = w - 1
-        if top < 0:   top = 0
-        if bot > h - 1:   bot = h - 1
+        verts = rec.get_vertices_points()
+        p0 = verts[0]
+        p1 = verts[1]
+        p2 = verts[2]
+        p3 = verts[3]
+
         mess = '{}'.format(label)
-        return (left, right, top, bot, mess, max_indx, max_prob)
+        return (p0, p1, p2, p3, mess, max_indx, max_prob)
     return None
 
 
@@ -105,26 +106,15 @@ def postprocess(self, net_out, im, save=True):
         boxResults = self.process_box(b, h, w, threshold)
         if boxResults is None:
             continue
-        left, right, top, bot, mess, max_indx, confidence = boxResults
+        p0, p1, p2, p3, mess, max_indx, confidence = boxResults
         thick = int((h + w) // 300)
         if self.FLAGS.json:
             resultsForJSON.append(
-                {"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top},
-                 "bottomright": {"x": right, "y": bot}})
+                {"label": mess, "confidence": float('%.2f' % confidence),
+                 "Rectangle Vertices - ": {"p0": p0, "p1": p1, "p2": p2, "p3": p3}})
             continue
-        
-        x = int((left - right / 2.) * w)
-        y = int((top - bot / 2.) * h)
-        # angle =
-        # rec = Rectangle()
 
-        cv2.rectangle(imgcv,
-                      (left, top), (right, bot),
-                      self.meta['colors'][max_indx], thick)
-        cv2.putText(
-            imgcv, mess, (left, top - 12),
-            0, 1e-3 * h, self.meta['colors'][max_indx],
-               thick // 3)
+        draw_polygon(imgcv, [p0, p1, p2, p3])
 
     if not save: return imgcv
 
