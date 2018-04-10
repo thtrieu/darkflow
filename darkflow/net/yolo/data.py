@@ -36,12 +36,10 @@ def _batch(self, chunk):
 
     allobj = deepcopy(allobj_)
     path = os.path.join(self.FLAGS.dataset, jpg)
+
     #here be dragons
-    #todo: turn this bollocks off?
+    #todo: turn this off?
     img = self.preprocess(path, allobj)
-    # print("ALL object: ", allobj)
-    # Calculate regression target
-    # Which cell is the object centre in.
 
     # Find width a of single cell.
     # print("Cell size", S)
@@ -87,24 +85,9 @@ def _batch(self, chunk):
 
         # Copies Box Coordinates to it's cell and creates three copies of the same box.
         coord[obj[5], :, :] = [obj[1:5]] * B
-
-        # todo??? NOT SURE ABOUT THIS ONE HERE!!!
-        # Change these to just xmin, xmax, ymin, ymax
-        prear[obj[5], 0] = obj[1] - obj[3] ** 2 * .5 * S  # xleft
-        prear[obj[5], 1] = obj[2] - obj[4] ** 2 * .5 * S  # yup
-        prear[obj[5], 2] = obj[1] + obj[3] ** 2 * .5 * S  # xright
-        prear[obj[5], 3] = obj[2] + obj[4] ** 2 * .5 * S  # ybot
+        # Set the confidences to 1
         confs[obj[5], :] = [1.] * B
 
-    # Finalise the placeholders' values
-    upleft = np.expand_dims(prear[:, 0:2], 1)
-    botright = np.expand_dims(prear[:, 2:4], 1)
-    wh = botright - upleft;
-    area = wh[:, :, 0] * wh[:, :, 1]
-    upleft = np.concatenate([upleft] * B, 1)
-    botright = np.concatenate([botright] * B, 1)
-    areas = np.concatenate([area] * B, 1)
-    # angle = np.concatenate()
 
     # value for placeholder at input layer
     inp_feed_val = img

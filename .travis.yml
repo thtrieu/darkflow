@@ -15,7 +15,9 @@ install:
     - pip install -e .
 
 # command to run tests
-script: pytest -x --cov=./
+script:
+  - pytest -x --cov=./
+  - echo "I love rats"
 
 #Upload code coverage statistics
 after_success:
