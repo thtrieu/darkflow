@@ -15,7 +15,7 @@ config = {
     # 'MATLAB_DATA_FILE_PATH': "/home/richard/git/yopo/data/mpii_human_pose_v1_u12_1.mat",
     'TRAIN_SET_IMAGES_NUM': 5,
     'TEST_SET_IMAGES_NUM': 1,
-    'IMAGE_PATH': "/Users/richardjones/Desktop/Dist/MPII/MPII_data/images/",
+    'IMAGE_PATH': "/media/richard/Data/images/",
     'TRAINING_OUTPUT_PATH': "../../data/train_yolo/train_data/labels/",
     'TESTING_OUT_PATH': "../../data/train_yolo/test_data/",
     'YOLO_PATH': "../../data/train_yolo/",

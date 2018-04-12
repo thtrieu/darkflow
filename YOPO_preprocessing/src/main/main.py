@@ -32,8 +32,8 @@ if __name__ == "__main__":
     data = load_matlab_data()
     start_time = time.time()
     if darkflow:
-        # generate_limb_data(image_file_path_list=images, image_metadata=data, train=True)
-        generate_limb_gt_min_max(image_file_path_list=images, image_metadata=data, train=True)
+        generate_limb_data(image_file_path_list=images, image_metadata=data, train=True)
+        # generate_limb_gt_min_max(image_file_path_list=images, image_metadata=data, train=True)
         darkflow_sort_images()
 
     else:

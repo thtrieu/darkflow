@@ -36,8 +36,7 @@ def _batch(self, chunk):
 
     allobj = deepcopy(allobj_)
     path = os.path.join(self.FLAGS.dataset, jpg)
-    #here be dragons
-    #todo: turn this bollocks off?
+
     img = self.preprocess(path, allobj)
     # print("ALL object: ", allobj)
     # Calculate regression target

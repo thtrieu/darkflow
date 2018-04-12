@@ -4,11 +4,11 @@ import math
 import cv2
 import scipy.io as sio
 import YOPO_preprocessing.src.main.config as cfg
-from darkflow.utils.Point import Point
+from YOPO_preprocessing.src.busniess.Point import Point
 
 mat = sio.loadmat(cfg.config['MATLAB_DATA_FILE_PATH'])
 
-# OUTPUT_PATH = cfg.config['OUTPUT_PATH']/
+OUTPUT_PATH = cfg.config['OUTPUT_PATH']
 # OUTPUT_PATH =
 BOX_W = 50
 BOX_H = 50

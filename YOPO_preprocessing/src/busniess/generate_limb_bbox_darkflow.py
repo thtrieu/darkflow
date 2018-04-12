@@ -2,6 +2,8 @@
 
 Generates bbox's for all the image in a given set of images.
 
+MPII Dataset Only!
+
 '''
 
 import math
@@ -20,8 +22,11 @@ TEXT_POSITION_MODIFIER_Y = 50
 WHITE = 255, 255, 255
 RED = 0, 0, 255
 BBOX_WIDTH = 50
-HEAD_SF = 80
+HEAD_SF = 70
 LIMB_INDEXS = [0, 1, 3, 4, 10, 11, 13, 14]
+IMAGE_PROCESS_LIMIT = 6000
+HALF = 2
+FLOAT_HALF = 2.0
 
 object_id = {0: 'left-lower-leg',
              1: 'left-upper-leg',
@@ -58,12 +63,14 @@ look_up_table = {0: 'left-lower-leg',
                  14: 'right-upper-arm'
                  }
 
+
 class Chest:
 
-    def __init__(self, point, width, height):
-        self.point = point
+    def __init__(self, centre, width, height, angle):
+        self.centre = centre
         self.width = width
         self.height = height
+        self.angle = angle
 
 
 class Limb:
@@ -75,11 +82,9 @@ class Limb:
         self.height = height
 
 
-# def create_limb_bbox():
-
 #  image_file_path_list - A list of all the image with the fill path names.
 #  image_metadata - a python dictionary that contains all pose data for a given image.
-def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=False):
+def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=True):
     counter = 0
 
     if train:
@@ -91,14 +96,13 @@ def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=F
         OUT_PATH = cfg.config['TESTING_OUT_PATH']
         image_file_path_list = image_file_path_list[:cfg.config['TEST_SET_IMAGES_NUM']]
 
-    # print(image_metadata)
     # For all the image we have select one and perform some operation
     for current_img_full_path in image_file_path_list:
 
         counter = counter + 1
-        print(counter)
 
-        if 3000 == counter:
+        # Limits the amount of data
+        if IMAGE_PROCESS_LIMIT == counter:
             return
 
         # Remove the full path from the file name
@@ -107,97 +111,87 @@ def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=F
         # Check if the image has metadata
         if image_file_name in image_metadata:
 
-            # # --------------------------------------------------------------------------------------------------
-            # # XML
-            # # --------------------------------------------------------------------------------------------------
-            #
+            # get image
             img = cv2.imread(current_img_full_path)
             img_height, img_width = img.shape[:2]
-            #
-            #
-            #
+
             root = ET.Element("annotation")
             filename_jpg = ET.SubElement(root, "filename").text = image_file_name
             size = ET.SubElement(root, "size")
             width = ET.SubElement(size, 'width').text = str(img_width)
             height = ET.SubElement(size, 'height').text = str(img_height)
-            #
-            # # --------------------------------------------------------------------------------------------------
-            # # XML
-            # # --------------------------------------------------------------------------------------------------
 
             # Get the meta data for single image
             current_img_metadata = image_metadata[image_file_name]
-            # print(current_img_metadata['is_visible'][str(joint_id)])
 
             for current_pose in current_img_metadata:
 
-                # Now that we are inside the pose, we need to access each joint in that pose.
+                # Edge case: chest made up of many points
+                chest = create_chest(current_pose)
+
+                # Get min and max point for chest
+                xmin_chest = int(chest.centre.x - (chest.height / HALF))
+                xmax_chest = int(chest.centre.x + (chest.height / HALF))
+                ymin_chest = int(chest.centre.y - (chest.width / HALF))
+                ymax_chest = int(chest.centre.y + (chest.width / HALF))
+                create_XML_entry(root, xmin_chest, xmax_chest, ymin_chest, ymax_chest, chest.angle, name="chest")
+
+                # Head
+                head = current_pose['head_rect']
+                head_angle = math.degrees(math.atan2(head[3] - head[1], head[2] - head[0]))
+                create_XML_entry(root, head[0], head[2], head[1], head[3], head_angle, name="head")
+
+                # Arms and legs
                 for joint in current_pose['joint_pos']:
-                    # print(joint)
+
+                    # Get Joint meta data
                     x = current_pose['joint_pos'][joint][0]
                     y = current_pose['joint_pos'][joint][1]
                     # Current joint point
-                    p1 = {'x': x, 'y': y}
+                    p1 = Point(x, y)
                     p2 = p1
 
-                    # is_visible = current_pose['is_visible'][joint]
-                    # print("Image: ", filename_jpg)
-                    # print(current_pose['is_visible'])
-                    # if is_visible != 1: continue
+                    # Skip joint if it's not visible.
+                    if current_pose['is_visible'][joint] == 0:
+                        continue
 
                     if int(joint) is not 15:
-                        # print("JOINT", joint)
                         x = current_pose['joint_pos'][str(int(joint) + 1)][0]
                         y = current_pose['joint_pos'][str(int(joint) + 1)][1]
-                        p2 = {'x': x, 'y': y}
+                        p2 = Point(x, y)
 
-                    # print('Joint ID', joint, 'X:', x, 'Y:', y)
+                    # Find Centre points and height of the joint
+                    center = Point((p2.x + p1.x) / FLOAT_HALF, (p2.y + p1.y) / FLOAT_HALF)
+                    height_joint = math.hypot(p2.x - p1.x, p2.y - p1.y)
 
-                    angle = math.atan2(p2['y'] - p1['y'], p2['x'] - p1['x']) * 180 / math.pi
-                    # cv2.line(img, (int(p1['x']), int(p1['y'])), (int(p2['x']), int(p2['y'])), (255, 255, 255), 2)
-
-                    xc = (p2['x'] + p1['x']) / 2.
-                    yc = (p2['y'] + p1['y']) / 2.
-                    center = Point((p2['x'] + p1['x']) / 2., (p2['y'] + p1['y']) / 2.)
-                    height_joint = math.hypot(p2['x'] - p1['x'], p2['y'] - p1['y'])
-
-                    head = current_pose['head_rect']
+                    # Width
                     head_width = head[2] - head[0]
                     limb_width = BBOX_WIDTH * head_width / HEAD_SF
 
-                    if int(joint) in LIMB_INDEXS:
-                        print(center.x, center.y, height_joint, limb_width, angle, joint, img)
-                        draw_rec_limb_boxes(center.x, center.y, height_joint, limb_width, angle, joint, img)
-                        xmin = int(center.x - (height_joint / 2))
-                        xmax = int(center.x + (height_joint / 2))
-                        ymin = int(center.y - (limb_width / 2))
-                        ymax = int(center.y + (limb_width / 2))
+                    # Get Angle
+                    angle = math.degrees(math.atan2(p2.y - p1.y, p2.x - p1.x))
 
-                        object = ET.SubElement(root, "object")
-                        name = ET.SubElement(object, 'name').text = look_up_table[int(joint)]
-                        bndbox = ET.SubElement(object, 'bndbox')
-                        xmin = ET.SubElement(bndbox, 'xmin').text = str(xmin)
-                        xmax = ET.SubElement(bndbox, 'xmax').text = str(xmax)
-                        ymin = ET.SubElement(bndbox, 'ymin').text = str(ymin)
-                        ymax = ET.SubElement(bndbox, 'ymax').text = str(ymax)
-                        angle = ET.SubElement(bndbox, 'angle').text = str(angle)
+                    if int(joint) in LIMB_INDEXS:
+                        if int(joint) != 9 and int(joint) != 5:
+                            # Draw Head, Arms, Legs, Chest
+                            draw_rec_limb_boxes(center.x, center.y, height_joint, limb_width, angle, img)
+                            draw_head(head, img)
+                            draw_rec_limb_boxes(chest.centre.x, chest.centre.y, chest.height, chest.width,
+                                                chest.angle, img)
+
+                        xmin = int(center.x - (height_joint / HALF))
+                        xmax = int(center.x + (height_joint / HALF))
+                        ymin = int(center.y - (limb_width / HALF))
+                        ymax = int(center.y + (limb_width / HALF))
+
+                        name = look_up_table[int(joint)]
+                        create_XML_entry(root, xmin, xmax, ymin, ymax, angle, name)
 
                 if debug:
-                    x = current_pose['joint_pos'][joint][0]
-                    y = current_pose['joint_pos'][joint][1]
-                    ls = Point(current_pose['joint_pos']['14'][0], current_pose['joint_pos']['14'][1])
-                    rs = Point(current_pose['joint_pos']['13'][0], current_pose['joint_pos']['13'][1])
-                    lh = Point(current_pose['joint_pos']['3'][0], current_pose['joint_pos']['3'][1])
-                    rh = Point(current_pose['joint_pos']['2'][0], current_pose['joint_pos']['2'][1])
-                    thorax = Point(current_pose['joint_pos']['7'][0], current_pose['joint_pos']['7'][1])
-                    pelvis = Point(current_pose['joint_pos']['6'][0], current_pose['joint_pos']['6'][1])
-                    draw_chest(ls, rs, lh, rh, img, image_file_name, thorax, pelvis, OUT_PATH)
-                    draw_head(current_pose['head_rect'], img)
-                    cv2.imwrite("/home/richard/git/yopo/data/darkflow/ann_images/{}".format(filename_jpg), img)
+                    cv2.imwrite("../../data/ann_images/{}".format(filename_jpg), img)
                     cv2.namedWindow("Display window", cv2.WINDOW_AUTOSIZE)
                     cv2.imshow("Display Window", img)
-                    # cv2.waitKey(0)
+                    cv2.waitKey(0)
 
             filename = filename_jpg.split('.jpg')[0]
             # Write to file
@@ -205,44 +199,31 @@ def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=F
             XML_OUT = cfg.config['DARKFLOW_XML_OUTPATH']
             tree.write(open('{}{}.xml'.format(XML_OUT, filename), 'w'), encoding='unicode')
 
-        # if debug:
-        #     cv2.namedWindow("Display window", cv2.WINDOW_AUTOSIZE)
-        #     cv2.imshow("Display Window", img)
-        #     cv2.waitKey(0)
-
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Drawing Functions
 # ---------------------------------------------------------------------------------------------------------------------
 
 
-def draw_rec_limb_boxes(x0, y0, width, height, angle, joint_id, img, colour=WHITE):
-    if joint_id != 9 and joint_id != 5:
-        _angle = angle * math.pi / 180.0
-        b = math.cos(_angle) * 0.5
-        a = math.sin(_angle) * 0.5
-        pt0 = (int(x0 - a * height - b * width), int(y0 + b * height - a * width))
-        pt1 = (int(x0 + a * height - b * width), int(y0 - b * height - a * width))
-        pt2 = (int(2 * x0 - pt0[0]), int(2 * y0 - pt0[1]))
-        pt3 = (int(2 * x0 - pt1[0]), int(2 * y0 - pt1[1]))
+def draw_rec_limb_boxes(x0, y0, width, height, angle, img, colour=WHITE, thickness=2):
 
-        cv2.line(img, pt0, pt1, colour, 3)
-        cv2.line(img, pt1, pt2, colour, 3)
-        cv2.line(img, pt2, pt3, colour, 3)
-        cv2.line(img, pt3, pt0, colour, 3)
+    _angle = math.radians(angle)
+    b = math.cos(_angle) * 0.5
+    a = math.sin(_angle) * 0.5
+    pt0 = (int(x0 - a * height - b * width), int(y0 + b * height - a * width))
+    pt1 = (int(x0 + a * height - b * width), int(y0 - b * height - a * width))
+    pt2 = (int(2 * x0 - pt0[0]), int(2 * y0 - pt0[1]))
+    pt3 = (int(2 * x0 - pt1[0]), int(2 * y0 - pt1[1]))
 
-        cv2.line(img, pt0, pt0, (255, 0, 0), 10)
-        cv2.line(img, pt2, pt2, (255, 0, 0), 10)
+    cv2.line(img, pt0, pt1, colour, thickness)
+    cv2.line(img, pt1, pt2, colour, thickness)
+    cv2.line(img, pt2, pt3, colour, thickness)
+    cv2.line(img, pt3, pt0, colour, thickness)
 
-        # Show which were are talking about.
-        # Draw Text to label the joint.
-        cv2.putText(img, org=(int(x0 + TEXT_POSITION_MODIFIER_X),
-                              int(y0 + TEXT_POSITION_MODIFIER_Y)),
-                    color=colour, text=str(joint_id), fontFace=cv2.FONT_HERSHEY_PLAIN,
-                    fontScale=2,
-                    thickness=3)
+    cv2.line(img, pt0, pt0, (255, 0, 0), thickness)
+    cv2.line(img, pt2, pt2, (255, 0, 0), thickness)
 
-        return img
+    return img
 
 
 def draw_head(head, img):
@@ -256,10 +237,10 @@ def is_joint_visible(joint_id, pose_meta_data):
         return False
 
 
-def create_joint_entry(current_filename, limb_id, x, y, width, height, angle, img, OUT_PATH):
+def create_joint_entry(current_filename, limb_id, x, y, width, height, angle, img, OUT_PATH, limb_width):
     filename, ext = current_filename.rsplit('.', 1)
 
-    # Convert data into YOLOv2 format
+    # Convert data into YOLOv1 format
     img_height, img_width = img.shape[:2]
     x = x / img_width
     y = y / img_height
@@ -272,9 +253,9 @@ def create_joint_entry(current_filename, limb_id, x, y, width, height, angle, im
         out.write(output_line)
 
 
-def draw_chest(right_shoulder, left_shoulder, right_hip, left_hip, img, current_filename, thorax, pelvis, OUT_PATH):
+def _create_chest(right_shoulder, left_shoulder, right_hip, left_hip, thorax, pelvis):
     # Chest Angle
-    angle = math.atan2(thorax.y + pelvis.y, thorax.x + pelvis.x) * 180 / math.pi
+    angle = math.degrees(math.atan2(thorax.y - pelvis.y, thorax.x - pelvis.x))
 
     # Calculates the centre of the chest
     mid_left_y = midpoint(left_shoulder.x, left_shoulder.y, left_hip.x, left_hip.y)
@@ -290,16 +271,28 @@ def draw_chest(right_shoulder, left_shoulder, right_hip, left_hip, img, current_
     width = (w_top + w_bot)
 
     # Height
-    # h_top = distance_between_points(left_shoulder.x, left_shoulder.y, left_hip.x, left_hip.y)
-    # h_bot = distance_between_points(right_shoulder.x, right_shoulder.y, right_hip.x, right_hip.y)
-    # height = (h_top + h_bot)
     height = distance_between_points(thorax.x, thorax.y, pelvis.x, pelvis.y)
 
-    draw_rec_limb_boxes(x0=center.x, y0=center.y, width=width, height=height, angle=angle,
-                        joint_id=limb_ids['chest'], img=img, colour=RED)
-
-    create_joint_entry(current_filename, limb_ids['chest'], center.x, center.y, width, height, angle, img, OUT_PATH)
-
-    return Chest(center, width, height)
+    return Chest(center, width, height, angle)
 
 
+def create_chest(current_pose):
+    ls = Point(current_pose['joint_pos']['14'][0], current_pose['joint_pos']['14'][1])
+    rs = Point(current_pose['joint_pos']['13'][0], current_pose['joint_pos']['13'][1])
+    lh = Point(current_pose['joint_pos']['3'][0], current_pose['joint_pos']['3'][1])
+    rh = Point(current_pose['joint_pos']['2'][0], current_pose['joint_pos']['2'][1])
+    thorax = Point(current_pose['joint_pos']['7'][0], current_pose['joint_pos']['7'][1])
+    pelvis = Point(current_pose['joint_pos']['6'][0], current_pose['joint_pos']['6'][1])
+
+    return _create_chest(ls, rs, lh, rh, thorax, pelvis)
+
+
+def create_XML_entry(root, xmin, xmax, ymin, ymax, angle, name):
+    object = ET.SubElement(root, "object")
+    name = ET.SubElement(object, 'name').text = name
+    bndbox = ET.SubElement(object, 'bndbox')
+    xmin = ET.SubElement(bndbox, 'xmin').text = str(xmin)
+    xmax = ET.SubElement(bndbox, 'xmax').text = str(xmax)
+    ymin = ET.SubElement(bndbox, 'ymin').text = str(ymin)
+    ymax = ET.SubElement(bndbox, 'ymax').text = str(ymax)
+    angle = ET.SubElement(bndbox, 'angle').text = str(angle)
