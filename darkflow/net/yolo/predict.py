@@ -1,11 +1,10 @@
-from ...utils.im_transform import imcv2_recolor, imcv2_affine_trans
-from ...utils.box import BoundBox, box_iou, prob_compare
+from ...utils.im_transform import imcv2_affine_trans
 import numpy as np
 import cv2
 import os
 import json
 from ...cython_utils.cy_yolo_findboxes import yolo_box_constructor
-from darkflow.net.yopo.calulating_IOU import intersection_over_union, Rectangle, draw_polygon
+from darkflow.net.yopo.network.calulating_IOU import Rectangle, draw_polygon
 
 
 def _fix(obj, dims, scale, offs):
@@ -68,19 +67,19 @@ def preprocess(self, im, allobj=None):
     if type(im) is not np.ndarray:
         im = cv2.imread(im)
 
-    # if allobj is not None:  # in training mode
-    #     result = imcv2_affine_trans(im)
-    #     im, dims, trans_param = result
-    #     scale, offs, flip = trans_param
-    #     for obj in allobj:
-    #         _fix(obj, dims, scale, offs)
-    #         if not flip: continue
-    #         obj_1_ = obj[1]
-    #         obj[1] = dims[0] - obj[3]
-    #         obj[3] = dims[0] - obj_1_
-    #     im = imcv2_recolor(im)
+    if allobj is not None:  # in training mode
+        result = imcv2_affine_trans(im)
+        im, dims, trans_param = result
+        scale, offs, flip = trans_param
+        for obj in allobj:
+            _fix(obj, dims, scale, offs)
+            if not flip: continue
+            obj_1_ = obj[1]
+            obj[1] = dims[0] - obj[3]
+            obj[3] = dims[0] - obj_1_
+        # im = imcv2_recolor(im)
 
-    im = self.resize_input(im)
+    # im = self.resize_input(im)
     if allobj is None: return im
     return im  # , np.array(im) # for unit testing
 

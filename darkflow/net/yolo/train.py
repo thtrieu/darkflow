@@ -1,12 +1,7 @@
 import tensorflow.contrib.slim as slim
-import pickle
 import tensorflow as tf
 
-from darkflow.net.yopo.calulating_IOU import intersection_over_union, Rectangle
-from .misc import show
-import numpy as np
-import os
-import pprint as pp
+from darkflow.net.yopo.network.calulating_IOU import intersection_over_union, Rectangle
 from copy import deepcopy
 import math
 

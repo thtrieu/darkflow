@@ -1,9 +1,6 @@
 import unittest
-import cv2
-import numpy as np
-import math
 
-from darkflow.net.yopo.calulating_IOU import Rectangle, intersection_over_union, draw_polygon, show_image, check_intersection_is_line
+from darkflow.net.yopo.network.calulating_IOU import Rectangle, intersection_over_union, check_intersection_is_line
 
 
 class TestCalculateIOU(unittest.TestCase):

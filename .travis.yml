@@ -15,6 +15,7 @@ install:
     - pip install -e .
 
 # command to run tests
+#todo add tests
 script:
   - pytest -x --cov=./
   - echo "I love rats"
