@@ -5,17 +5,31 @@ language: python
 python:
   - "3.6"
 
+addons:
+  sonarcloud:
+    organization: "YOPO-Darkflow"
+    token:
+      secure: "c4997113ae129c849e67f549f8566c546d5866e0"
+
+jdk:
+  - oraclejdk8
+script:
+  - sonar-scanner
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
 cache:
     directories:
     - bin #cache .weights files
     
 # command to install dependencies
 install: 
-    - pip install -r test/requirements-testing.txt
+    - pip install -r requirements.txt
     - pip install -e .
-
+#
 # command to run tests
-script: pytest -x --cov=./
+script:
 
 #Upload code coverage statistics
 after_success:
