@@ -8,7 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9aa2a4d5-6272-4f30-973a-893f06fb2a77" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
+      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,6 +20,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/darkflow$flow_new.coverage" NAME="flow_new Coverage Results" MODIFIED="1523576224777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/darkflow$flow.coverage" NAME="flow Coverage Results" MODIFIED="1521842579642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_calculate_IOU_py.coverage" NAME="Nosetests in test_calculate_IOU.py Coverage Results" MODIFIED="1523576526983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/darkflow/net/yopo/tests" />
     <SUITE FILE_PATH="coverage/darkflow$main.coverage" NAME="main Coverage Results" MODIFIED="1523560961103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/main" />
     <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_darkflow_py.coverage" NAME="Nosetests in test_darkflow.py Coverage Results" MODIFIED="1523575475727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/darkflow$flow_test.coverage" NAME="flow_test Coverage Results" MODIFIED="1523217925560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -30,9 +31,46 @@
       <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="19" column="26" lean-forward="true" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+            <state relative-caret-position="576">
+              <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="calulating_IOU.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="630">
+              <caret line="163" column="4" lean-forward="false" selection-start-line="163" selection-start-column="4" selection-end-line="163" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="656">
+                <caret line="283" column="1" lean-forward="false" selection-start-line="283" selection-start-column="0" selection-end-line="283" selection-end-column="44" />
+                <folding>
+                  <marker date="1523577121245" expanded="true" signature="4314:4640" ph="[...]" />
+                </folding>
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_calculate_IOU.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="738">
+              <caret line="156" column="48" lean-forward="false" selection-start-line="156" selection-start-column="48" selection-end-line="156" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -133,7 +171,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/darkflow/dark/darknet.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yopo/parse-darkflow.py" />
         <option value="$PROJECT_DIR$/darkflow/utils/darknet_parser.py" />
         <option value="$PROJECT_DIR$/darkflow/net/yolov2/data.py" />
@@ -183,6 +220,7 @@
         <option value="$PROJECT_DIR$/YOPO_preprocessing/src/busniess/generate_limb_bbox_darkflow.py" />
         <option value="$PROJECT_DIR$/sonar-project.properties" />
         <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/.travis.yml" />
       </list>
     </option>
@@ -193,11 +231,11 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="4">
-    <option name="x" value="3232" />
-    <option name="y" value="24" />
-    <option name="width" value="1248" />
-    <option name="height" value="1416" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="2368" />
+    <option name="y" value="33" />
+    <option name="width" value="2493" />
+    <option name="height" value="1436" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -220,6 +258,32 @@
             <path>
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="yopo" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="yopo" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -258,7 +322,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.flow_new">
+  <component name="RunManager" selected="Python tests.Nosetests in test_calculate_IOU.py">
     <configuration name="calulating_IOU" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -433,10 +497,10 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python tests.Nosetests in test_darkflow.py" />
-        <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetests in test_rectangle.py" />
-        <item index="2" class="java.lang.String" itemvalue="Python.main" />
-        <item index="3" class="java.lang.String" itemvalue="Python tests.Nosetests in test_calculate_IOU.py" />
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Nosetests in test_calculate_IOU.py" />
+        <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetests in test_darkflow.py" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests in test_rectangle.py" />
+        <item index="3" class="java.lang.String" itemvalue="Python.main" />
         <item index="4" class="java.lang.String" itemvalue="Python tests.Nosetests for test_calculate_IOU.TestCalculateIOU.test_intersection_over_union" />
       </list>
     </recent_temporary>
@@ -458,9 +522,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 33m 54s.xml">
-      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
-    </history-entry>
     <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 35m 08s.xml">
       <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
@@ -479,6 +540,9 @@
     <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.07 at 15h 42m 48s.xml">
       <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
     </history-entry>
+    <history-entry file="Nosetests_in_test_calculate_IOU_py - 2018.04.13 at 00h 42m 07s.xml">
+      <configuration name="Nosetests in test_calculate_IOU.py" configurationId="tests" />
+    </history-entry>
     <history-entry file="Nosetests_in_test_darkflow_py - 2018.04.13 at 00h 24m 27s.xml">
       <configuration name="Nosetests in test_darkflow.py" configurationId="tests" />
     </history-entry>
@@ -490,16 +554,16 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="3232" y="24" width="1248" height="1416" extended-state="4" />
+    <frame x="1985" y="-4" width="2495" height="1444" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3908397" sideWeight="0.51282054" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934132" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38854963" sideWeight="0.91382766" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38041854" sideWeight="0.91382766" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29160306" sideWeight="0.4871795" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17548077" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11062124" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31570512" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -640,17 +704,6 @@ y_axis_len = len(set(y_axis))</expression-string>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/nose/suite.py" />
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2652">
-          <caret line="156" column="48" lean-forward="false" selection-start-line="156" selection-start-column="48" selection-end-line="156" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
@@ -743,16 +796,6 @@ y_axis_len = len(set(y_axis))</expression-string>
         <state relative-caret-position="180">
           <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2934">
-          <caret line="163" column="4" lean-forward="false" selection-start-line="163" selection-start-column="4" selection-end-line="163" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#11#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -877,14 +920,6 @@ y_axis_len = len(set(y_axis))</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sonar-project.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
@@ -919,10 +954,49 @@ y_axis_len = len(set(y_axis))</expression-string>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sonar-project.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/tests/test_calculate_IOU.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="738">
+          <caret line="156" column="48" lean-forward="false" selection-start-line="156" selection-start-column="48" selection-end-line="156" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/darkflow/net/yopo/calulating_IOU.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="163" column="4" lean-forward="false" selection-start-line="163" selection-start-column="4" selection-end-line="163" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="656">
+            <caret line="283" column="1" lean-forward="false" selection-start-line="283" selection-start-column="0" selection-end-line="283" selection-end-column="44" />
+            <folding>
+              <marker date="1523577121245" expanded="true" signature="4314:4640" ph="[...]" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.travis.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="26" lean-forward="true" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+        <state relative-caret-position="576">
+          <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
           <folding />
         </state>
       </provider>

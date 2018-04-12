@@ -27,9 +27,11 @@ cache:
 install: 
     - pip3 install -r requirements.txt
     - pip3 install -e .
-#
+
 # command to run tests
 script:
+    - export PYTHONPATH=$PWD
+    - python3 darkflow/net/yopo/tests/test_calculate_IOU.py
 
 #Upload code coverage statistics
 after_success:

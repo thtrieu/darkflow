@@ -275,3 +275,12 @@ flow --pbLoad built_graph/yolo.pb --metaLoad built_graph/yolo.meta --imgdir samp
 If you'd like to load a `.pb` and `.meta` file when using `return_predict()` you can set the `"pbLoad"` and `"metaLoad"` options in place of the `"model"` and `"load"` options you would normally set.
 
 That's all.
+
+## YOPO
+
+The project was developed with pycharm so to run it from the command you must export this path: 
+
+```bash
+export PYTHONPATH=/home/richard/git/darkflow
+```
+
