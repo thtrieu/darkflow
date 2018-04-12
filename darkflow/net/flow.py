@@ -34,17 +34,21 @@ def train(self):
     loss_mva = None; profile = list()
 
     batches = self.framework.shuffle()
+    # Function Pointer to loss function
     loss_op = self.framework.loss
 
+    print("LOSS FUNCTION POINTER: ",loss_op)
     for i, (x_batch, datum) in enumerate(batches):
         if not i: self.say(train_stats.format(
             self.FLAGS.lr, self.FLAGS.batch,
             self.FLAGS.epoch, self.FLAGS.save
         ))
 
+        # Is this where the Ground Truth Value are feed into?
         feed_dict = {
             loss_ph[key]: datum[key] 
                 for key in loss_ph }
+
         feed_dict[self.inp] = x_batch
         feed_dict.update(self.feed)
 
@@ -53,8 +57,15 @@ def train(self):
         if self.FLAGS.summary:
             fetches.append(self.summary_op)
 
+        # Debug - Print shit!
+        # print(feed_dict)
+        # Session
+        # self.sess.run(loss_op)
+
         fetched = self.sess.run(fetches, feed_dict)
+        # print(fetched)
         loss = fetched[1]
+        print(loss)
 
         if loss_mva is None: loss_mva = loss
         loss_mva = .9 * loss_mva + .1 * loss
