@@ -32,12 +32,7 @@ install:
 script:
     - export PYTHONPATH=$PWD
     - python3 darkflow/net/yopo/tests/test_calculate_IOU.py
+    - ls
 
 #Upload code coverage statistics
-after_success:
-  - sonar-scanner \
-    -Dsonar.projectKey=your_project_key_that_must_be_unique \
-    -Dsonar.sources=. \
-    -Dsonar.host.url=https://sonarcloud.io \
-    -Dsonar.organization=your_organization_key \
-    -Dsonar.login=abcdef0123456789
+#after_success:
