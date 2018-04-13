@@ -7,9 +7,9 @@ python:
 
 addons:
   sonarcloud:
-    organization: "YOPO-Darkflow"
+    organization: "rij12-github"
     token:
-      secure: "c4997113ae129c849e67f549f8566c546d5866e0"
+      secure: "b7bd23cbad5d2a534003dbdbdecf517265a5e739"
 
 jdk:
   - oraclejdk8
@@ -35,4 +35,9 @@ script:
 
 #Upload code coverage statistics
 after_success:
-  - codecov
+  - sonar-scanner \
+    -Dsonar.projectKey=your_project_key_that_must_be_unique \
+    -Dsonar.sources=. \
+    -Dsonar.host.url=https://sonarcloud.io \
+    -Dsonar.organization=your_organization_key \
+    -Dsonar.login=abcdef0123456789
