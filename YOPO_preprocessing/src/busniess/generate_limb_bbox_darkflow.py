@@ -24,7 +24,7 @@ RED = 0, 0, 255
 BBOX_WIDTH = 50
 HEAD_SF = 70
 LIMB_INDEXS = [0, 1, 3, 4, 10, 11, 13, 14]
-IMAGE_PROCESS_LIMIT = 6000
+IMAGE_PROCESS_LIMIT = 4000
 HALF = 2
 FLOAT_HALF = 2.0
 
@@ -84,7 +84,7 @@ class Limb:
 
 #  image_file_path_list - A list of all the image with the fill path names.
 #  image_metadata - a python dictionary that contains all pose data for a given image.
-def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=True):
+def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=False):
     counter = 0
 
     if train:
@@ -102,7 +102,7 @@ def generate_limb_data(image_file_path_list, image_metadata, train=True, debug=T
         counter = counter + 1
 
         # Limits the amount of data
-        if IMAGE_PROCESS_LIMIT == counter:
+        if counter > 6000:
             return
 
         # Remove the full path from the file name

@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-IMAGE = "/home/richard/git/darkflow/sub_set/images/040967287.jpg"
+IMAGE = "/home/richard/git/darkflow/YOPO_preprocessing/data/darkflow/images/000065339.jpg"
 
 """
 This file is used to test the grid system on a given image. 
@@ -15,7 +15,7 @@ img = cv2.imread(IMAGE)
 img_height, img_width = img.shape[:2]
 
 # Number of grid cells you want to split the image into.
-S = 25
+S = 16
 
 # How big each cell is (w,h) of the cell
 S_W = img_width / S

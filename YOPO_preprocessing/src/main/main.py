@@ -3,7 +3,6 @@ import glob
 import time
 from YOPO_preprocessing.src.main.config import config
 from YOPO_preprocessing.src.busniess.generate_limb_bbox_darkflow import generate_limb_data
-from YOPO_preprocessing.src.busniess.generate_limb_bbox_min_max import generate_limb_gt_min_max
 from YOPO_preprocessing.src.busniess.ground_truth_darknet import create_ground_truth
 from YOPO_preprocessing.src.utils.util import load_matlab_data, darkflow_sort_images, prepare_train_and_test_data
 
@@ -33,7 +32,6 @@ if __name__ == "__main__":
     start_time = time.time()
     if darkflow:
         generate_limb_data(image_file_path_list=images, image_metadata=data, train=True)
-        # generate_limb_gt_min_max(image_file_path_list=images, image_metadata=data, train=True)
         darkflow_sort_images()
 
     else:

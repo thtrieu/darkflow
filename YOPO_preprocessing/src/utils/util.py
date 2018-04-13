@@ -9,12 +9,8 @@ from YOPO_preprocessing.src.busniess.Point import Point
 mat = sio.loadmat(cfg.config['MATLAB_DATA_FILE_PATH'])
 
 OUTPUT_PATH = cfg.config['OUTPUT_PATH']
-# OUTPUT_PATH =
-BOX_W = 50
-BOX_H = 50
 
-IMAGES_PATH = "/home/richard/Downloads/images/"
-images = glob.glob("/home/richard/Downloads/images/*jpg")
+
 TRAIN_PATH = "/home/richard/git/yopo/data/train_yolo/train_data"
 TEST_PATH = "/home/richard/git/yopo/data/train_yolo/test_data/"
 YOLO_PATH = "/home/richard/git/yopo/data/train_yolo/"
@@ -106,45 +102,6 @@ def load_matlab_data():
     return all_data
 
 
-def generate_ground_truth(images, image_data, images_path):
-    #  For each given image.
-    for x in range(0, len(images)):
-        # Get image
-        full_image_path = images_path + images[x]
-        img = cv2.imread(full_image_path, -1)
-        img_width, img_height = img.shape[:2]
-        # print("Image Size: ", img_width, img_height)
-
-        current_img_data = image_data[images[x]]
-
-        # For each pose in that given image. {KEY:[{},{}]}
-        for pose_key in range(0, len(image_data[images[x]])):
-            joint_data = current_img_data[pose_key]['joint_pos']
-            # visible_joint = current_img_data[pose_key]['is_visible']
-            # head_data = current_img_data[pose_key]['head_rect']
-
-            print("------------------------------")
-            #  For each joint in that given pose.
-            # Each class needs it own line the truth file.
-            for joint_id in range(0, 16):
-                # print(joint_data[str(joint_id)])
-
-                # Check if joint is viable in the image.
-                if current_img_data['is_visible'] == 1:
-                    # YOLO Data
-                    yolo_class = joint_id
-                    yolo_x = joint_id[0] / img_width
-                    yolo_y = joint_id[1] / img_height
-                    yolo_w = BOX_W / img_width
-                    yolo_h = BOX_H / img_height
-
-                # print(convert(), joint_id)
-            print("------------------------------")
-
-
-# todo add these to a config file. training speed dif
-
-
 def prepare_train_and_test_data():
     for x in TRAIN_IMAGES:
         train_img_path = x.split('.')[0] + ".jpg"
@@ -174,8 +131,13 @@ def prepare_train_and_test_data():
 
 
 def darkflow_sort_images():
-    TRAIN_IMAGES = glob.glob(
-        "/home/richard/git/yopo/data/darkflow/labels/*xml")
+    # todo change to config file
+    TRAIN_IMAGES = glob.glob("/home/richard/git/darkflow/YOPO_preprocessing/data/darkflow/labels/*xml")
+
+    if len(TRAIN_IMAGES) < 1:
+        print("ERROR: Can not find xml files in labels dir")
+
+    print(len(TRAIN_IMAGES))
     for x in TRAIN_IMAGES:
         train_img_path = x.split('.')[0] + ".jpg"
         # break to next line
