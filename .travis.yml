@@ -5,18 +5,34 @@ language: python
 python:
   - "3.6"
 
+addons:
+  sonarcloud:
+    organization: "rij12-github"
+    token:
+      secure: "b7bd23cbad5d2a534003dbdbdecf517265a5e739"
+
+jdk:
+  - oraclejdk8
+script:
+  - sonar-scanner
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
 cache:
     directories:
     - bin #cache .weights files
     
 # command to install dependencies
 install: 
-    - pip install -r test/requirements-testing.txt
-    - pip install -e .
+    - pip3 install -r requirements.txt
+    - pip3 install -e .
 
 # command to run tests
-script: pytest -x --cov=./
+script:
+    - export PYTHONPATH=$PWD
+    - python3 darkflow/net/yopo/tests/test_calculate_IOU.py
+    - ls
 
 #Upload code coverage statistics
-after_success:
-  - codecov
+#after_success:

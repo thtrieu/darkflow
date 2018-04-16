@@ -44,3 +44,9 @@ ckpt/*
 
 #pytest cache
 .cache/
+
+#Yopo
+.train/
+test_images/
+voc/
+sub_set/large_sub_set_100/
