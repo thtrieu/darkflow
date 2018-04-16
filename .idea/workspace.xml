@@ -7,13 +7,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9aa2a4d5-6272-4f30-973a-893f06fb2a77" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/sonarSettings.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/sonarlint-state.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/sonarlint.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/darkflow.iml" afterPath="$PROJECT_DIR$/.idea/darkflow.iml" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/YOPO_preprocessing/src/busniess/draw_grid_cells.py" afterPath="$PROJECT_DIR$/YOPO_preprocessing/src/busniess/draw_grid_cells.py" />
-      <change beforePath="$PROJECT_DIR$/YOPO_preprocessing/src/busniess/generate_limb_bbox_darkflow.py" afterPath="$PROJECT_DIR$/YOPO_preprocessing/src/busniess/generate_limb_bbox_darkflow.py" />
-      <change beforePath="$PROJECT_DIR$/YOPO_preprocessing/src/main/main.py" afterPath="$PROJECT_DIR$/YOPO_preprocessing/src/main/main.py" />
-      <change beforePath="$PROJECT_DIR$/YOPO_preprocessing/src/utils/util.py" afterPath="$PROJECT_DIR$/YOPO_preprocessing/src/utils/util.py" />
-      <change beforePath="$PROJECT_DIR$/cfg/yopo.cfg" afterPath="$PROJECT_DIR$/cfg/yopo.cfg" />
-      <change beforePath="$PROJECT_DIR$/labels.txt" afterPath="$PROJECT_DIR$/labels.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,15 +22,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/darkflow$flow_new.coverage" NAME="flow_new Coverage Results" MODIFIED="1523590390671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/darkflow$flow.coverage" NAME="flow Coverage Results" MODIFIED="1521842579642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/darkflow$draw_grid_cells.coverage" NAME="draw_grid_cells Coverage Results" MODIFIED="1523588823402" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/busniess" />
-    <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_calculate_IOU_py.coverage" NAME="Nosetests in test_calculate_IOU.py Coverage Results" MODIFIED="1523576526983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/darkflow/net/yopo/tests" />
-    <SUITE FILE_PATH="coverage/darkflow$main.coverage" NAME="main Coverage Results" MODIFIED="1523560961103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/main" />
-    <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_darkflow_py.coverage" NAME="Nosetests in test_darkflow.py Coverage Results" MODIFIED="1523575475727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/darkflow$YOLO_Preprocessing.coverage" NAME="YOLO_Preprocessing Coverage Results" MODIFIED="1523590037413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/main" />
+    <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_darkflow_py.coverage" NAME="Nosetests in test_darkflow.py Coverage Results" MODIFIED="1523575475727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_calculate_IOU_py.coverage" NAME="Nosetests in test_calculate_IOU.py Coverage Results" MODIFIED="1523576526983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/darkflow/net/yopo/tests" />
+    <SUITE FILE_PATH="coverage/darkflow$flow_new.coverage" NAME="flow_new Coverage Results" MODIFIED="1523590390671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/darkflow$main.coverage" NAME="main Coverage Results" MODIFIED="1523560961103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/main" />
     <SUITE FILE_PATH="coverage/darkflow$flow_test.coverage" NAME="flow_test Coverage Results" MODIFIED="1523217925560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/darkflow$draw_grid_cells.coverage" NAME="draw_grid_cells Coverage Results" MODIFIED="1523588823402" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/src/busniess" />
     <SUITE FILE_PATH="coverage/darkflow$Nosetests_in_test_rectangle_py.coverage" NAME="Nosetests in test_rectangle.py Coverage Results" MODIFIED="1523563710459" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/YOPO_preprocessing/tests/busniess" />
+    <SUITE FILE_PATH="coverage/darkflow$flow.coverage" NAME="flow Coverage Results" MODIFIED="1521842579642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -45,14 +44,41 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="JavaScript-modules-diagram//Users/richardjones/git/darkflow" pinned="false" current-in-tab="false">
+        <entry file="uml://JavaScript-modules-diagram//Users/richardjones/git/darkflow">
+          <provider selected="true" editor-type-id="UmlEditorProvider">
+            <state>
+              <ID>JavaScript-modules-diagram</ID>
+              <OriginalElement>$PROJECT_DIR$</OriginalElement>
+              <nodes />
+              <notes />
+              <edges />
+              <settings layout="Hierarchic Group" zoom="1.0" x="240.0" y="240.0" />
+              <SelectedNodes />
+              <Categories>
+                <Category>All</Category>
+              </Categories>
+              <VISIBILITY>Details</VISIBILITY>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config_mac.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/main/config_mac.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" column="59" lean-forward="true" selection-start-line="19" selection-start-column="59" selection-end-line="19" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
+            <state relative-caret-position="2686">
               <caret line="165" column="51" lean-forward="false" selection-start-line="165" selection-start-column="51" selection-end-line="165" selection-end-column="51" />
-              <folding>
-                <marker date="1523590551809" expanded="true" signature="1310:1425" ph="..." />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -60,7 +86,7 @@
       <file leaf-file-name="misc.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/misc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
+            <state relative-caret-position="476">
               <caret line="31" column="32" lean-forward="false" selection-start-line="31" selection-start-column="32" selection-end-line="31" selection-end-column="32" />
               <folding />
             </state>
@@ -70,7 +96,7 @@
       <file leaf-file-name="predict.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/predict.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
+            <state relative-caret-position="1768">
               <caret line="111" column="27" lean-forward="false" selection-start-line="111" selection-start-column="27" selection-end-line="111" selection-end-column="27" />
               <folding />
             </state>
@@ -80,18 +106,8 @@
       <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="711">
-              <caret line="183" column="24" lean-forward="true" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="log_new.txt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/logs/log_new.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="38426" column="20" lean-forward="true" selection-start-line="38426" selection-start-column="20" selection-end-line="38426" selection-end-column="20" />
+            <state relative-caret-position="2941">
+              <caret line="183" column="24" lean-forward="false" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -100,7 +116,7 @@
       <file leaf-file-name="labels.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/labels.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
+            <state relative-caret-position="153">
               <caret line="9" column="4" lean-forward="false" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
               <folding />
             </state>
@@ -110,7 +126,7 @@
       <file leaf-file-name="draw_grid_cells.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/busniess/draw_grid_cells.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
+            <state relative-caret-position="272">
               <caret line="17" column="6" lean-forward="false" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
               <folding />
             </state>
@@ -120,21 +136,9 @@
       <file leaf-file-name="yopo.cfg" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cfg/yopo.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
+            <state relative-caret-position="4233">
               <caret line="249" column="9" lean-forward="false" selection-start-line="249" selection-start-column="9" selection-end-line="249" selection-end-column="9" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/main/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="428">
-              <caret line="33" column="21" lean-forward="false" selection-start-line="33" selection-start-column="21" selection-end-line="33" selection-end-column="21" />
-              <folding>
-                <element signature="e#1#12#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -255,11 +259,11 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="3232" />
-    <option name="y" value="-4" />
-    <option name="width" value="1248" />
-    <option name="height" value="1444" />
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="x" value="1920" />
+    <option name="y" value="-217" />
+    <option name="width" value="2560" />
+    <option name="height" value="1362" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -282,11 +286,6 @@
             <path>
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="darkflow" type="462c0819:PsiDirectoryNode" />
-              <item name="logs" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="darkflow" type="b2602c69:ProjectViewProjectNode" />
@@ -325,7 +324,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="org.sonarlint.intellij.config.project.SonarLintProjectConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -585,22 +584,24 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="-4" width="2495" height="1444" extended-state="6" />
+    <frame x="1920" y="-240" width="2560" height="1440" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3908397" sideWeight="0.51282054" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38041854" sideWeight="0.91382766" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934132" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38041854" sideWeight="0.91382766" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29160306" sideWeight="0.4871795" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15871744" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15859374" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="SonarLint" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="SonarQube" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31570512" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3721973" sideWeight="0.93507016" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -735,20 +736,6 @@ y_axis_len = len(set(y_axis))</expression-string>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/darkflow/net/build.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="740">
-          <caret line="179" column="16" lean-forward="false" selection-start-line="179" selection-start-column="12" selection-end-line="179" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/darkflow/cli.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="45" column="14" lean-forward="false" selection-start-line="45" selection-start-column="14" selection-end-line="45" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/defaults.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
@@ -781,18 +768,10 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/scipy/io/matlab/mio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../yopo/venv/lib/python3.5/site-packages/scipy/io/matlab/mio.py" />
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/000015774.xml" />
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/000033016.xml" />
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/008703357.xml" />
@@ -808,7 +787,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
           <caret line="2" column="47" lean-forward="false" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -817,7 +795,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -825,7 +802,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -833,7 +809,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -841,7 +816,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -849,7 +823,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -857,7 +830,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
           <caret line="21" column="20" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -865,7 +837,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" column="9" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -873,9 +844,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
           <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#36#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -883,7 +851,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -891,7 +858,6 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -913,24 +879,11 @@ y_axis_len = len(set(y_axis))</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="656">
-            <caret line="283" column="1" lean-forward="false" selection-start-line="283" selection-start-column="0" selection-end-line="283" selection-end-column="44" />
-            <folding>
-              <marker date="1523577121245" expanded="true" signature="4314:4640" ph="[...]" />
-            </folding>
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
     <entry file="file://$PROJECT_DIR$/run_sonar.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -946,31 +899,15 @@ y_axis_len = len(set(y_axis))</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1728">
           <caret line="96" column="13" lean-forward="false" selection-start-line="96" selection-start-column="13" selection-end-line="96" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/048962446.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/008970488.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="38" lean-forward="false" selection-start-line="1" selection-start-column="38" selection-end-line="1" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/048962446.xml" />
+    <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/data/darkflow/labels/008970488.xml" />
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/main/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
           <caret line="19" column="42" lean-forward="false" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -984,7 +921,7 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/main/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
+        <state relative-caret-position="476">
           <caret line="33" column="21" lean-forward="false" selection-start-line="33" selection-start-column="21" selection-end-line="33" selection-end-column="21" />
           <folding>
             <element signature="e#1#12#0" expanded="true" />
@@ -994,7 +931,7 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/labels.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
+        <state relative-caret-position="153">
           <caret line="9" column="4" lean-forward="false" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
           <folding />
         </state>
@@ -1002,7 +939,7 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/busniess/draw_grid_cells.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
+        <state relative-caret-position="272">
           <caret line="17" column="6" lean-forward="false" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
           <folding />
         </state>
@@ -1010,7 +947,7 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/cfg/yopo.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
+        <state relative-caret-position="4233">
           <caret line="249" column="9" lean-forward="false" selection-start-line="249" selection-start-column="9" selection-end-line="249" selection-end-column="9" />
           <folding />
         </state>
@@ -1026,17 +963,15 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
+        <state relative-caret-position="2686">
           <caret line="165" column="51" lean-forward="false" selection-start-line="165" selection-start-column="51" selection-end-line="165" selection-end-column="51" />
-          <folding>
-            <marker date="1523590551809" expanded="true" signature="1310:1425" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/misc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
+        <state relative-caret-position="476">
           <caret line="31" column="32" lean-forward="false" selection-start-line="31" selection-start-column="32" selection-end-line="31" selection-end-column="32" />
           <folding />
         </state>
@@ -1044,7 +979,7 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/predict.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
+        <state relative-caret-position="1768">
           <caret line="111" column="27" lean-forward="false" selection-start-line="111" selection-start-column="27" selection-end-line="111" selection-end-column="27" />
           <folding />
         </state>
@@ -1052,16 +987,34 @@ y_axis_len = len(set(y_axis))</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/darkflow/net/yolo/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="711">
-          <caret line="183" column="24" lean-forward="true" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
+        <state relative-caret-position="2941">
+          <caret line="183" column="24" lean-forward="false" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logs/log_new.txt">
+    <entry file="file://$PROJECT_DIR$/logs/log_new.txt" />
+    <entry file="uml://JavaScript-modules-diagram//Users/richardjones/git/darkflow">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="240.0" y="240.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/YOPO_preprocessing/src/main/config_mac.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="38426" column="20" lean-forward="true" selection-start-line="38426" selection-start-column="20" selection-end-line="38426" selection-end-column="20" />
+        <state relative-caret-position="323">
+          <caret line="19" column="59" lean-forward="true" selection-start-line="19" selection-start-column="59" selection-end-line="19" selection-end-column="59" />
           <folding />
         </state>
       </provider>
