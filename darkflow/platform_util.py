@@ -1,14 +1,15 @@
 import os
 import subprocess
+import sys
 from sys import exit
 
 '''This module implements a platform utility that exposes functions that detect platform information.'''
 
-NUMA_NODES_STR_       = "NUMA node(s)"
-CPU_SOCKETS_STR_      = "Socket(s)"
-CORES_PER_SOCKET_STR_ = "Core(s) per socket"
-THREADS_PER_CORE_STR_ = "Thread(s) per core"
-LOGICAL_CPUS_STR_     = "CPU(s)"
+NUMA_NODES_STR_       = b"NUMA node(s)"
+CPU_SOCKETS_STR_      = b"Socket(s)"
+CORES_PER_SOCKET_STR_ = b"Core(s) per socket"
+THREADS_PER_CORE_STR_ = b"Thread(s) per core"
+LOGICAL_CPUS_STR_     = b"CPU(s)"
 
 class platform:
   cpu_sockets_      = 0
@@ -40,12 +41,12 @@ class platform:
                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       stdout,stderr = process.communicate()
       if stderr:
-        print "Error: {}".format(stderr)
+        print ("Error: ", stderr)
         exit(1)
       else:
         lscpu_path = stdout.strip()
     except:
-      print "Error!"
+      print ("Error attempting to locate lscpu: ", sys.exc_info()[0])
 
     #get the lscpu output
     cpu_info = ''
@@ -55,24 +56,24 @@ class platform:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE)
         stdout,stderr = process.communicate()
-        cpu_info = stdout.split('\n')
+        cpu_info = stdout.split(b"\n")
       except:
-        print "Error!@"
+        print ("Error running lscpu: ", sys.exc_info()[0])
 
     #parse it
     for line in cpu_info:
 #      NUMA_NODES_STR_       = "NUMA node(s)"
       if line.find(NUMA_NODES_STR_) == 0:
-        self.numa_nodes_ = int(line.split(":")[1].strip())
+        self.numa_nodes_ = int(line.split(b":")[1].strip())
 #      CPU_SOCKETS_STR_      = "Socket(s)"
       elif line.find(CPU_SOCKETS_STR_) == 0:
-        self.cpu_sockets_ = int(line.split(":")[1].strip())
+        self.cpu_sockets_ = int(line.split(b":")[1].strip())
 #      CORES_PER_SOCKET_STR_ = "Core(s) per socket"
       elif line.find(CORES_PER_SOCKET_STR_) == 0:
-        self.cores_per_socket_ = int(line.split(":")[1].strip())
+        self.cores_per_socket_ = int(line.split(b":")[1].strip())
 #      THREADS_PER_CORE_STR_ = "Thread(s) per core"
       elif line.find(THREADS_PER_CORE_STR_) == 0:
-        self.threads_per_core_ = int(line.split(":")[1].strip())
+        self.threads_per_core_ = int(line.split(b":")[1].strip())
 #      LOGICAL_CPUS_STR_     = "CPU(s)"
       elif line.find(LOGICAL_CPUS_STR_) == 0:
-        self.logical_cpus_ = int(line.split(":")[1].strip())
+        self.logical_cpus_ = int(line.split(b":")[1].strip())

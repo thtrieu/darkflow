@@ -144,15 +144,15 @@ class TFNet(object):
 		os.environ["KMP_AFFINITY"] = str(self.FLAGS.KMP_AFFINITY)
 		os.environ["OMP_NUM_THREADS"]= str(self.FLAGS.intra_op)
 
-		print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-		print 'CPU parallelism settings - tweak defaults for better performance:'
-		print 'See https://www.tensorflow.org/performance/performance_guide#tensorflow_with_intel_mkl_dnn for details'
-		print 'inter_op', self.FLAGS.inter_op
-		print 'intra_op', self.FLAGS.intra_op
-		print 'KMP_BLOCKTIME', self.FLAGS.KMP_BLOCKTIME
-		print 'KMP_AFFINITY', self.FLAGS.KMP_AFFINITY
-		print 'KMP_SETTINGS', self.FLAGS.KMP_SETTINGS
-		print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+		print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print ('CPU parallelism settings - tweak defaults for better performance:')
+		print ('See https://www.tensorflow.org/performance/performance_guide#tensorflow_with_intel_mkl_dnn for details')
+		print ('inter_op', self.FLAGS.inter_op)
+		print ('intra_op', self.FLAGS.intra_op)
+		print ('KMP_BLOCKTIME', self.FLAGS.KMP_BLOCKTIME)
+		print ('KMP_AFFINITY', self.FLAGS.KMP_AFFINITY)
+		print ('KMP_SETTINGS', self.FLAGS.KMP_SETTINGS)
+		print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 		if self.FLAGS.train: self.build_train_op()
 		

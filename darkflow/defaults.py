@@ -1,4 +1,4 @@
-from platform_util import platform
+from .platform_util import platform
 
 class argHandler(dict):
     #A super duper fancy custom made CLI argument handler!!
