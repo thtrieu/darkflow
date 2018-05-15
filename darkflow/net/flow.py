@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import pickle
 from multiprocessing.pool import ThreadPool
+from tensorflow.python.client import timeline
 
 train_stats = (
     'Training statistics: \n'
@@ -115,6 +116,9 @@ def predict(self):
 
     # predict in batches
     n_batch = int(math.ceil(len(all_inps) / batch))
+    total_time = 0
+    num_imgs = 0
+
     for j in range(n_batch):
         from_idx = j * batch
         to_idx = min(from_idx + batch, len(all_inps))
@@ -128,9 +132,21 @@ def predict(self):
         # Feed to the net
         feed_dict = {self.inp : np.concatenate(inp_feed, 0)}    
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
+        num_imgs += len(inp_feed)
+
+        run_meta = tf.RunMetadata()
         start = time.time()
-        out = self.sess.run(self.out, feed_dict)
+        if self.FLAGS.timeline_enabled:
+            out = self.sess.run(self.out, feed_dict,
+                            options=tf.RunOptions(
+                                trace_level=tf.RunOptions.FULL_TRACE),
+                            run_metadata=run_meta)
+        else:
+            out = self.sess.run(self.out, feed_dict)
+
         stop = time.time(); last = stop - start
+
+        total_time += last
         self.say('Total time = {}s / {} inps = {} ips'.format(
             last, len(inp_feed), len(inp_feed) / last))
 
@@ -146,3 +162,16 @@ def predict(self):
         # Timing
         self.say('Total time = {}s / {} inps = {} ips'.format(
             last, len(inp_feed), len(inp_feed) / last))
+
+        if self.FLAGS.timeline_enabled:
+            # Let performance stabilize before taking the timeline
+            if j is 20:
+                # Create the Timeline object, and write it to a json file
+                fetched_timeline = timeline.Timeline(run_meta.step_stats)
+                chrome_trace = fetched_timeline.generate_chrome_trace_format()
+                with open('timeline.json', 'w') as f:
+                    f.write(chrome_trace)
+                return
+
+    self.say('\nFinal time = {}s / {} inps = {} ips'.format(total_time,
+        num_imgs, num_imgs / total_time))
