@@ -234,6 +234,15 @@ To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
 
 To save a video with predicted bounding box, add `--saveVideo` option.
 
+## Evaluating accuracy
+To evaluate the performance of your model, you can use **mean Average Precision (mAP)** metric from [this repository here](https://github.com/Cartucho/mAP). It works well with darkflow's predicted `json` files.
+
+1) Clone [mAP](https://github.com/Cartucho/mAP) repository
+2) Flow your darkflow model with `--json` option. Then move the predicted `json` files into the `predicted` folder of mAP repo.
+3) Move your ground truth annotation files into `ground-truth` folder. (E.g. `.xml` files generated from [labelImg](https://github.com/tzutalin/labelImg) or `.txt` files generated from [BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool))
+4) Read the `README.md` and `extra/README.md` of that repository for further information, you'll need to run some `extra/` scripts based on your circumstance.
+5) Run `python main.py` of mAP repo.
+
 ## Using darkflow from another python application
 
 Please note that `return_predict(img)` must take an `numpy.ndarray`. Your image must be loaded beforehand and passed to `return_predict(img)`. Passing the file path won't work.
