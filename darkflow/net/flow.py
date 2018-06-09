@@ -110,26 +110,26 @@ def train(self):
         if not ckpt: _save_ckpt(self, *args)
 
         #validation time
+        if i % self.FLAGS.val_steps == 0:
+            (x_batch, datum) = next(val_batches)
+            feed_dict = {
+                loss_ph[key]: datum[key] 
+                    for key in loss_ph }
+            feed_dict[self.inp] = x_batch
+            feed_dict.update(self.feed)
+            feed_dict[self.learning_rate] = lr
 
-        (x_batch, datum) = next(val_batches)
-        feed_dict = {
-            loss_ph[key]: datum[key] 
-                for key in loss_ph }
-        feed_dict[self.inp] = x_batch
-        feed_dict.update(self.feed)
-        feed_dict[self.learning_rate] = lr
+            fetches = [loss_op, self.summary_op] 
+            fetched = self.sess.run(fetches, feed_dict)
+            loss = fetched[0]
 
-        fetches = [loss_op, self.summary_op] 
-        fetched = self.sess.run(fetches, feed_dict)
-        loss = fetched[0]
+            if loss_mva_valid is None: loss_mva_valid = loss
+            loss_mva_valid = .9 * loss_mva_valid + .1 * loss
 
-        if loss_mva_valid is None: loss_mva_valid = loss
-        loss_mva_valid = .9 * loss_mva_valid + .1 * loss
+            self.val_writer.add_summary(fetched[1], step_now)
 
-        self.val_writer.add_summary(fetched[1], step_now)
-
-        form = 'VALIDATION step {} - loss {} - moving ave loss {}'
-        self.say(form.format(step_now, loss, loss_mva_valid))
+            form = 'VALIDATION step {} - loss {} - moving ave loss {}'
+            self.say(form.format(step_now, loss, loss_mva_valid))
 
 
 

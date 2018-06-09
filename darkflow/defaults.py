@@ -41,6 +41,7 @@ class argHandler(dict):
         self.define('bucket', 'gs://bucket_hand_detection_2', 'path to bucket')
         self.define('steps', '[10,5000,10000,15000,20000]', 'steps for changing learning rate')
         self.define('scales', '[1,0.1,0.1,0.1,0.1]', 'scales for changing learning rate')
+        self.define('val_steps', '1', 'evaluate validation loss every #val_steps iterations')
 
 
     def define(self, argName, default, description):
