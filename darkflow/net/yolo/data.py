@@ -7,10 +7,13 @@ import pickle
 import numpy as np
 import os 
 
-def parse(self, exclusive = False):
+def parse(self, exclusive = False, training = True):
     meta = self.meta
     ext = '.parsed'
-    ann = self.FLAGS.annotation
+    if (training):
+        ann = self.FLAGS.annotation
+    else:
+        ann = self.FLAGS.val_annotation
     if not os.path.isdir(ann):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
@@ -19,7 +22,7 @@ def parse(self, exclusive = False):
     return dumps
 
 
-def _batch(self, chunk):
+def _batch(self, chunk, training = True):
     """
     Takes a chunk of parsed annotations
     returns value for placeholders of net's 
@@ -32,7 +35,10 @@ def _batch(self, chunk):
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = os.path.join(self.FLAGS.dataset, jpg)
+    if (training):
+        path = os.path.join(self.FLAGS.dataset, jpg)
+    else:
+        path = os.path.join(self.FLAGS.val_dataset, jpg)
     img = self.preprocess(path, allobj)
 
     # Calculate regression target
@@ -92,45 +98,71 @@ def _batch(self, chunk):
 
     return inp_feed_val, loss_feed_val
 
-def shuffle(self):
+def shuffle(self, training = True):
     batch = self.FLAGS.batch
-    data = self.parse()
+    data = self.parse(training = training)
     size = len(data)
 
     print('Dataset of {} instance(s)'.format(size))
     if batch > size: self.FLAGS.batch = batch = size
     batch_per_epoch = int(size / batch)
 
-    for i in range(self.FLAGS.epoch):
-        shuffle_idx = perm(np.arange(size))
-        for b in range(batch_per_epoch):
-            # yield these
-            x_batch = list()
-            feed_batch = dict()
+    if (training):
+        for i in range(self.FLAGS.epoch):
+            shuffle_idx = perm(np.arange(size))
+            for b in range(batch_per_epoch):
+                # yield these
+                x_batch = list()
+                feed_batch = dict()
 
-            for j in range(b*batch, b*batch+batch):
-                train_instance = data[shuffle_idx[j]]
-                try:
-                    inp, new_feed = self._batch(train_instance)
-                except ZeroDivisionError:
-                    print("This image's width or height are zeros: ", train_instance[0])
-                    print('train_instance:', train_instance)
-                    print('Please remove or fix it then try again.')
-                    raise
+                for j in range(b*batch, b*batch+batch):
+                    train_instance = data[shuffle_idx[j]]
+                    try:
+                        inp, new_feed = self._batch(train_instance)
+                    except ZeroDivisionError:
+                        print("This image's width or height are zeros: ", train_instance[0])
+                        print('train_instance:', train_instance)
+                        print('Please remove or fix it then try again.')
+                        raise
 
-                if inp is None: continue
-                x_batch += [np.expand_dims(inp, 0)]
+                    if inp is None: continue
+                    x_batch += [np.expand_dims(inp, 0)]
 
-                for key in new_feed:
-                    new = new_feed[key]
-                    old_feed = feed_batch.get(key, 
-                        np.zeros((0,) + new.shape))
-                    feed_batch[key] = np.concatenate([ 
-                        old_feed, [new] 
-                    ])      
+                    for key in new_feed:
+                        new = new_feed[key]
+                        old_feed = feed_batch.get(key, 
+                            np.zeros((0,) + new.shape))
+                        feed_batch[key] = np.concatenate([ 
+                            old_feed, [new] 
+                        ])      
             
-            x_batch = np.concatenate(x_batch, 0)
-            yield x_batch, feed_batch
-        
+                x_batch = np.concatenate(x_batch, 0)
+                yield x_batch, feed_batch
+    else:
+        i = 0
+        while (True == True):
+            shuffle_idx = perm(np.arrange(size))
+            for b in range(batch_per_epoch):
+                # yield these
+                x_batch = list()
+                feed_batch = dict()
+
+                for j in range(b*batch, b*batch+batch):
+                    train_instance = data[shuffle_idx[j]]
+                    inp, new_feed = self._batch(train_instance,training = training)
+
+                    if inp is None: continue
+                    x_batch += [np.expand_dims(inp, 0)]
+
+                    for key in new_feed:
+                        new = new_feed[key]
+                        old_feed = feed_batch.get(key,
+                                np.zeros((0,) + new.shape))
+                        feed_batch[key] = np.concatenate([
+                            old_feed, [new]
+                            ])
+                        x_batch = np.concatenate(x_batch, 0)
+                        yield x_batch, feed_batch
+                    i+=1
         print('Finish {} epoch(es)'.format(i + 1))
 
