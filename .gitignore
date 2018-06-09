@@ -1,6 +1,7 @@
 
 # Python bytecode
 *.pyc
+*.so
 
 # Weight files
 bin/
