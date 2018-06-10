@@ -138,10 +138,13 @@ class TFNet(object):
 
 		if self.FLAGS.train: self.build_train_op()
 		
-		if self.FLAGS.summary:
+		if self.FLAGS.summary is not None:
 			self.summary_op = tf.summary.merge_all()
 			self.writer = tf.summary.FileWriter(self.FLAGS.summary + 'train')
-		
+
+		if self.FLAGS.val_summary is not None:
+			self.val_writer = tf.summary.FileWriter(os.path.join(self.FLAGS.val_summary, 'val'))
+
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
 
@@ -150,7 +153,7 @@ class TFNet(object):
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
 		
-		if self.FLAGS.summary:
+		if self.FLAGS.summary is not None:
 			self.writer.add_graph(self.sess.graph)
 
 	def savepb(self):

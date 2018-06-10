@@ -7,7 +7,7 @@ import pickle
 import numpy as np
 import os
 
-def _batch(self, chunk):
+def _batch(self, chunk, training = True):
     """
     Takes a chunk of parsed annotations
     returns value for placeholders of net's 
@@ -23,7 +23,11 @@ def _batch(self, chunk):
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = os.path.join(self.FLAGS.dataset, jpg)
+    # path = os.path.join(self.FLAGS.dataset, jpg)
+    if (training):
+        path = os.path.join(self.FLAGS.dataset, jpg)
+    else:
+        path = os.path.join(self.FLAGS.val_dataset, jpg)
     img = self.preprocess(path, allobj)
 
     # Calculate regression target

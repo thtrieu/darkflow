@@ -11,9 +11,12 @@ class argHandler(dict):
         self.define('config', './cfg/', 'path to .cfg directory')
         self.define('dataset', '../pascal/VOCdevkit/IMG/', 'path to dataset directory')
         self.define('labels', 'labels.txt', 'path to labels file')
+        self.define('val_dataset', '../pascal/VOCdevkit/IMG/', 'path to validation dataset directory')
         self.define('backup', './ckpt/', 'path to backup folder')
-        self.define('summary', '', 'path to TensorBoard summaries directory')
+        self.define('summary', './summary/', 'path to TensorBoard summaries directory')
+        self.define('val_summary', './summary/', 'path to TensorBoard validation summaries directory')
         self.define('annotation', '../pascal/VOCdevkit/ANN/', 'path to annotation directory')
+        self.define('val_annotation', '../pascal/VOCdevkit/ANN/', 'path to validation annotation directory')
         self.define('threshold', -0.1, 'detection threshold')
         self.define('model', '', 'configuration of choice')
         self.define('trainer', 'rmsprop', 'training algorithm')
@@ -35,6 +38,11 @@ class argHandler(dict):
         self.define('saveVideo', False, 'Records video from input video or camera')
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
         self.define('metaLoad', '', 'path to .meta file generated during --savepb that corresponds to .pb file')
+        self.define('bucket', 'gs://bucket_hand_detection_2', 'path to bucket')
+        self.define('steps', '[10,5000,10000,15000,20000]', 'steps for changing learning rate')
+        self.define('scales', '[1,0.1,0.1,0.1,0.1]', 'scales for changing learning rate')
+        self.define('val_steps', '1', 'evaluate validation loss every #val_steps iterations')
+
 
     def define(self, argName, default, description):
         self[argName] = default
