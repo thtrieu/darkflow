@@ -114,11 +114,26 @@ class weights_walker(object):
             return
         else: 
             self.size = os.path.getsize(path)# save the path
-            major, minor, revision, seen = np.memmap(path,
+            major, minor, revision = np.memmap(path,
                 shape = (), mode = 'r', offset = 0,
-                dtype = '({})i4,'.format(4))
+                dtype = '({})i4,'.format(3))
+            
+            self.offset = 12
+            
+            if major * 10 + minor >= 2:
+                # Reading version >= 2
+                seen = np.memmap(path,
+                    shape = (), mode = 'r', offset = 12,
+                    dtype = '({})i8,'.format(1))
+                self.offset += 8
+            else:
+                # Reading version >= 2
+                seen = np.memmap(path,
+                    shape = (), mode = 'r', offset = 12,
+                    dtype = '({})i4,'.format(1))
+                self.offset += 4
+
             self.transpose = major > 1000 or minor > 1000
-            self.offset = 16
 
     def walk(self, size):
         if self.eof: return None
