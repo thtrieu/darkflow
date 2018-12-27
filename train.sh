@@ -1,0 +1,1 @@
+flow --model cfg/yolo-new.cfg --load bin/tiny-yolo-voc.weights --train --annotation pepsi_data/annotations --datasetpepsi_data/images/ --gpu 0.8 --epoch 300
