@@ -1,0 +1,22 @@
+<annotation>
+  <folder>images</folder>
+  <filename>mcdonalds174.jpeg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>1000</width>
+    <height>601</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>mcdonalds</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>207</xmin>
+      <ymin>55</ymin>
+      <xmax>801</xmax>
+      <ymax>430</ymax>
+    </bndbox>
+  </object>
+</annotation>

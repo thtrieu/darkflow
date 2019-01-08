@@ -1,0 +1,46 @@
+<annotation>
+  <folder>images</folder>
+  <filename>mcdonalds569. mcdonaldsjpg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>600</width>
+    <height>422</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>mcdonalds</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>61</xmin>
+      <ymin>5</ymin>
+      <xmax>314</xmax>
+      <ymax>219</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>mcdonalds</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>361</xmin>
+      <ymin>216</ymin>
+      <xmax>520</xmax>
+      <ymax>370</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>mcdonalds</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>374</xmin>
+      <ymin>216</ymin>
+      <xmax>520</xmax>
+      <ymax>370</ymax>
+    </bndbox>
+  </object>
+</annotation>
