@@ -13,7 +13,7 @@ object_list = []
 # constants
 image_folder = 'images'
 savedir = 'annotations'
-obj = 'pepsi'
+obj = 'class not specified'
 
 
 def line_select_callback(clk, rls):
@@ -44,6 +44,8 @@ def toggle_selector(event):
 
 
 if __name__ == '__main__':
+    obj = input("Please Specify Class Name: ")
+    
     for n, image_file in enumerate(os.scandir(image_folder)):
         print("Annotating ",image_file.path);
         img = image_file
@@ -62,4 +64,6 @@ if __name__ == '__main__':
         bbox = plt.connect('key_press_event', toggle_selector)
         key = plt.connect('key_press_event', onkeypress)
         plt.show()
+
+        # Removing the file to clear space for clarity and workspace order
         os.remove(image_file.path)
