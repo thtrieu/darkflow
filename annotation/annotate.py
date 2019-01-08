@@ -45,12 +45,13 @@ def toggle_selector(event):
 
 if __name__ == '__main__':
     obj = input("Please Specify Class Name: ")
-    
+
     for n, image_file in enumerate(os.scandir(image_folder)):
         print("Annotating ",image_file.path);
         img = image_file
         fig, ax = plt.subplots(1)
         mngr = plt.get_current_fig_manager()
+        mngr.frame.Maximize(True)
         image = cv2.imread(image_file.path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         ax.imshow(image)
