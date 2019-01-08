@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="900px" height="500px" viewBox="-99.899 166.367 900 500" xml:space="preserve">
+<rect x="-89.899" y="458.3" fill="none" width="214.056" height="259.973"/>
+<text transform="matrix(1 0 0 1 -94.8994 660.7002)" fill="#86B4E0" font-family="'Arial'" font-weight="600" font-size="288.2743">S</text>
+<rect x="368.195" y="458.3" fill="none" width="273.703" height="259.973"/>
+<text transform="matrix(1 0 0 1 104.8408 664.7002)" fill="#FFCA70" font-family="'Arial'" font-weight="600" font-size="288.2743">W</text>
+<text transform="matrix(1 0 0 1 390.207 660.7002)" fill="#8EC642" font-family="'Arial'" font-weight="600" font-size="288.2743">O</text>
+<text transform="matrix(1 0 0 1 625.6074 664.7002)" fill="#F37C75" font-family="'Arial'" font-weight="600" font-size="288.2743">T</text>
+<path id="path3" fill="#FFC300" d="M432.958,189.491c25.511,0,46.314,107.736,46.314,240.547
+	h37.008c0-143.102-37.336-259.051-83.322-259.051c-26.168,0-49.489,34.817-64.817,89.343c-15.219-54.525-38.54-89.343-64.708-89.343
+	c-45.985,0-83.321,115.949-83.321,259.051h37.008c0-132.919,20.693-240.547,46.313-240.547c25.511,0,46.314,99.416,46.314,222.043
+	h37.008C386.644,288.907,407.338,189.491,432.958,189.491"/>
+</svg>
