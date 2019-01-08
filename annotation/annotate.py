@@ -51,7 +51,7 @@ if __name__ == '__main__':
         img = image_file
         fig, ax = plt.subplots(1)
         mngr = plt.get_current_fig_manager()
-        mngr.frame.Maximize(True)
+        mngr.resize(*mngr.window.maxsize())
         image = cv2.imread(image_file.path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         ax.imshow(image)
