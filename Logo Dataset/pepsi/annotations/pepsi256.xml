@@ -1,0 +1,22 @@
+<annotation>
+  <folder>images</folder>
+  <filename>pepsi256.jpg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>2520</width>
+    <height>1455</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>pepsi</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>1149</xmin>
+      <ymin>360</ymin>
+      <xmax>1418</xmax>
+      <ymax>661</ymax>
+    </bndbox>
+  </object>
+</annotation>
