@@ -1,0 +1,46 @@
+<annotation>
+  <folder>images</folder>
+  <filename>sprite165. box-sprite-bottle-png</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>431</width>
+    <height>856</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>77</xmin>
+      <ymin>179</ymin>
+      <xmax>393</xmax>
+      <ymax>750</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>40</xmin>
+      <ymin>179</ymin>
+      <xmax>393</xmax>
+      <ymax>713</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>40</xmin>
+      <ymin>179</ymin>
+      <xmax>393</xmax>
+      <ymax>723</ymax>
+    </bndbox>
+  </object>
+</annotation>
