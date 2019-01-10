@@ -1,0 +1,22 @@
+<annotation>
+  <folder>images</folder>
+  <filename>snickers544.jpg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>950</width>
+    <height>534</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>snickers</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>331</xmin>
+      <ymin>315</ymin>
+      <xmax>614</xmax>
+      <ymax>383</ymax>
+    </bndbox>
+  </object>
+</annotation>
