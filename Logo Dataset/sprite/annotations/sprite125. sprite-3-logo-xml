@@ -1,0 +1,46 @@
+<annotation>
+  <folder>images</folder>
+  <filename>sprite125. sprite-3-logo-png</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>2400</width>
+    <height>2400</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>275</xmin>
+      <ymin>307</ymin>
+      <xmax>2106</xmax>
+      <ymax>2031</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>275</xmin>
+      <ymin>307</ymin>
+      <xmax>2106</xmax>
+      <ymax>2012</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>238</xmin>
+      <ymin>307</ymin>
+      <xmax>2106</xmax>
+      <ymax>2012</ymax>
+    </bndbox>
+  </object>
+</annotation>
