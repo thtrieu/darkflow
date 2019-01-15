@@ -1,0 +1,22 @@
+<annotation>
+  <folder>images</folder>
+  <filename>sprite9.jpg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>174</width>
+    <height>441</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>58</xmin>
+      <ymin>196</ymin>
+      <xmax>124</xmax>
+      <ymax>241</ymax>
+    </bndbox>
+  </object>
+</annotation>

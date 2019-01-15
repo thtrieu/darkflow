@@ -1,0 +1,22 @@
+<annotation>
+  <folder>images</folder>
+  <filename>sprite416. bottle-of-sprite-png</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>1090</width>
+    <height>3500</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>156</xmin>
+      <ymin>1421</ymin>
+      <xmax>802</xmax>
+      <ymax>1903</ymax>
+    </bndbox>
+  </object>
+</annotation>

@@ -1,0 +1,34 @@
+<annotation>
+  <folder>images</folder>
+  <filename>sprite257.jpg</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>1300</width>
+    <height>951</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>353</xmin>
+      <ymin>187</ymin>
+      <xmax>1118</xmax>
+      <ymax>604</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>sprite</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>359</xmin>
+      <ymin>187</ymin>
+      <xmax>1118</xmax>
+      <ymax>604</ymax>
+    </bndbox>
+  </object>
+</annotation>

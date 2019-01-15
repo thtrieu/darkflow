@@ -1,1 +1,4 @@
 pepsi
+mcdonalds
+sprite
+snickers

@@ -1,0 +1,34 @@
+<annotation>
+  <folder>images</folder>
+  <filename>pepsi640.png</filename>
+  <segmented>0</segmented>
+  <size>
+    <width>275</width>
+    <height>200</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>pepsi</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>105</xmin>
+      <ymin>52</ymin>
+      <xmax>122</xmax>
+      <ymax>78</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>pepsi</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>4</xmin>
+      <ymin>178</ymin>
+      <xmax>21</xmax>
+      <ymax>193</ymax>
+    </bndbox>
+  </object>
+</annotation>
