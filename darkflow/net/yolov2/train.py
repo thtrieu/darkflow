@@ -7,7 +7,7 @@ import os
 import math
 
 def expit_tensor(x):
-	return 1. / (1. + tf.exp(-x))
+    return 1. / (1. + tf.exp(-x))
 
 def loss(self, net_out):
     """
@@ -25,6 +25,8 @@ def loss(self, net_out):
     B, C = m['num'], m['classes']
     HW = H * W # number of grid cells
     anchors = m['anchors']
+    # Number of bounding box parameters (usually x, y, w, h). Must be set to 4, at least.
+    bbox_params = m['coords']
 
     print('{} loss hyper-parameters:'.format(m['model']))
     print('\tH       = {}'.format(H))
@@ -39,7 +41,7 @@ def loss(self, net_out):
     # return the below placeholders
     _probs = tf.placeholder(tf.float32, size1)
     _confs = tf.placeholder(tf.float32, size2)
-    _coord = tf.placeholder(tf.float32, size2 + [4])
+    _coord = tf.placeholder(tf.float32, size2 + [bbox_params])
     # weights term for L2 loss
     _proid = tf.placeholder(tf.float32, size1)
     # material calculating IOU
@@ -53,17 +55,17 @@ def loss(self, net_out):
     }
 
     # Extract the coordinate prediction from net.out
-    net_out_reshape = tf.reshape(net_out, [-1, H, W, B, (4 + 1 + C)])
-    coords = net_out_reshape[:, :, :, :, :4]
-    coords = tf.reshape(coords, [-1, H*W, B, 4])
+    net_out_reshape = tf.reshape(net_out, [-1, H, W, B, (bbox_params + 1 + C)])
+    coords = net_out_reshape[:, :, :, :, :bbox_params]
+    coords = tf.reshape(coords, [-1, H*W, B, bbox_params])
     adjusted_coords_xy = expit_tensor(coords[:,:,:,0:2])
     adjusted_coords_wh = tf.sqrt(tf.exp(coords[:,:,:,2:4]) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2]))
     coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
 
-    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, 4])
+    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, bbox_params])  # Changed this: confidence score is last parameter
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
 
-    adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, 5:])
+    adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, (bbox_params+1):])
     adjusted_prob = tf.reshape(adjusted_prob, [-1, H*W, B, C])
 
     adjusted_net_out = tf.concat([adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob], 3)
@@ -74,6 +76,7 @@ def loss(self, net_out):
     floor = centers - (wh * .5)
     ceil  = centers + (wh * .5)
 
+    # TODO: Change how IOU is calculated for rotational bounding boxes
     # calculate the intersection areas
     intersect_upleft   = tf.maximum(floor, _upleft)
     intersect_botright = tf.minimum(ceil , _botright)
@@ -101,7 +104,7 @@ def loss(self, net_out):
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(adjusted_net_out - true, 2)
     loss = tf.multiply(loss, wght)
-    loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
+    loss = tf.reshape(loss, [-1, H*W*B*(bbox_params + 1 + C)])
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)
     tf.summary.scalar('{} loss'.format(m['model']), self.loss)
