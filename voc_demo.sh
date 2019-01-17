@@ -1,0 +1,1 @@
+flow --model cfg/tiny-yolo-voc.cfg --load bin/tiny-yolo-voc.weights --demo apple.mp4
