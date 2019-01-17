@@ -62,7 +62,7 @@ def loss(self, net_out):
     adjusted_coords_wh = tf.sqrt(tf.exp(coords[:,:,:,2:4]) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2]))
     coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
 
-    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, bbox_params])  # Changed this: confidence score is last parameter
+    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, bbox_params])  # Confidence score is last parameter
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
 
     adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, (bbox_params+1):])

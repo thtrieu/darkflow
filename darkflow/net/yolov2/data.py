@@ -53,15 +53,15 @@ def _batch(self, chunk):
     proid = np.zeros([H*W,B,C])
     prear = np.zeros([H*W,bbox_params])
     for obj in allobj:
-        probs[obj[5], :, :] = [[0.]*C] * B
-        probs[obj[5], :, labels.index(obj[0])] = 1.
-        proid[obj[5], :, :] = [[1.]*C] * B
-        coord[obj[5], :, :] = [obj[1:5]] * B
-        prear[obj[5],0] = obj[1] - obj[3]**2 * .5 * W # xleft
-        prear[obj[5],1] = obj[2] - obj[4]**2 * .5 * H # yup
-        prear[obj[5],2] = obj[1] + obj[3]**2 * .5 * W # xright
-        prear[obj[5],3] = obj[2] + obj[4]**2 * .5 * H # ybot
-        confs[obj[5], :] = [1.] * B
+        probs[obj[-1], :, :] = [[0.]*C] * B
+        probs[obj[-1], :, labels.index(obj[0])] = 1.
+        proid[obj[-1], :, :] = [[1.]*C] * B
+        coord[obj[-1], :, :] = [obj[1:5]] * B
+        prear[obj[-1],0] = obj[1] - obj[3]**2 * .5 * W # xleft
+        prear[obj[-1],1] = obj[2] - obj[4]**2 * .5 * H # ytop
+        prear[obj[-1],2] = obj[1] + obj[3]**2 * .5 * W # xright
+        prear[obj[-1],3] = obj[2] + obj[4]**2 * .5 * H # ybot
+        confs[obj[-1], :] = [1.] * B
 
     # Finalise the placeholders' values
     upleft   = np.expand_dims(prear[:,0:2], 1)
