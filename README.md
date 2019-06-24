@@ -21,7 +21,7 @@ You can choose _one_ of the following three ways to get started with darkflow.
 
 1. Just build the Cython extensions in place. NOTE: If installing this way you will have to use `./flow` in the cloned darkflow directory instead of `flow` as darkflow is not installed globally.
     ```
-    python3 setup.py build_ext --inplace
+    python setup.py build_ext --inplace
     ```
 
 2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
@@ -82,6 +82,9 @@ activation = linear
 
 ```bash
 # Have a look at its options
+# On Windows
+python flow --h
+# Others
 flow --h
 ```
 
@@ -89,13 +92,13 @@ First, let's take a closer look at one of a very useful option `--load`
 
 ```bash
 # 1. Load tiny-yolo.weights
-flow --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights
+python flow --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights
 
 # 2. To completely initialize a model, leave the --load option
-flow --model cfg/yolo-new.cfg
+python flow --model cfg/yolo-new.cfg
 
 # 3. It is useful to reuse the first identical layers of tiny for `yolo-new`
-flow --model cfg/yolo-new.cfg --load bin/tiny-yolo.weights
+python flow --model cfg/yolo-new.cfg --load bin/tiny-yolo.weights
 # this will print out which layers are reused, which are initialized
 ```
 
@@ -103,12 +106,12 @@ All input images from default folder `sample_img/` are flowed through the net an
 
 ```bash
 # Forward all images in sample_img/ using tiny yolo and 100% GPU usage
-flow --imgdir sample_img/ --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights --gpu 1.0
+python flow --imgdir sample_img/ --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights --gpu 1.0
 ```
 json output can be generated with descriptions of the pixel location of each bounding box and the pixel location. Each prediction is stored in the `sample_img/out` folder by default. An example json array is shown below.
 ```bash
 # Forward all images in sample_img/ using tiny yolo and JSON output.
-flow --imgdir sample_img/ --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights --json
+python flow --imgdir sample_img/ --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights --json
 ```
 JSON output:
 ```json
@@ -127,23 +130,23 @@ Training is simple as you only have to add option `--train`. Training set and an
 
 ```bash
 # Initialize yolo-new from yolo-tiny, then train the net on 100% GPU:
-flow --model cfg/yolo-new.cfg --load bin/tiny-yolo.weights --train --gpu 1.0
+python flow --model cfg/yolo-new.cfg --load bin/tiny-yolo.weights --train --gpu 1.0
 
 # Completely initialize yolo-new and train it with ADAM optimizer
-flow --model cfg/yolo-new.cfg --train --trainer adam
+python flow --model cfg/yolo-new.cfg --train --trainer adam
 ```
 
 During training, the script will occasionally save intermediate results into Tensorflow checkpoints, stored in `ckpt/`. To resume to any checkpoint before performing training/testing, use `--load [checkpoint_num]` option, if `checkpoint_num < 0`, `darkflow` will load the most recent save by parsing `ckpt/checkpoint`.
 
 ```bash
 # Resume the most recent checkpoint for training
-flow --train --model cfg/yolo-new.cfg --load -1
+python flow --train --model cfg/yolo-new.cfg --load -1
 
 # Test with checkpoint at step 1500
-flow --model cfg/yolo-new.cfg --load 1500
+python flow --model cfg/yolo-new.cfg --load 1500
 
 # Fine tuning yolo-tiny from the original one
-flow --train --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights
+python flow --train --model cfg/tiny-yolo.cfg --load bin/tiny-yolo.weights
 ```
 
 Example of training on Pascal VOC 2007:
@@ -156,7 +159,7 @@ tar xf VOCtest_06-Nov-2007.tar
 vim VOCdevkit/VOC2007/Annotations/000001.xml
 
 # Train the net on the Pascal dataset:
-flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages" --annotation "~/VOCdevkit/VOC2007/Annotations"
+python flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages" --annotation "~/VOCdevkit/VOC2007/Annotations"
 ```
 
 ### Training on your own dataset
@@ -208,7 +211,7 @@ flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages"
     ```
 5. Reference the `tiny-yolo-voc-3c.cfg` model when you train.
 
-    `flow --model cfg/tiny-yolo-voc-3c.cfg --load bin/tiny-yolo-voc.weights --train --annotation train/Annotations --dataset train/Images`
+    `python flow --model cfg/tiny-yolo-voc-3c.cfg --load bin/tiny-yolo-voc.weights --train --annotation train/Annotations --dataset train/Images`
 
 
 * Why should I leave the original `tiny-yolo-voc.cfg` file unchanged?
@@ -221,13 +224,13 @@ flow --model cfg/yolo-new.cfg --train --dataset "~/VOCdevkit/VOC2007/JPEGImages"
 For a demo that entirely runs on the CPU:
 
 ```bash
-flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi
+python flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi
 ```
 
 For a demo that runs 100% on the GPU:
 
 ```bash
-flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --gpu 1.0
+python flow --model cfg/yolo-new.cfg --load bin/yolo-new.weights --demo videofile.avi --gpu 1.0
 ```
 
 To use your webcam/camera, simply replace `videofile.avi` with keyword `camera`.
@@ -258,10 +261,10 @@ print(result)
 
 ```bash
 ## Saving the lastest checkpoint to protobuf file
-flow --model cfg/yolo-new.cfg --load -1 --savepb
+python flow --model cfg/yolo-new.cfg --load -1 --savepb
 
 ## Saving graph and weights to protobuf file
-flow --model cfg/yolo.cfg --load bin/yolo.weights --savepb
+python flow --model cfg/yolo.cfg --load bin/yolo.weights --savepb
 ```
 When saving the `.pb` file, a `.meta` file will also be generated alongside it. This `.meta` file is a JSON dump of everything in the `meta` dictionary that contains information nessecary for post-processing such as `anchors` and `labels`. This way, everything you need to make predictions from the graph and do post processing is contained in those two files - no need to have the `.cfg` or any labels file tagging along.
 
