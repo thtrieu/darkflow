@@ -85,10 +85,10 @@ class checkpoint_loader(loader):
     def load(self, ckpt, ignore):
         meta = ckpt + '.meta'
         with tf.Graph().as_default() as graph:
-            with tf.Session().as_default() as sess:
-                saver = tf.train.import_meta_graph(meta)
+            with tf.compat.v1.Session().as_default() as sess:
+                saver = tf.compat.v1.train.import_meta_graph(meta)
                 saver.restore(sess, ckpt)
-                for var in tf.global_variables():
+                for var in tf.compat.v1.global_variables():
                     name = var.name.split(':')[0]
                     packet = [name, var.get_shape().as_list()]
                     self.src_key += [packet]

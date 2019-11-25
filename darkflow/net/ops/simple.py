@@ -1,4 +1,4 @@
-import tensorflow.contrib.slim as slim
+import tf_slim as slim
 from .baseop import BaseOp
 import tensorflow as tf
 from distutils.version import StrictVersion
@@ -22,7 +22,7 @@ class route(BaseOp):
 
 class connected(BaseOp):
 	def forward(self):
-		self.out = tf.nn.xw_plus_b(
+		self.out = tf.compat.v1.nn.xw_plus_b(
 			self.inp.out,
 			self.lay.w['weights'], 
 			self.lay.w['biases'], 
@@ -56,7 +56,7 @@ class extract(connected):
 class flatten(BaseOp):
 	def forward(self):
 		temp = tf.transpose(
-			self.inp.out, [0,3,1,2])
+			a=self.inp.out, perm=[0,3,1,2])
 		self.out = slim.flatten(
 			temp, scope = self.scope)
 
@@ -73,7 +73,7 @@ class softmax(BaseOp):
 class avgpool(BaseOp):
 	def forward(self):
 		self.out = tf.reduce_mean(
-			self.inp.out, [1, 2], 
+			input_tensor=self.inp.out, axis=[1, 2], 
 			name = self.scope
 		)
 
@@ -86,7 +86,7 @@ class dropout(BaseOp):
 			self.lay.h['pdrop'] = 1.0
 		self.out = tf.nn.dropout(
 			self.inp.out, 
-			self.lay.h['pdrop'], 
+			1 - (self.lay.h['pdrop']), 
 			name = self.scope
 		)
 
@@ -103,8 +103,8 @@ class crop(BaseOp):
 
 class maxpool(BaseOp):
 	def forward(self):
-		self.out = tf.nn.max_pool(
-			self.inp.out, padding = 'SAME',
+		self.out = tf.nn.max_pool2d(
+			input=self.inp.out, padding = 'SAME',
 	        ksize = [1] + [self.lay.ksize]*2 + [1], 
 	        strides = [1] + [self.lay.stride]*2 + [1],
 	        name = self.scope

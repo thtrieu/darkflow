@@ -34,8 +34,8 @@ def loss(self, net_out):
 		loss = l1_loss(diff)
 
 	elif loss_type == 'softmax':
-		loss = tf.nn.softmax_cross_entropy_with_logits(logits, y)
-		loss = tf.reduce_mean(loss)
+		loss = tf.nn.softmax_cross_entropy_with_logits(labels=tf.stop_gradient(y))
+		loss = tf.reduce_mean(input_tensor=loss)
 
 	elif loss_type == 'svm':
 		assert 'train_size' in m, \
