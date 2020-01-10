@@ -131,3 +131,33 @@ class identity(BaseOp):
 	def __init__(self, inp):
 		self.inp = None
 		self.out = inp
+
+class shortcut(BaseOp):
+	def forward(self):
+		inp = self.inp.out
+		frm = self.lay.frmLayer
+		this = self.inp
+		while this.lay.number != frm:
+		    this = this.inp
+		    assert this is not None, \
+		    'Shortcut to non-existence {}'.format(frm)
+		self.out = inp + this.out
+
+	def speak(self): return 'shortcut'
+
+class yolo(BaseOp):
+	def forward(self):
+		inp = self.inp.out
+		self.out = inp
+
+	def speak(self): return 'yolo'
+
+class upsample(BaseOp):
+	def forward(self):
+		inp = self.inp.out
+		strd = self.lay.strd
+		shape = inp.get_shape()
+		inp = tf.image.resize_nearest_neighbor(inp, (shape[1] * strd, shape[2] * strd))
+		self.out = inp
+
+	def speak(self): return 'upsample'

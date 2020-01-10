@@ -312,6 +312,17 @@ def cfg_yielder(model, binary):
 			c = c * (stride ** 2)
 			l = w * h * c
 		#-----------------------------------------------------
+		elif d['type'] == '[shortcut]':
+			frm = d['from']
+			yield ['shortcut', i, i + frm]
+		elif d['type'] == '[yolo]':
+			yield ['yolo', i]
+		elif d['type'] == '[upsample]':
+			strd = d['stride']
+			ly = layers[i]
+			h *= strd
+			w *= strd
+			yield ['upsample', i, strd]
 		else:
 			exit('Layer {} not implemented'.format(d['type']))
 
