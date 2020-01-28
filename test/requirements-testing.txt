@@ -1,4 +1,4 @@
-tensorflow==1.4.1
+tensorflow==1.15.2
 pytest
 requests
 opencv-python
