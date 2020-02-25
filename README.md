@@ -15,6 +15,17 @@ See demo below or see on [this imgur](http://i.imgur.com/EyZZKAA.gif)
 
 Python3, tensorflow 1.0, numpy, opencv 3.
 
+## Citation
+
+```
+@article{trieu2018darkflow,
+  title={Darkflow},
+  author={Trieu, Trinh Hoang},
+  journal={GitHub Repository. Available online: https://github. com/thtrieu/darkflow (accessed on 14 February 2019)},
+  year={2018}
+}
+```
+
 ### Getting started
 
 You can choose _one_ of the following three ways to get started with darkflow.
