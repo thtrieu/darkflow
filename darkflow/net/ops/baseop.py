@@ -62,7 +62,6 @@ class BaseOp(object):
                 val = np.random.normal(*args)
             self.lay.w[var] = val.astype(np.float32)
             self.act = 'Init '
-        if not self.var: return
 
         val = self.lay.w[var]
         self.lay.w[var] = tf.constant_initializer(val)
@@ -71,6 +70,7 @@ class BaseOp(object):
             self.lay.w[var] = tf.get_variable(var,
                 shape = self.lay.wshape[var],
                 dtype = tf.float32,
+                trainable = self.var,
                 initializer = self.lay.w[var])
 
     def wrap_pholder(self, ph, feed):

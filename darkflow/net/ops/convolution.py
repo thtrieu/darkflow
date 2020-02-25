@@ -74,20 +74,18 @@ class convolutional(BaseOp):
         self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
     def batchnorm(self, layer, inp):
-        if not self.var:
-            temp = (inp - layer.w['moving_mean'])
-            temp /= (np.sqrt(layer.w['moving_variance']) + 1e-5)
-            temp *= layer.w['gamma']
-            return temp
-        else:
-            args = dict({
-                'center' : False, 'scale' : True,
-                'epsilon': 1e-5, 'scope' : self.scope,
-                'updates_collections' : None,
-                'is_training': layer.h['is_training'],
-                'param_initializers': layer.w
-                })
-            return slim.batch_norm(inp, **args)
+        args = dict({
+            'center' : False, 'scale' : True,
+            'epsilon': 1e-5, 'scope' : self.scope,
+            'updates_collections' : None,
+            'is_training': {
+                'feed': True,
+                'dfault': False,
+                'shape': ()
+            },
+            'param_initializers': layer.w
+            })
+        return slim.batch_norm(inp, **args)
 
     def speak(self):
         l = self.lay

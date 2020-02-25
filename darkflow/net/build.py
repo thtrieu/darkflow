@@ -34,8 +34,6 @@ class TFNet(object):
 	load_from_ckpt = help.load_from_ckpt
 
 	def __init__(self, FLAGS, darknet = None):
-		self.ntrain = 0
-
 		if isinstance(FLAGS, dict):
 			from ..defaults import argHandler
 			newFLAGS = argHandler()
@@ -44,6 +42,9 @@ class TFNet(object):
 			FLAGS = newFLAGS
 
 		self.FLAGS = FLAGS
+
+		self.skip = self.FLAGS.skip
+
 		if self.FLAGS.pbLoad and self.FLAGS.metaLoad:
 			self.say('\nLoading from .pb and .meta')
 			self.graph = tf.Graph()
@@ -56,7 +57,6 @@ class TFNet(object):
 
 		if darknet is None:	
 			darknet = Darknet(FLAGS)
-			self.ntrain = len(darknet.layers)
 
 		self.darknet = darknet
 		args = [darknet.meta, FLAGS]
@@ -107,11 +107,10 @@ class TFNet(object):
 
 		# Build the forward pass
 		state = identity(self.inp)
-		roof = self.num_layer - self.ntrain
 		self.say(HEADER, LINE)
 		for i, layer in enumerate(self.darknet.layers):
 			scope = '{}-{}'.format(str(i),layer.type)
-			args = [layer, state, i, roof, self.feed]
+			args = [layer, state, i, self.skip, self.feed]
 			state = op_create(*args)
 			mess = state.verbalise()
 			self.say(mess)
@@ -145,7 +144,6 @@ class TFNet(object):
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
 
-		if not self.ntrain: return
 		self.saver = tf.train.Saver(tf.global_variables(), 
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
