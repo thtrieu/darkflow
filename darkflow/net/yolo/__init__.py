@@ -23,6 +23,12 @@ def constructor(self, meta, FLAGS):
 		'inconsistent class numbers'
 	).format(meta['model'])
 
+	if 'tree' in meta:
+		misc.tree(meta, FLAGS)
+
+	if 'map' in meta:
+		misc.map(meta, FLAGS)
+
 	# assign a color for each label
 	colors = list()
 	base = int(np.ceil(pow(meta['classes'], 1./3)))
@@ -35,3 +41,6 @@ def constructor(self, meta, FLAGS):
 	# over-ride the threshold in meta if FLAGS has it.
 	if FLAGS.threshold > 0.0:
 		self.meta['thresh'] = FLAGS.threshold
+
+	# Add the hierarchy threshold to meta for cython 
+	self.meta['hier_thresh'] = FLAGS.hierarchyThreshold

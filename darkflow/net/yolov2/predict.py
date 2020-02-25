@@ -13,16 +13,20 @@ def expit(x):
 	return 1. / (1. + np.exp(-x))
 
 def _softmax(x):
-    e_x = np.exp(x - np.max(x))
-    out = e_x / e_x.sum()
-    return out
+	e_x = np.exp(x - np.max(x))
+	out = e_x / e_x.sum()
+	return out
 
 def findboxes(self, net_out):
 	# meta
 	meta = self.meta
 	boxes = list()
+
 	boxes=box_constructor(meta,net_out)
 	return boxes
+
+def complementary(b, r, g):
+	return (255-b, 255-r, 255-g)
 
 def postprocess(self, net_out, im, save = True):
 	"""
@@ -51,11 +55,26 @@ def postprocess(self, net_out, im, save = True):
 			resultsForJSON.append({"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
 			continue
 
+		# Bounding box
 		cv2.rectangle(imgcv,
 			(left, top), (right, bot),
 			colors[max_indx], thick)
-		cv2.putText(imgcv, mess, (left, top - 12),
-			0, 1e-3 * h, colors[max_indx],thick//3)
+		# Measure label sizes
+		wt, ht = cv2.getTextSize(mess, cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * h, thick//2)[0]
+		#wc, hc = cv2.getTextSize(str(format(confidence, '.3f')), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * h, thick//2)[0]
+		# Draw label backgrounds
+		cv2.rectangle(imgcv,
+			(left, top), (left+wt, top-5-ht),
+			colors[max_indx], cv2.FILLED)
+		#cv2.rectangle(imgcv,
+		# (right-wc, bot), (right, bot+hc),
+		#	colors[max_indx], cv2.FILLED)
+		# Draw labels 
+		cv2.putText(imgcv, mess, (left, top-5),
+			0, 1e-3 * h, complementary(*colors[max_indx]),thick//2)
+		#cv2.putText(imgcv, str(format(confidence, '.3f')), (right-wc, bot+hc),
+		#		0, 1e-3 * h, complementary(*colors[max_indx]),thick//2)
+
 
 	if not save: return imgcv
 
