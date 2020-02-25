@@ -19,7 +19,8 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
     cur_dir = os.getcwd()
     os.chdir(ANN)
     annotations = os.listdir('.')
-    annotations = glob.glob(str(annotations)+'*.xml')
+    # annotations = glob.glob(str(annotations)+'*.xml')
+    annotations = glob.glob('*.xml')
     size = len(annotations)
 
     for i, file in enumerate(annotations):
@@ -36,7 +37,10 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
         in_file = open(file)
         tree=ET.parse(in_file)
         root = tree.getroot()
-        jpg = str(root.find('filename').text)
+        # jpg = str(root.find('filename').text)
+        from pathlib import Path
+        jpg = str(Path(file).with_suffix('.jpg').name)
+        # print('jpg:', jpg)
         imsize = root.find('size')
         w = int(imsize.find('width').text)
         h = int(imsize.find('height').text)
