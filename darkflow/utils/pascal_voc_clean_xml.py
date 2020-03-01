@@ -45,7 +45,7 @@ def pascal_voc_clean_xml(ANN, pick, exclusive = False):
         for obj in root.iter('object'):
                 current = list()
                 name = obj.find('name').text
-                if name not in pick:
+                if name not in pick and name != "UNDEFINED":
                         continue
 
                 xmlbox = obj.find('bndbox')
