@@ -9,8 +9,10 @@ from ..dark.darknet import Darknet
 import json
 import os
 
-class TFNet(object):
+""" builds TF computation graph as an instance of TFNET, selects one of the training algorithm"""
 
+class TFNet(object):
+	#trainig algorithm selecter
 	_TRAINER = dict({
 		'rmsprop': tf.train.RMSPropOptimizer,
 		'adadelta': tf.train.AdadeltaOptimizer,
@@ -23,8 +25,8 @@ class TFNet(object):
 	})
 
 	# imported methods
-	_get_fps = help._get_fps
-	say = help.say
+	_get_fps = help._get_fps # checks FPS
+	say = help.say #
 	train = flow.train
 	camera = help.camera
 	predict = flow.predict

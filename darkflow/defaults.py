@@ -1,10 +1,12 @@
 class argHandler(dict):
+    #FLAG assignment file
     #A super duper fancy custom made CLI argument handler!!
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
+    __getattr__ = dict.get #Maybe getting variables from args 
+    __setattr__ = dict.__setitem__ #Setting
+    __delattr__ = dict.__delitem__ #Deleting?
     _descriptions = {'help, --h, -h': 'show this super helpful message and exit'}
     
+    #nested function, one function to set all the default FLAGS using define function plus an option to add more anywhere in the API 
     def setDefaults(self):
         self.define('imgdir', './sample_img/', 'path to testing directory with images')
         self.define('binary', './bin/', 'path to .weights directory')
@@ -36,10 +38,11 @@ class argHandler(dict):
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
         self.define('metaLoad', '', 'path to .meta file generated during --savepb that corresponds to .pb file')
 
+    # Inside function that does the assignment
     def define(self, argName, default, description):
         self[argName] = default
         self._descriptions[argName] = description
-    
+    # Default --help
     def help(self):
         print('Example usage: flow --imgdir sample_img/ --model cfg/yolo.cfg --load bin/yolo.weights')
         print('')
@@ -50,7 +53,8 @@ class argHandler(dict):
             print('  --' + item + (' ' * currentSpacing) + self._descriptions[item])
         print('')
         exit()
-
+    # Checks for proper flag format and assigns custom FLAGS
+    # i = flag/argument, i+1 = value
     def parseArgs(self, args):
         print('')
         i = 1

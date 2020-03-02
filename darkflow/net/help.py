@@ -11,7 +11,7 @@ import os
 
 old_graph_msg = 'Resolving old graph def {} (no guarantee)'
 
-def build_train_op(self):
+def build_train_op(self): 
     self.framework.loss(self.out)
     self.say('Building {} train op'.format(self.meta['model']))
     optimizer = self._TRAINER[self.FLAGS.trainer](self.FLAGS.lr)
@@ -33,7 +33,7 @@ def load_from_ckpt(self):
     try: self.saver.restore(self.sess, load_point)
     except: load_old_graph(self, load_point)
 
-def say(self, *msgs):
+def say(self, *msgs): # Verbose, prints provided messages while building CG
     if not self.FLAGS.verbalise:
         return
     msgs = list(msgs)
@@ -56,8 +56,8 @@ def load_old_graph(self, ckpt):
         op = tf.assign(var, plh)
         self.sess.run(op, {plh: val})
 
-def _get_fps(self, frame):
-    elapsed = int()
+def _get_fps(self, frame): #check for FPS
+    elapsed = int()  
     start = timer()
     preprocessed = self.framework.preprocess(frame)
     feed_dict = {self.inp: [preprocessed]}
@@ -65,82 +65,82 @@ def _get_fps(self, frame):
     processed = self.framework.postprocess(net_out, frame, False)
     return timer() - start
 
-def camera(self):
-    file = self.FLAGS.demo
-    SaveVideo = self.FLAGS.saveVideo
+def camera(self): # Only for demo run, takes a video from camera or a given file, '0 stands for camera, '
+    file = self.FLAGS.demo # input file given, 0 for webcam feed
+    SaveVideo = self.FLAGS.saveVideo # bool
     
-    if file == 'camera':
+    if file == 'camera': 
         file = 0
     else:
         assert os.path.isfile(file), \
         'file {} does not exist'.format(file)
         
-    camera = cv2.VideoCapture(file)
+    camera = cv2.VideoCapture(file) # Capture video from said file and save it to variable
     
-    if file == 0:
+    if file == 0: # On line Verbose
         self.say('Press [ESC] to quit demo')
         
     assert camera.isOpened(), \
-    'Cannot capture source'
+    'Cannot capture source' # Check if camera is available
     
     if file == 0:#camera window
         cv2.namedWindow('', 0)
-        _, frame = camera.read()
-        height, width, _ = frame.shape
-        cv2.resizeWindow('', width, height)
+        _, frame = camera.read() # reading useful input from camera
+        height, width, _ = frame.shape # getting raw input shape
+        cv2.resizeWindow('', width, height) # resize window equal to width and height of input
     else:
-        _, frame = camera.read()
+        _, frame = camera.read() # If video just take the height and width
         height, width, _ = frame.shape
 
-    if SaveVideo:
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    if SaveVideo: # If True
+        fourcc = cv2.VideoWriter_fourcc(*'XVID') # Write to file
         if file == 0:#camera window
-          fps = 1 / self._get_fps(frame)
+          fps = 1 / self._get_fps(frame) # _get_fps gives time per frame, inverse gives real FPS
           if fps < 1:
-            fps = 1
+            fps = 1 # if the fps is lower than 1 return 1 else get the actual Proper FPS after rounding it up
         else:
             fps = round(camera.get(cv2.CAP_PROP_FPS))
         videoWriter = cv2.VideoWriter(
-            'video.avi', fourcc, fps, (width, height))
+            'video.avi', fourcc, fps, (width, height)) #Actual video write at a given fps
 
     # buffers for demo in batch
-    buffer_inp = list()
-    buffer_pre = list()
+    buffer_inp = list() # Input stream into a list/ buffer
+    buffer_pre = list() # Preprocessed stream into save/ buffer
     
     elapsed = int()
     start = timer()
     self.say('Press [ESC] to quit demo')
     # Loop through frames
-    while camera.isOpened():
+    while camera.isOpened(): #While the camera is opened
         elapsed += 1
-        _, frame = camera.read()
-        if frame is None:
+        _, frame = camera.read() # read the frame
+        if frame is None: # frame will be None at the end of video
             print ('\nEnd of Video')
             break
-        preprocessed = self.framework.preprocess(frame)
-        buffer_inp.append(frame)
-        buffer_pre.append(preprocessed)
+        preprocessed = self.framework.preprocess(frame) #Preprocess pipeline
+        buffer_inp.append(frame) # append input frames
+        buffer_pre.append(preprocessed) # append preprocessed frame
         
         # Only process and imshow when queue is full
-        if elapsed % self.FLAGS.queue == 0:
-            feed_dict = {self.inp: buffer_pre}
-            net_out = self.sess.run(self.out, feed_dict)
-            for img, single_out in zip(buffer_inp, net_out):
-                postprocessed = self.framework.postprocess(
+        if elapsed % self.FLAGS.queue == 0: # demo can take multiple videos in queue
+            feed_dict = {self.inp: buffer_pre} # If all the buffer is loaded feed the preprocessed buffer as input to CG
+            net_out = self.sess.run(self.out, feed_dict) # Run a session on CG
+            for img, single_out in zip(buffer_inp, net_out): # Clubbed for loop
+                postprocessed = self.framework.postprocess( # postprocess input buffer using model output per frame
                     single_out, img, False)
-                if SaveVideo:
+                if SaveVideo: # if True, save Video
                     videoWriter.write(postprocessed)
                 if file == 0: #camera window
-                    cv2.imshow('', postprocessed)
+                    cv2.imshow('', postprocessed) # If camera feed, just show the output as a feed
             # Clear Buffers
-            buffer_inp = list()
+            buffer_inp = list() # to save memory
             buffer_pre = list()
 
         if elapsed % 5 == 0:
             sys.stdout.write('\r')
             sys.stdout.write('{0:3.3f} FPS'.format(
                 elapsed / (timer() - start)))
-            sys.stdout.flush()
+            sys.stdout.flush() # at intervals STDOUT the average frame rate
         if file == 0: #camera window
             choice = cv2.waitKey(1)
             if choice == 27: break
@@ -148,9 +148,9 @@ def camera(self):
     sys.stdout.write('\n')
     if SaveVideo:
         videoWriter.release()
-    camera.release()
+    camera.release() # Release video capturing
     if file == 0: #camera window
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows() 
 
 def to_darknet(self):
     darknet_ckpt = self.darknet

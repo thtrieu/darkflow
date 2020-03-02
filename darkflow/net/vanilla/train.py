@@ -2,24 +2,25 @@ import tensorflow as tf
 
 _LOSS_TYPE = ['sse','l2', 'smooth',
 			  'sparse', 'l1', 'softmax',
-			  'svm', 'fisher']
+			  'svm', 'fisher'] # Select Loss among list of losses
 
 def loss(self, net_out):
-	m = self.meta
-	loss_type = self.meta['type']
+	m = self.meta # since called in framework take self.meta from that cls
+	loss_type = self.meta['type'] # take the loss type
 	assert loss_type in _LOSS_TYPE, \
-	'Loss type {} not implemented'.format(loss_type)
+	'Loss type {} not implemented'.format(loss_type) # If loss_type not in list raise error
 
-	out = net_out
-	out_shape = out.get_shape()
-	out_dtype = out.dtype.base_dtype
-	_truth = tf.placeholders(out_dtype, out_shape)
+	out = net_out # network output  
+	out_shape = out.get_shape() # shape of output
+	out_dtype = out.dtype.base_dtype # datatype of output
+	_truth = tf.placeholders(out_dtype, out_shape) # using both to assign target placeholder for groundtruth
 
-	self.placeholders = dict({
+	self.placeholders = dict({ # Truth placeholder for the framework
 			'truth': _truth
 		})
 
-	diff = _truth - out
+	diff = _truth - out #error
+	#according to user choice calcuate among the range of losses
 	if loss_type in ['sse','12']:
 		loss = tf.nn.l2_loss(diff)
 

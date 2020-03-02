@@ -6,6 +6,7 @@ import os
 import json
 from ...cython_utils.cy_yolo_findboxes import yolo_box_constructor
 
+#Preprocessing prediction time image display ops
 def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
 		dim = dims[(i + 1) % 2]
@@ -13,12 +14,15 @@ def _fix(obj, dims, scale, offs):
 		obj[i] = int(obj[i] * scale - off)
 		obj[i] = max(min(obj[i], dim), 0)
 
+
+# c = channels, resiing input to desired dimensions
 def resize_input(self, im):
 	h, w, c = self.meta['inp_size']
 	imsz = cv2.resize(im, (w, h))
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
 	return imsz
+
 
 def process_box(self, b, h, w, threshold):
 	max_indx = np.argmax(b.probs)
@@ -45,6 +49,7 @@ def findboxes(self, net_out):
 	boxes = yolo_box_constructor(meta, net_out, threshold)
 	
 	return boxes
+
 
 def preprocess(self, im, allobj = None):
 	"""
