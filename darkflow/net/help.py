@@ -130,8 +130,9 @@ def camera(self):
                     single_out, img, False)
                 if SaveVideo:
                     videoWriter.write(postprocessed)
-                if file == 0: #camera window
+                else: # video or camera window
                     cv2.imshow('', postprocessed)
+                    cv2.waitKey(1)
             # Clear Buffers
             buffer_inp = list()
             buffer_pre = list()
