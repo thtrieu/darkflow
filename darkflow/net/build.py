@@ -12,11 +12,11 @@ import os
 class TFNet(object):
 
 	_TRAINER = dict({
-		'rmsprop': tf.train.RMSPropOptimizer,
-		'adadelta': tf.train.AdadeltaOptimizer,
-		'adagrad': tf.train.AdagradOptimizer,
-		'adagradDA': tf.train.AdagradDAOptimizer,
-		'momentum': tf.train.MomentumOptimizer,
+		'rmsprop': tf.compat.v1.train.RMSPropOptimizer,
+		'adadelta': tf.compat.v1.train.AdadeltaOptimizer,
+		'adagrad': tf.compat.v1.train.AdagradOptimizer,
+		'adagradDA': tf.compat.v1.train.AdagradDAOptimizer,
+		'momentum':  tf.compat.v1.train.MomentumOptimizer,
 		'adam': tf.train.AdamOptimizer,
 		'ftrl': tf.train.FtrlOptimizer,
 		'sgd': tf.train.GradientDescentOptimizer
@@ -54,7 +54,7 @@ class TFNet(object):
 					self.build_from_pb()
 			return
 
-		if darknet is None:	
+		if darknet is None:
 			darknet = Darknet(FLAGS)
 			self.ntrain = len(darknet.layers)
 
@@ -62,7 +62,7 @@ class TFNet(object):
 		args = [darknet.meta, FLAGS]
 		self.num_layer = len(darknet.layers)
 		self.framework = create_framework(*args)
-		
+
 		self.meta = darknet.meta
 
 		self.say('\nBuilding net ...')
@@ -76,12 +76,12 @@ class TFNet(object):
 				self.setup_meta_ops()
 		self.say('Finished in {}s\n'.format(
 			time.time() - start))
-	
+
 	def build_from_pb(self):
 		with tf.gfile.FastGFile(self.FLAGS.pbLoad, "rb") as f:
 			graph_def = tf.GraphDef()
 			graph_def.ParseFromString(f.read())
-		
+
 		tf.import_graph_def(
 			graph_def,
 			name=""
@@ -94,9 +94,9 @@ class TFNet(object):
 		self.inp = tf.get_default_graph().get_tensor_by_name('input:0')
 		self.feed = dict() # other placeholders
 		self.out = tf.get_default_graph().get_tensor_by_name('output:0')
-		
+
 		self.setup_meta_ops()
-	
+
 	def build_forward(self):
 		verbalise = self.FLAGS.verbalise
 
@@ -132,39 +132,39 @@ class TFNet(object):
 			cfg['gpu_options'] = tf.GPUOptions(
 				per_process_gpu_memory_fraction = utility)
 			cfg['allow_soft_placement'] = True
-		else: 
+		else:
 			self.say('Running entirely on CPU')
 			cfg['device_count'] = {'GPU': 0}
 
 		if self.FLAGS.train: self.build_train_op()
-		
+
 		if self.FLAGS.summary:
 			self.summary_op = tf.summary.merge_all()
 			self.writer = tf.summary.FileWriter(self.FLAGS.summary + 'train')
-		
+
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
 
 		if not self.ntrain: return
-		self.saver = tf.train.Saver(tf.global_variables(), 
+		self.saver = tf.train.Saver(tf.global_variables(),
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
-		
+
 		if self.FLAGS.summary:
 			self.writer.add_graph(self.sess.graph)
 
 	def savepb(self):
 		"""
-		Create a standalone const graph def that 
+		Create a standalone const graph def that
 		C++	can load and run.
 		"""
 		darknet_pb = self.to_darknet()
 		flags_pb = self.FLAGS
 		flags_pb.verbalise = False
-		
+
 		flags_pb.train = False
 		# rebuild another tfnet. all const.
-		tfnet_pb = TFNet(flags_pb, darknet_pb)		
+		tfnet_pb = TFNet(flags_pb, darknet_pb)
 		tfnet_pb.sess = tf.Session(graph = tfnet_pb.graph)
 		# tfnet_pb.predict() # uncomment for unit testing
 		name = 'built_graph/{}.pb'.format(self.meta['name'])
