@@ -6,9 +6,6 @@ import numpy as np
 import os
 import math
 
-def expit_tensor(x):
-	return 1. / (1. + tf.exp(-x))
-
 def loss(self, net_out):
     """
     Takes net.out and placeholders value
@@ -56,11 +53,12 @@ def loss(self, net_out):
     net_out_reshape = tf.reshape(net_out, [-1, H, W, B, (4 + 1 + C)])
     coords = net_out_reshape[:, :, :, :, :4]
     coords = tf.reshape(coords, [-1, H*W, B, 4])
-    adjusted_coords_xy = expit_tensor(coords[:,:,:,0:2])
-    adjusted_coords_wh = tf.sqrt(tf.exp(coords[:,:,:,2:4]) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2]))
+    adjusted_coords_xy = tf.sigmoid(coords[:,:,:,0:2])
+    adjusted_coords_wh = tf.exp(tf.clip_by_value(coords[:,:,:,2:4], -1e3, 10)) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2])
+    adjusted_coords_wh = tf.sqrt(tf.clip_by_value(adjusted_coords_wh, 1e-10, 1e5))
     coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
 
-    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, 4])
+    adjusted_c = tf.sigmoid(net_out_reshape[:, :, :, :, 4])
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
 
     adjusted_prob = tf.nn.softmax(net_out_reshape[:, :, :, :, 5:])
@@ -68,7 +66,7 @@ def loss(self, net_out):
 
     adjusted_net_out = tf.concat([adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob], 3)
 
-    wh = tf.pow(coords[:,:,:,2:4], 2) * np.reshape([W, H], [1, 1, 1, 2])
+    wh = tf.square(coords[:,:,:,2:4]) * np.reshape([W, H], [1, 1, 1, 2])
     area_pred = wh[:,:,:,0] * wh[:,:,:,1]
     centers = coords[:,:,:,0:2]
     floor = centers - (wh * .5)
@@ -99,7 +97,7 @@ def loss(self, net_out):
     wght = tf.concat([cooid, tf.expand_dims(conid, 3), proid ], 3)
 
     print('Building {} loss'.format(m['model']))
-    loss = tf.pow(adjusted_net_out - true, 2)
+    loss = tf.square(adjusted_net_out - true)
     loss = tf.multiply(loss, wght)
     loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
     loss = tf.reduce_sum(loss, 1)
