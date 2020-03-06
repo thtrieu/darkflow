@@ -1,4 +1,8 @@
-aeroplane
-bicycle
-bird
-boat
+car
+electrical cabinet
+traffic cone
+post
+robot
+tarm
+bench
+cupboard
