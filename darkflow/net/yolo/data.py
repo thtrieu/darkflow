@@ -6,6 +6,8 @@ from copy import deepcopy
 import pickle
 import numpy as np
 import os 
+import sys
+from sys import exit
 
 def parse(self, exclusive = False):
     meta = self.meta

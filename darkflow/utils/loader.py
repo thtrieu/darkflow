@@ -118,7 +118,7 @@ class weights_walker(object):
                 shape = (), mode = 'r', offset = 0,
                 dtype = '({})i4,'.format(4))
             self.transpose = major > 1000 or minor > 1000
-            self.offset = 16
+            self.offset = 20
 
     def walk(self, size):
         if self.eof: return None
