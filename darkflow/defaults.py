@@ -29,10 +29,11 @@ class argHandler(dict):
         self.define('batch', 16, 'batch size')
         self.define('epoch', 1000, 'number of epoch')
         self.define('save', 2000, 'save checkpoint every ? training examples')
-        self.define('demo', '', 'demo on webcam')
+        self.define('demo', '', 'path to video source or type camera for webcam')
         self.define('queue', 1, 'process demo in batch')
         self.define('json', False, 'Outputs bounding box information in json format.')
         self.define('saveVideo', False, 'Records video from input video or camera')
+        self.define('display', False, 'Displays the post processed video')
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
         self.define('metaLoad', '', 'path to .meta file generated during --savepb that corresponds to .pb file')
 
