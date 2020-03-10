@@ -45,15 +45,15 @@ def load_old_graph(self, ckpt):
     ckpt_loader = create_loader(ckpt)
     self.say(old_graph_msg.format(ckpt))
     
-    for var in tf.global_variables():
+    for var in tf.compat.v1.global_variables():
         name = var.name.split(':')[0]
         args = [name, var.get_shape()]
         val = ckpt_loader(args)
         assert val is not None, \
         'Cannot find and load {}'.format(var.name)
         shp = val.shape
-        plh = tf.placeholder(tf.float32, shp)
-        op = tf.assign(var, plh)
+        plh = tf.compat.v1.placeholder(tf.float32, shp)
+        op = tf.compat.v1.assign(var, plh)
         self.sess.run(op, {plh: val})
 
 def _get_fps(self, frame):
@@ -156,7 +156,7 @@ def to_darknet(self):
     darknet_ckpt = self.darknet
 
     with self.graph.as_default() as g:
-        for var in tf.global_variables():
+        for var in tf.compat.v1.global_variables():
             name = var.name.split(':')[0]
             var_name = name.split('-')
             l_idx = int(var_name[0])

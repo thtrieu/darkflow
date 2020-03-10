@@ -1,4 +1,4 @@
-import tensorflow.contrib.slim as slim
+import tf_slim as slim
 from .baseop import BaseOp
 import tensorflow as tf
 import numpy as np
@@ -24,7 +24,7 @@ class reorg(BaseOp):
     def forward(self):
         inp = self.inp.out
         s = self.lay.stride
-        self.out = tf.extract_image_patches(
+        self.out = tf.image.extract_patches(
             inp, [1,s,s,1], [1,s,s,1], [1,1,1,1], 'VALID')
 
     def speak(self):
@@ -36,7 +36,7 @@ class reorg(BaseOp):
 class local(BaseOp):
     def forward(self):
         pad = [[self.lay.pad, self.lay.pad]] * 2;
-        temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
+        temp = tf.pad(tensor=self.inp.out, paddings=[[0, 0]] + pad + [[0, 0]])
 
         k = self.lay.w['kernels']
         ksz = self.lay.ksize
@@ -49,7 +49,7 @@ class local(BaseOp):
                 i_, j_ = i + 1 - half, j + 1 - half
                 tij = temp[:, i_ : i_ + ksz, j_ : j_ + ksz,:]
                 row_i.append(
-                    tf.nn.conv2d(tij, kij, 
+                    tf.nn.conv2d(input=tij, filters=kij, 
                         padding = 'VALID', 
                         strides = [1] * 4))
             out += [tf.concat(row_i, 2)]
@@ -66,8 +66,8 @@ class local(BaseOp):
 class convolutional(BaseOp):
     def forward(self):
         pad = [[self.lay.pad, self.lay.pad]] * 2;
-        temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
-        temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
+        temp = tf.pad(tensor=self.inp.out, paddings=[[0, 0]] + pad + [[0, 0]])
+        temp = tf.nn.conv2d(input=temp, filters=self.lay.w['kernel'], padding = 'VALID', 
             name = self.scope, strides = [1] + [self.lay.stride] * 2 + [1])
         if self.lay.batch_norm: 
             temp = self.batchnorm(self.lay, temp)

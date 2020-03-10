@@ -28,19 +28,22 @@ Python3, tensorflow 1.0, numpy, opencv 3.
 
 ### Getting started
 
-You can choose _one_ of the following three ways to get started with darkflow.
+- Install tf_slim module since contrib is deprecated from tf2+
+ ```pip install git+https://github.com/ShanuDey/tf-slim.git```
 
-1. Just build the Cython extensions in place. NOTE: If installing this way you will have to use `./flow` in the cloned darkflow directory instead of `flow` as darkflow is not installed globally.
+- You can choose _one_ of the following three ways to get started with darkflow.
+
+	1. Just build the Cython extensions in place. NOTE: If installing this way you will have to use `./flow` in the cloned darkflow directory instead of `flow` as darkflow is not installed globally.
     ```
     python3 setup.py build_ext --inplace
     ```
 
-2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
+	2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
     ```
     pip install -e .
     ```
 
-3. Install with pip globally
+	3. Install with pip globally
     ```
     pip install .
     ```

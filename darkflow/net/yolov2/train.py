@@ -1,4 +1,4 @@
-import tensorflow.contrib.slim as slim
+import tf_slim as slim
 import pickle
 import tensorflow as tf
 from ..yolo.misc import show
@@ -37,15 +37,15 @@ def loss(self, net_out):
     size2 = [None, HW, B]
 
     # return the below placeholders
-    _probs = tf.placeholder(tf.float32, size1)
-    _confs = tf.placeholder(tf.float32, size2)
-    _coord = tf.placeholder(tf.float32, size2 + [4])
+    _probs = tf.compat.v1.placeholder(tf.float32, size1)
+    _confs = tf.compat.v1.placeholder(tf.float32, size2)
+    _coord = tf.compat.v1.placeholder(tf.float32, size2 + [4])
     # weights term for L2 loss
-    _proid = tf.placeholder(tf.float32, size1)
+    _proid = tf.compat.v1.placeholder(tf.float32, size1)
     # material calculating IOU
-    _areas = tf.placeholder(tf.float32, size2)
-    _upleft = tf.placeholder(tf.float32, size2 + [2])
-    _botright = tf.placeholder(tf.float32, size2 + [2])
+    _areas = tf.compat.v1.placeholder(tf.float32, size2)
+    _upleft = tf.compat.v1.placeholder(tf.float32, size2 + [2])
+    _botright = tf.compat.v1.placeholder(tf.float32, size2 + [2])
 
     self.placeholders = {
         'probs':_probs, 'confs':_confs, 'coord':_coord, 'proid':_proid,
@@ -83,8 +83,8 @@ def loss(self, net_out):
 
     # calculate the best IOU, set 0.0 confidence for worse boxes
     iou = tf.truediv(intersect, _areas + area_pred - intersect)
-    best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
-    best_box = tf.to_float(best_box)
+    best_box = tf.equal(iou, tf.reduce_max(input_tensor=iou, axis=[2], keepdims=True))
+    best_box = tf.cast(best_box, dtype=tf.float32)
     confs = tf.multiply(best_box, _confs)
 
     # take care of the weight terms
@@ -102,6 +102,6 @@ def loss(self, net_out):
     loss = tf.pow(adjusted_net_out - true, 2)
     loss = tf.multiply(loss, wght)
     loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
-    loss = tf.reduce_sum(loss, 1)
-    self.loss = .5 * tf.reduce_mean(loss)
-    tf.summary.scalar('{} loss'.format(m['model']), self.loss)
+    loss = tf.reduce_sum(input_tensor=loss, axis=1)
+    self.loss = .5 * tf.reduce_mean(input_tensor=loss)
+    tf.compat.v1.summary.scalar('{} loss'.format(m['model']), self.loss)
