@@ -49,7 +49,6 @@ def postprocess(self, net_out, im, save = True):
 		thick = int((h + w) // 300)
 		if self.FLAGS.json:
 			resultsForJSON.append({"label": mess, "confidence": float('%.2f' % confidence), "topleft": {"x": left, "y": top}, "bottomright": {"x": right, "y": bot}})
-			continue
 
 		cv2.rectangle(imgcv,
 			(left, top), (right, bot),
@@ -66,6 +65,5 @@ def postprocess(self, net_out, im, save = True):
 		textFile = os.path.splitext(img_name)[0] + ".json"
 		with open(textFile, 'w') as f:
 			f.write(textJSON)
-		return
 
 	cv2.imwrite(img_name, imgcv)
