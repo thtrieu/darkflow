@@ -119,6 +119,10 @@ class weights_walker(object):
                 dtype = '({})i4,'.format(4))
             self.transpose = major > 1000 or minor > 1000
             self.offset = 16
+			#patched https://github.com/thtrieu/darkflow/issues/421
+            # support for darknet yolo v2
+            if major == 0 and minor == 2:
+                self.offset = 20
 
     def walk(self, size):
         if self.eof: return None
