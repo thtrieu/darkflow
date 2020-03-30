@@ -2,6 +2,7 @@ import tensorflow.contrib.slim as slim
 from .baseop import BaseOp
 import tensorflow as tf
 import numpy as np
+import math
 
 class reorg(BaseOp):
     def _forward(self):
@@ -24,6 +25,7 @@ class reorg(BaseOp):
     def forward(self):
         inp = self.inp.out
         s = self.lay.stride
+        #working higher mAP
         self.out = tf.extract_image_patches(
             inp, [1,s,s,1], [1,s,s,1], [1,1,1,1], 'VALID')
 
@@ -75,17 +77,22 @@ class convolutional(BaseOp):
 
     def batchnorm(self, layer, inp):
         if not self.var:
-            temp = (inp - layer.w['moving_mean'])
-            temp /= (np.sqrt(layer.w['moving_variance']) + 1e-5)
-            temp *= layer.w['gamma']
-            return temp
+            tensor, mean, variance = tf.nn.fused_batch_norm(inp, 
+                                                            layer.w['gamma'], 
+                                                            np.zeros([np.size(layer.w['gamma'])], dtype=np.float32), 
+                                                            mean=layer.w['moving_mean'], 
+                                                            variance = layer.w['moving_variance'], 
+                                                            epsilon= 1e-5, 
+                                                            is_training=False)
+            return tensor;
         else:
             args = dict({
                 'center' : False, 'scale' : True,
                 'epsilon': 1e-5, 'scope' : self.scope,
                 'updates_collections' : None,
                 'is_training': layer.h['is_training'],
-                'param_initializers': layer.w
+                'param_initializers': layer.w,
+                'fused' : True
                 })
             return slim.batch_norm(inp, **args)
 
