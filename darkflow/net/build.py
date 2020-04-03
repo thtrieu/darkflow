@@ -136,6 +136,24 @@ class TFNet(object):
 			self.say('Running entirely on CPU')
 			cfg['device_count'] = {'GPU': 0}
 
+		# Set CPU-specific parallelism flags
+		cfg['inter_op_parallelism_threads'] = self.FLAGS.inter_op
+		cfg['intra_op_parallelism_threads'] = self.FLAGS.intra_op
+		os.environ["KMP_BLOCKTIME"] = str(self.FLAGS.KMP_BLOCKTIME)
+		os.environ["KMP_SETTINGS"] = str(self.FLAGS.KMP_SETTINGS)
+		os.environ["KMP_AFFINITY"] = str(self.FLAGS.KMP_AFFINITY)
+		os.environ["OMP_NUM_THREADS"]= str(self.FLAGS.intra_op)
+
+		print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print ('CPU parallelism settings - tweak defaults for better performance:')
+		print ('See https://www.tensorflow.org/performance/performance_guide#tensorflow_with_intel_mkl_dnn for details')
+		print ('inter_op', self.FLAGS.inter_op)
+		print ('intra_op', self.FLAGS.intra_op)
+		print ('KMP_BLOCKTIME', self.FLAGS.KMP_BLOCKTIME)
+		print ('KMP_AFFINITY', self.FLAGS.KMP_AFFINITY)
+		print ('KMP_SETTINGS', self.FLAGS.KMP_SETTINGS)
+		print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
 		if self.FLAGS.train: self.build_train_op()
 		
 		if self.FLAGS.summary:

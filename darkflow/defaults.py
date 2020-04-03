@@ -1,11 +1,15 @@
+from .platform_util import platform
+
 class argHandler(dict):
     #A super duper fancy custom made CLI argument handler!!
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
     _descriptions = {'help, --h, -h': 'show this super helpful message and exit'}
-    
+
     def setDefaults(self):
+        p = platform()
+
         self.define('imgdir', './sample_img/', 'path to testing directory with images')
         self.define('binary', './bin/', 'path to .weights directory')
         self.define('config', './cfg/', 'path to .cfg directory')
@@ -35,6 +39,12 @@ class argHandler(dict):
         self.define('saveVideo', False, 'Records video from input video or camera')
         self.define('pbLoad', '', 'path to .pb protobuf file (metaLoad must also be specified)')
         self.define('metaLoad', '', 'path to .meta file generated during --savepb that corresponds to .pb file')
+        self.define('inter_op', 2, 'Maximum number of ops to run in parallel');
+        self.define('intra_op', p.num_cores_per_socket() * p.num_cpu_sockets(), 'Number of threads to use for each CPU op')
+        self.define('KMP_BLOCKTIME', 0, 'Time (in ms) a thread should wait after a parallel region before sleeping')
+        self.define('KMP_SETTINGS', 0, 'Enables printing of OpenMP environment variables')
+        self.define('KMP_AFFINITY', 'granularity=fine,compact,1,0', 'Enables binding of threads to physical processing units')
+        self.define('timeline_enabled', False, 'Run 20 batches and then dump the timeline in JSON format');
 
     def define(self, argName, default, description):
         self[argName] = default
