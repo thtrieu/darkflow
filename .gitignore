@@ -44,3 +44,6 @@ ckpt/*
 
 #pytest cache
 .cache/
+
+#dataset dir
+data

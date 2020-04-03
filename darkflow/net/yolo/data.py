@@ -1,4 +1,5 @@
 from ...utils.pascal_voc_clean_xml import pascal_voc_clean_xml
+from ...utils.annotation_json_parser import annotation_json_parser
 from numpy.random import permutation as perm
 from .predict import preprocess
 # from .misc import show
@@ -15,7 +16,14 @@ def parse(self, exclusive = False):
         msg = 'Annotation directory not found {} .'
         exit('Error: {}'.format(msg.format(ann)))
     print('\n{} parsing {}'.format(meta['model'], ann))
-    dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
+
+    dumps = None
+
+    if self.FLAGS.annotationformat == 'xml':
+        dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
+    elif self.FLAGS.annotationformat == 'json':
+        dumps = annotation_json_parser(ann, meta['labels'], exclusive)
+    
     return dumps
 
 
