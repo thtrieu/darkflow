@@ -141,6 +141,9 @@ class TFNet(object):
 		if self.FLAGS.summary:
 			self.summary_op = tf.summary.merge_all()
 			self.writer = tf.summary.FileWriter(self.FLAGS.summary + 'train')
+		if self.FLAGS.cpus:
+			cfg['inter_op_parallelism_threads'] = self.FLAGS.cpus
+			cfg['intra_op_parallelism_threads'] = self.FLAGS.cpus
 		
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
