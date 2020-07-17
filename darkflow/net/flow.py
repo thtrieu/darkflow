@@ -66,6 +66,10 @@ def train(self):
         form = 'step {} - loss {} - moving ave loss {}'
         self.say(form.format(step_now, loss, loss_mva))
         profile += [(loss, loss_mva)]
+		
+		with open("training_stats.csv", 'a') as logger:
+			logger.write("{}, {}, {}\n".format(step_now, loss, loss_mva))
+			logger.close()
 
         ckpt = (i+1) % (self.FLAGS.save // self.FLAGS.batch)
         args = [step_now, profile]
