@@ -7,7 +7,7 @@ Real-time object detection and classification. Paper: [version 1](https://arxiv.
 Read more about YOLO (in darknet) and download weight files [here](http://pjreddie.com/darknet/yolo/). In case the weight file cannot be found, I uploaded some of mine [here](https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU), which include `yolo-full` and `yolo-tiny` of v1.0, `tiny-yolo-v1.1` of v1.1 and `yolo`, `tiny-yolo-voc` of v2.
 
 
-See demo below or see on [this imgur](http://i.imgur.com/EyZZKAA.gif)
+See demo below or see on [this image](http://i.imgur.com/EyZZKAA.gif)
 
 <p align="center"> <img src="demo.gif"/> </p>
 
@@ -35,12 +35,12 @@ You can choose _one_ of the following three ways to get started with darkflow.
     python3 setup.py build_ext --inplace
     ```
 
-2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect)
+2. Let pip install darkflow globally in dev mode (still globally accessible, but changes to the code immediately take effect).
     ```
     pip install -e .
     ```
 
-3. Install with pip globally
+3. Install with pip globally.
     ```
     pip install .
     ```
@@ -50,11 +50,11 @@ You can choose _one_ of the following three ways to get started with darkflow.
 **Android demo on Tensorflow's** [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowYoloDetector.java)
 
 **I am looking for help:**
- - `help wanted` labels in issue track
+ - `help wanted` labels in issue track.
 
 ## Parsing the annotations
 
-Skip this if you are not training or fine-tuning anything (you simply want to forward flow a trained net)
+Skip this if you are not training or fine-tuning anything (you simply want to forward flow a trained net).
 
 For example, if you want to work with only 3 classes `tvmonitor`, `person`, `pottedplant`; edit `labels.txt` as follows
 
