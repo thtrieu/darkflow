@@ -1,4 +1,4 @@
-import tensorflow.contrib.slim as slim
+import tf_slim as slim
 import pickle
 import tensorflow as tf
 from ..yolo.misc import show

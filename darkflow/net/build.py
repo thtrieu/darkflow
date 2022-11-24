@@ -1,4 +1,5 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import time
 from . import help
 from . import flow
@@ -20,6 +21,12 @@ class TFNet(object):
 		'adam': tf.train.AdamOptimizer,
 		'ftrl': tf.train.FtrlOptimizer,
 		'sgd': tf.train.GradientDescentOptimizer
+		# 'rmsprop': tf.keras.optimizers.RMSprop,
+		# 'adadelta': tf.optimizers.Adadelta,
+		# 'adagrad': tf.keras.optimizers.Adagrad,
+		# 'adam': tf.keras.optimizers.Adam,
+		# 'ftrl': tf.keras.optimizers.Ftrl,
+		# 'sgd': tf.keras.optimizers.SGD
 	})
 
 	# imported methods
