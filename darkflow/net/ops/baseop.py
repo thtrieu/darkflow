@@ -67,8 +67,8 @@ class BaseOp(object):
         val = self.lay.w[var]
         self.lay.w[var] = tf.constant_initializer(val)
         if var in self._SLIM: return
-        with tf.variable_scope(self.scope):
-            self.lay.w[var] = tf.get_variable(var,
+        with tf.compat.v1.variable_scope(self.scope):
+            self.lay.w[var] = tf.compat.v1.get_variable(var,
                 shape = self.lay.wshape[var],
                 dtype = tf.float32,
                 initializer = self.lay.w[var])
@@ -81,7 +81,7 @@ class BaseOp(object):
         sig = '{}/{}'.format(self.scope, ph)
         val = self.lay.h[ph]
 
-        self.lay.h[ph] = tf.placeholder_with_default(
+        self.lay.h[ph] = tf.compat.v1.placeholder_with_default(
             val['dfault'], val['shape'], name = sig)
         feed[self.lay.h[ph]] = val['feed']
 
