@@ -84,7 +84,7 @@ def camera(self):
     'Cannot capture source'
     
     if file == 0:#camera window
-        cv2.namedWindow('', 0)
+        cv2.namedWindow('camera window', 0)
         _, frame = camera.read()
         height, width, _ = frame.shape
         cv2.resizeWindow('', width, height)

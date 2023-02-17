@@ -1,6 +1,11 @@
-import tensorflow.contrib.slim as slim
+try: # for tensorflow 1.x
+	import tensorflow.contrib.slim as slim
+	import tensorflow as tf
+except: # for tensorflow 2.x
+	import tensorflow.compat.v1 as tf
+	import tf_slim as slim
+	tf.disable_v2_behavior()
 from .baseop import BaseOp
-import tensorflow as tf
 from distutils.version import StrictVersion
 
 class route(BaseOp):
