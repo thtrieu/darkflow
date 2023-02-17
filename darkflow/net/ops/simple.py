@@ -3,7 +3,7 @@ try: # for tensorflow 1.x
 	import tensorflow as tf
 except: # for tensorflow 2.x
 	import tensorflow.compat.v1 as tf
-	import tensorflow.compat.v1.contrib.slim as slim
+	import tf_slim as slim
 	tf.disable_v2_behavior()
 from .baseop import BaseOp
 from distutils.version import StrictVersion

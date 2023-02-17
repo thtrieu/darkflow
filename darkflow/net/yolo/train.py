@@ -1,6 +1,10 @@
-import tensorflow.contrib.slim as slim
+try: # for tensorflow 1.x
+	import tensorflow.contrib.slim as slim
+	import tensorflow as tf
+except: # for tensorflow 2.x
+	import tensorflow.compat.v1 as tf
+	import tf_slim as slim
 import pickle
-import tensorflow as tf
 from .misc import show
 import numpy as np
 import os

@@ -1,4 +1,9 @@
-import tensorflow as tf
+try: # for tensorflow 1.x
+	import tensorflow.contrib.slim as slim
+	import tensorflow as tf
+except: # for tensorflow 2.x
+	import tensorflow.compat.v1 as tf
+	import tf_slim as slim
 import time
 from . import help
 from . import flow
