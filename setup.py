@@ -3,9 +3,10 @@ from setuptools.extension import Extension
 from Cython.Build import cythonize
 import numpy
 import os
-import imp
+import importlib
 
-VERSION = imp.load_source('version', os.path.join('.', 'darkflow', 'version.py'))
+LOADER = importlib.machinery.SourceFileLoader('version', os.path.join('.', 'darkflow', 'version.py'))
+VERSION = LOADER.load_module()
 VERSION = VERSION.__version__
 
 if os.name =='nt' :
